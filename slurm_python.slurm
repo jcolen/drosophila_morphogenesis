@@ -3,7 +3,7 @@
 #SBATCH --job-name=translation_vae
 #SBATCH --output=/scratch/midway3/jcolen/sbatch_outputs/translation_vae_%A.out
 #SBATCH --error=/scratch/midway3/jcolen/sbatch_outputs/translation_vae_%A.out
-#SBATCH --partition=gpu
+#SBATCH --partition=vitelli-gpu
 #SBATCH --gres=gpu:1
 #SBATCH --account=pi-vitelli
 #SBATCH --exclude=midway3-0294,midway3-[0277-0281]

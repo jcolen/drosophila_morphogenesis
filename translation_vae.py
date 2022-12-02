@@ -44,7 +44,6 @@ class TranslationVAE(pl.LightningModule):
 				 in_channels=4,
 				 out_channels=2,
 				 lr=1e-3,
-				 weight_decay=1e-3,
 				 beta=1e-2,
 				 num_latent=16,
 				 input_size=(236,200),
@@ -60,7 +59,7 @@ class TranslationVAE(pl.LightningModule):
 			**kwargs)
 		self.save_hyperparameters(
 			'input', 'in_channels', 'output', 'out_channels', 'num_latent',
-			'lr', 'weight_decay', 'beta', 'input_size', 'stage_dims')
+			'lr', 'beta', 'input_size', 'stage_dims')
 	
 	def getxy(self, batch):
 		if isinstance(input, list):
@@ -68,7 +67,8 @@ class TranslationVAE(pl.LightningModule):
 		else:
 			x = batch[self.hparams['input']]
 		y0 = batch[self.hparams['output']]
-		return x, y0
+
+		return x.to(self.device), y0.to(self.device)
 
 	def compute_loss(self, batch):
 		x, y0 = self.getxy(batch)
@@ -80,110 +80,119 @@ class TranslationVAE(pl.LightningModule):
 		
 	def forward(self, x):
 		return self.model(x)
- 
-	def training_step(self, batch, batch_idx):
-		res_loss, mse_loss, vae_loss = self.compute_loss(batch)
-		self.log('train/res', res_loss)
-		self.log('train/mse', mse_loss)
-		self.log('train/kld', vae_loss)
-		return {'loss': mse_loss + self.hparams['beta'] * vae_loss}
-	
-	def validation_step(self, batch, batch_idx):
-		res_loss, mse_loss, vae_loss = self.compute_loss(batch)
-		self.log('validation/res', res_loss)
-		self.log('validation/mse', mse_loss)
-		self.log('validation/kld', vae_loss)
-		return {'loss': mse_loss + self.hparams['beta'] * vae_loss}
-	
-	def validation_epoch_end(self, outs):
-		avg_loss = torch.stack([x['loss'] for x in outs]).mean()
-		self.log('hp/val_loss', avg_loss)
-	
-	def test_step(self, batch, batch_idx):
-		x, y0 = self.getxy(batch)
-		y, _ = self(x)
-		
-		mag0 = torch.linalg.norm(y0, dim=-3).mean(dim=(-2, -1)).cpu().numpy()
-		mag  = torch.linalg.norm(y, dim=-3).mean(dim=(-2, -1)).cpu().numpy()
-		mse = (y0 - y).pow(2).mean(dim=(-3, -2, -1)).cpu().numpy()
-		
-		res = residual(y, y0).mean(dim=(-2, -1)).cpu().numpy()
-		
-		return {'df': pd.DataFrame({
-			'res': res.flatten(),
-			'mse': mse.flatten(),
-			'mag0': mag0.flatten(),
-			'mag': mag.flatten(),
-			'time': batch['time'].cpu().numpy(),
-			'embryoID': batch['embryoID'].cpu().numpy(),
-			'genotype': batch['genotype'],
-		})}
 
-	def test_epoch_end(self, outs):
-		self.test_df = pd.concat([x['df'] for x in outs], axis=0)
-		
-	def configure_optimizers(self):
-		optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, self.parameters()), lr=self.hparams['lr'])
-		return {'optimizer': optimizer}			  
-	
+def run_beta_sweep(dataset, 
+				   betas, 
+				   logdir, 
+				   model_kwargs, 
+				   dl_kwargs,
+				   grad_clip=0.5,
+				   max_epochs=500, 
+				   patient=10):
+	device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-if __name__ == '__main__':
-	transform=Compose([Reshape2DField(), ToTensor()])
-	#cad = AtlasDataset('WT', 'ECad-GFP', 'tensor2D', transform=transform)
-	#sqh = AtlasDataset('WT', 'sqh-mCherry', 'tensor2D', transform=transform)
-	#vel = AtlasDataset('WT', 'ECad-GFP', 'velocity2D', transform=transform)
-	#dataset = AlignedDataset([sqh, cad, vel], ['sqh', 'cad', 'vel'])
-
-	eve = AtlasDataset('WT', 'Even_Skipped', 'raw2D', transform=transform)
-	dataset = AlignedDataset([eve], ['eve'])
-	
-
-	betas = np.power(10., np.arange(-4, -1))
-	betas = np.power(10., np.arange(-1, 1))
-	betas = np.power(10., np.arange(-6, -1))
-	betas = np.power(10., np.arange(-10, -1))
-	print(betas)
+	val_size = len(dataset) // 5
+	train, val = random_split(dataset, [len(dataset)-val_size, val_size])
+	val_indices = val.indices
+	val_df = dataset.df.iloc[val_indices]
+	train_loader = DataLoader(train, **dl_kwargs)
+	val_loader = DataLoader(val, **dl_kwargs)
 
 	for beta in betas:
-		print(beta)
-		test_size = len(dataset) // 5
-		kwargs = dict(num_workers=0, batch_size=8, shuffle=True, pin_memory=True)
-		train, test = random_split(dataset, [len(dataset)-test_size, test_size])
-		train_loader = DataLoader(train, **kwargs)
-		test_loader = DataLoader(test, **kwargs)
+		model = TranslationVAE(beta=beta, **model_kwargs)
+		model.to(device)
+		print(beta, model.hparams['input'], model.hparams['output'])
+		optimizer = torch.optim.Adam(
+			filter(lambda p: p.requires_grad, model.parameters()), 
+			lr=model.hparams['lr'])
+		scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 20, gamma=0.1)
+		model_logdir = os.path.join(logdir, model.__class__.__name__ + '_'+model.hparams['input']+'_'+model.hparams['output'])
+		
+		min_loss = 1e10
+		best_epoch = -1
 
-		model = TranslationVAE(
-			lr=1e-4, 
-			weight_decay=0., 
-			beta=beta,
-			num_latent=16,
-			input='runt',
-			in_channels=1,
-			output='runt',
-			out_channels=1,
-			stage_dims=[[32,32],[64,64],[128,128],[256,256]],
-		)
+		for epoch in range(max_epochs):
+			for bb, batch in enumerate(train_loader):
+				optimizer.zero_grad()
+				mse, res, kld = model.compute_loss(batch)
+				loss = mse + model.hparams['beta'] * kld
+				loss.backward()
+				torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
+				optimizer.step()
 
-		kwargs = {
-			'gpus': 1,
-			'max_epochs': 1000,
-			'accumulate_grad_batches': 1,
-			'checkpoint_callback': True,
-			'log_every_n_steps': 5,
-			'flush_logs_every_n_steps': 50,
-			'gradient_clip_val': 0.5,
-			'fast_dev_run': False,
-		}
-		trainer = pl.Trainer(**kwargs, 
-			callbacks=[pl.callbacks.early_stopping.EarlyStopping(monitor='hp/val_loss', patience=10, mode='min')]
-		)
-		logdir = '/project/vitelli/jonathan/REDO_fruitfly/tb_logs/'
-		trainer.logger = pl.loggers.TensorBoardLogger(
-			save_dir=logdir,
-			name='_'.join([model.__class__.__name__,model.hparams['input'],model.hparams['output']]),
-			default_hp_metric=False)
-		trainer.fit(model, train_loader, test_loader)
-		trainer.test(model, test_loader, verbose=False);
-		model.test_df.to_csv(os.path.join(trainer.logger.log_dir, 'test_df.csv'));
+			val_loss = 0.
+			with torch.no_grad():
+				for bb, batch in enumerate(val_loader):
+					mse, res, kld = model.compute_loss(batch)
+					loss = mse + model.hparams['beta'] * kld
+					val_loss += loss.item() / len(val_loader)
+			
+			print('Epoch %d\tVal Loss=%g' % (epoch, val_loss))
+			scheduler.step()
 
-		gc.collect()
+			if val_loss < min_loss:
+				save_dict = {
+					'state_dict': model.state_dict(),
+					'hparams': model.hparams,
+					'epoch': epoch,
+					'loss': loss,
+					'val_df': val_df,
+				}
+				torch.save(
+					save_dict, 
+					os.path.join(model_logdir, 'beta=%g.ckpt' % beta))
+				min_loss = loss
+				best_epoch = epoch
+
+			#Early stopping
+			if epoch - best_epoch > patient:
+				print('Stoppping at epoch %d' % epoch)
+				break
+		
+if __name__ == '__main__':
+	transform=Compose([Reshape2DField(), ToTensor()])
+	betas = np.power(10., np.arange(-10, -1))
+	dl_kwargs = dict(
+		num_workers=2, 
+		batch_size=8, 
+		shuffle=True, 
+		pin_memory=True
+	)
+		
+	model_kwargs = dict(
+		lr=1e-3, 
+		num_latent=16,
+		stage_dims=[[32,32],[64,64],[128,128],[256,256]],
+	)
+
+	logdir = '/project/vitelli/jonathan/REDO_fruitfly/tb_logs/'
+	
+	cad = AtlasDataset('WT', 'ECad-GFP', 'tensor2D', transform=transform)
+	sqh = AtlasDataset('WT', 'sqh-mCherry', 'tensor2D', transform=transform)
+	vel = AtlasDataset('WT', 'ECad-GFP', 'velocity2D', transform=transform)
+	dataset = AlignedDataset([sqh, cad, vel], ['sqh', 'cad', 'vel'])
+	
+	model_kwargs['in_channels'] = 2
+	model_kwargs['out_channels'] = 2
+	model_kwargs['input'] = 'vel'
+	model_kwargs['output'] = 'vel'
+	run_beta_sweep(dataset, betas, logdir, model_kwargs, dl_kwargs)
+
+	model_kwargs['in_channels'] = 4
+	model_kwargs['out_channels'] = 4
+	model_kwargs['input'] = 'sqh'
+	model_kwargs['output'] = 'sqh'
+	run_beta_sweep(dataset, betas, logdir, model_kwargs, dl_kwargs)
+
+	model_kwargs['input'] = 'cad'
+	model_kwargs['output'] = 'cad'
+	run_beta_sweep(dataset, betas, logdir, model_kwargs, dl_kwargs)
+
+
+	runt = AtlasDataset('WT', 'Runt', 'raw2D', transform=transform)
+	dataset = AlignedDataset([runt], ['runt'])
+	model_kwargs['input'] = 'runt'
+	model_kwargs['output'] = 'runt'
+	model_kwargs['in_channels'] = 1
+	model_kwargs['out_channels'] = 1
+	run_beta_sweep(dataset, betas, logdir, model_kwargs, dl_kwargs)
