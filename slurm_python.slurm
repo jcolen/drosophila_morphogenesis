@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-#SBATCH --job-name=translation_vae
-#SBATCH --output=/scratch/midway3/jcolen/sbatch_outputs/translation_vae_%A.out
-#SBATCH --error=/scratch/midway3/jcolen/sbatch_outputs/translation_vae_%A.out
+#SBATCH --job-name=gdtuo_translation_vae
+#SBATCH --output=/scratch/midway3/jcolen/sbatch_outputs/gdtuo_translation_vae_%A.out
+#SBATCH --error=/scratch/midway3/jcolen/sbatch_outputs/gdtuo_translation_vae_%A.out
 #SBATCH --partition=vitelli-gpu
 #SBATCH --gres=gpu:1
 #SBATCH --account=pi-vitelli
@@ -17,4 +17,4 @@ conda activate /project/vitelli/ml_venv
 
 cd /project/vitelli/jonathan/REDO_fruitfly/src
 #python atlas_processing/build_derivative_library.py
-python translation_vae.py
+python gdtuo_translation_vae.py

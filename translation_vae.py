@@ -11,7 +11,6 @@ warnings.filterwarnings('ignore')
 
 from tqdm import tqdm
 
-import pytorch_lightning as pl
 from torch.utils.data import DataLoader, random_split
 from torchvision.transforms import Compose
 
@@ -37,50 +36,6 @@ def kld_loss(params, logvar):
 	kld = kld.sum(axis=-1).mean()
 	return 0.5 * kld
 
-class TranslationVAE(pl.LightningModule):
-	def __init__(self,
-				 input='sqh',
-				 output='vel',
-				 in_channels=4,
-				 out_channels=2,
-				 lr=1e-3,
-				 beta=1e-2,
-				 num_latent=16,
-				 input_size=(236,200),
-				 stage_dims=[[32,32],[64,64],[128,128]],
-				 *args, **kwargs):
-		super(TranslationVAE, self).__init__()
-		self.model = VAE(
-			num_latent=num_latent, 
-			in_channels=in_channels,
-			out_channels=out_channels,
-			input_size=input_size,
-			stage_dims=stage_dims,
-			**kwargs)
-		self.save_hyperparameters(
-			'input', 'in_channels', 'output', 'out_channels', 'num_latent',
-			'lr', 'beta', 'input_size', 'stage_dims')
-	
-	def getxy(self, batch):
-		if isinstance(input, list):
-			x = torch.cat([batch[i] for i in self.hparams['input']], axis=-3)
-		else:
-			x = batch[self.hparams['input']]
-		y0 = batch[self.hparams['output']]
-
-		return x.to(self.device), y0.to(self.device)
-
-	def compute_loss(self, batch):
-		x, y0 = self.getxy(batch)
-		y, pl = self(x)
-		res_loss = residual(y, y0).mean()
-		mse_loss = F.mse_loss(y, y0)
-		vae_loss = kld_loss(*pl)
-		return res_loss, mse_loss, vae_loss
-		
-	def forward(self, x):
-		return self.model(x)
-
 def run_beta_sweep(dataset, 
 				   betas, 
 				   logdir, 
@@ -99,41 +54,68 @@ def run_beta_sweep(dataset,
 	val_loader = DataLoader(val, **dl_kwargs)
 
 	for beta in betas:
-		model = TranslationVAE(beta=beta, **model_kwargs)
+		model = VAE(**model_kwargs)
 		model.to(device)
-		print(beta, model.hparams['input'], model.hparams['output'])
+		print(beta, model_kwargs['input'], model_kwargs['output'])
 		optimizer = torch.optim.Adam(
 			filter(lambda p: p.requires_grad, model.parameters()), 
-			lr=model.hparams['lr'])
-		scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 20, gamma=0.1)
-		model_logdir = os.path.join(logdir, model.__class__.__name__ + '_'+model.hparams['input']+'_'+model.hparams['output'])
-		
+			lr=model_kwargs['lr'])
+
+		model_logdir = os.path.join(logdir, 
+			'_'.join(['Adam',model.__class__.__name__,model_kwargs['input'], model_kwargs['output']]))
+		if not os.path.exists(model_logdir):
+			os.mkdir(model_logdir)
+		model_kwargs['beta'] = beta	
 		min_loss = 1e10
 		best_epoch = -1
 
 		for epoch in range(max_epochs):
 			for bb, batch in enumerate(train_loader):
+				if isinstance(input, list):
+					x = torch.cat([batch[i] for i in model_kwargs['input']], axis=-3).to(device)
+				else:
+					x = batch[model_kwargs['input']].to(device)
+				y0 = batch[model_kwargs['output']].to(device)
 				optimizer.zero_grad()
-				mse, res, kld = model.compute_loss(batch)
-				loss = mse + model.hparams['beta'] * kld
+				y, pl = model.forward(x)
+				res = residual(y, y0).mean()
+				mag = (y.pow(2).sum(dim=(1,2,3)) - y0.pow(2).sum(dim=(1,2,3))).abs().mean()
+				kld = kld_loss(*pl)
+				loss = res + model_kwargs['alpha'] * mag + model_kwargs['beta'] * kld
 				loss.backward()
 				torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
 				optimizer.step()
 
 			val_loss = 0.
+			res_val = 0.
+			mag_val = 0.
+			kld_val = 0.
 			with torch.no_grad():
 				for bb, batch in enumerate(val_loader):
-					mse, res, kld = model.compute_loss(batch)
-					loss = mse + model.hparams['beta'] * kld
+					if isinstance(input, list):
+						x = torch.cat([batch[i] for i in model_kwargs['input']], axis=-3).to(device)
+					else:
+						x = batch[model_kwargs['input']].to(device)
+					y0 = batch[model_kwargs['output']].to(device)
+					
+					y, pl = model(x)
+					res = residual(y, y0).mean()
+					mag = (y.pow(2).sum(dim=(1,2,3)) - y0.pow(2).sum(dim=(1,2,3))).abs().mean()
+					kld = kld_loss(*pl)
+					loss = res + model_kwargs['alpha'] * mag + model_kwargs['beta'] * kld
 					val_loss += loss.item() / len(val_loader)
-			
-			print('Epoch %d\tVal Loss=%g' % (epoch, val_loss))
-			scheduler.step()
+					res_val += res.item() / len(val_loader)
+					mag_val += mag.item() / len(val_loader)
+					kld_val += kld.item() / len(val_loader)
+		
+			outstr = 'Epoch %d\tVal Loss=%g' % (epoch, val_loss)
+			outstr += '\tRes=%g\tMag=%g\tKLD=%g' % (res_val, mag_val, kld_val)
+			print(outstr)
 
 			if val_loss < min_loss:
 				save_dict = {
 					'state_dict': model.state_dict(),
-					'hparams': model.hparams,
+					'hparams': model_kwargs,
 					'epoch': epoch,
 					'loss': loss,
 					'val_df': val_df,
@@ -141,7 +123,7 @@ def run_beta_sweep(dataset,
 				torch.save(
 					save_dict, 
 					os.path.join(model_logdir, 'beta=%g.ckpt' % beta))
-				min_loss = loss
+				min_loss = val_loss
 				best_epoch = epoch
 
 			#Early stopping
@@ -160,9 +142,10 @@ if __name__ == '__main__':
 	)
 		
 	model_kwargs = dict(
-		lr=1e-3, 
+		lr=1e-4,
 		num_latent=16,
 		stage_dims=[[32,32],[64,64],[128,128],[256,256]],
+		alpha=0.,
 	)
 
 	logdir = '/project/vitelli/jonathan/REDO_fruitfly/tb_logs/'
@@ -177,7 +160,8 @@ if __name__ == '__main__':
 	model_kwargs['input'] = 'vel'
 	model_kwargs['output'] = 'vel'
 	run_beta_sweep(dataset, betas, logdir, model_kwargs, dl_kwargs)
-
+	
+	
 	model_kwargs['in_channels'] = 4
 	model_kwargs['out_channels'] = 4
 	model_kwargs['input'] = 'sqh'
@@ -187,7 +171,6 @@ if __name__ == '__main__':
 	model_kwargs['input'] = 'cad'
 	model_kwargs['output'] = 'cad'
 	run_beta_sweep(dataset, betas, logdir, model_kwargs, dl_kwargs)
-
 
 	runt = AtlasDataset('WT', 'Runt', 'raw2D', transform=transform)
 	dataset = AlignedDataset([runt], ['runt'])
