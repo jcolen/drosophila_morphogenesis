@@ -12,7 +12,10 @@ from geometry_utils import mesh
 def color_2D(ax, f, vmax_std=None, **im_kwargs):
 	if vmax_std:
 		im_kwargs['vmax'] = vmax_std * np.std(f)
-	ax.imshow(f, **im_kwargs)
+	if len(f.shape) > 2:
+		ax.imshow(np.linalg.norm(f, axis=0), **im_kwargs)
+	else:
+		ax.imshow(f, **im_kwargs)
 	ax.set(xticks=[], yticks=[])
 
 def plot_tensor2D(ax, f0, skip=20, **im_kwargs):
