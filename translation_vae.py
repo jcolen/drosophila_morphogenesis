@@ -31,8 +31,8 @@ def residual(u, v):
 	res /= 2 * vavg**2 * uavg**2
 	return res
 
-def kld_loss(params, logvar):
-	kld = params.pow(2) + logvar.exp() - logvar - 1
+def kld_loss(params, mu, logvar):
+	kld = mu.pow(2) + logvar.exp() - logvar - 1
 	kld = 0.5 * kld.sum(axis=-1).mean()
 	return kld
 

@@ -18,7 +18,7 @@ def color_2D(ax, f, vmax_std=None, **im_kwargs):
 		ax.imshow(f, **im_kwargs)
 	ax.set(xticks=[], yticks=[])
 
-def plot_tensor2D(ax, f0, skip=20, **im_kwargs):
+def plot_tensor2D(ax, f0, skip=20, both=False, **im_kwargs):
 	f = f0.copy()
 	f = f.reshape([4, *f.shape[-2:]])
 	color_2D(ax, np.linalg.norm(f, axis=0), **im_kwargs)
@@ -31,12 +31,17 @@ def plot_tensor2D(ax, f0, skip=20, **im_kwargs):
 	f = f.transpose(2, 3, 0, 1)[::skip, ::skip]
 	f = f.reshape([-1, *f.shape[-2:]])
 	el, ev = np.linalg.eig(f)
-	order = np.argmax(el, axis=-1)
 
-	ev = np.array([ev[i, :, ei] for i, ei in enumerate(order)])
 	qwargs = dict(pivot='middle', color='white', linewidth=0.5,
 				  headwidth=0, headlength=0, headaxislength=0)
-	ax.quiver(X, Y, ev[:, 1], ev[:, 0], **qwargs)
+
+	if both:
+		for i in range(ev.shape[-1]):
+			ax.quiver(X, Y, ev[:, 1, i], ev[:, 0, i], **qwargs)
+	else:
+		order = np.argmax(el, axis=-1)
+		ev = np.array([ev[i, :, ei] for i, ei in enumerate(order)])
+		ax.quiver(X, Y, ev[:, 1], ev[:, 0], **qwargs)
 
 def plot_vector2D(ax, f, skip=10, **im_kwargs):
 	color_2D(ax, np.linalg.norm(f, axis=0), **im_kwargs)

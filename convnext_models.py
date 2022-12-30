@@ -162,14 +162,14 @@ class VAE(nn.Module):
 		x = x.reshape([b, -1])
 		x = self.field_to_params(x)
 		
-		params = x[:, :self.num_latent]
+		mu = x[:, :self.num_latent]
 		logvar = x[:, self.num_latent:]
 
-		z = params
+		params = mu
 		if self.training:
-			z = z + torch.randn_like(z) * (0.5 * logvar).exp()
+			params = params + torch.randn_like(params) * (0.5 * logvar).exp()
 			
-		z = self.params_to_field(z)
+		z = self.params_to_field(params)
 		z = F.gelu(z)
 		z = z.reshape([b, -1, *self.bottleneck_size])
 		
@@ -177,4 +177,4 @@ class VAE(nn.Module):
 		if (z.shape[-2] != h0) or (z.shape[-1] != w0):
 			z = torch.nn.functional.interpolate(z, size=[h0, w0], mode='bilinear')	
 
-		return z, (params, logvar)
+		return z, (params, mu, logvar)
