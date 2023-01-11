@@ -3,7 +3,10 @@ from matplotlib.colors import LogNorm, Normalize
 from matplotlib.cm import get_cmap
 import matplotlib
 import numpy as np
-from geometry_utils import mesh
+from .geometry_utils import mesh
+
+plt.rcParams['image.origin'] = 'lower'
+plt.rcParams['image.cmap'] = 'inferno'
 
 '''
 2D plotting
@@ -133,8 +136,8 @@ def plot_tensor3D(ax, f0, skip=3, title='', norm=None, vmax=None):
 Tangent space plotting
 '''
 
-from geometry_utils import pull_vector_from_tangent_space
-from geometry_utils import e1, e2, pull_tensor_from_tangent_space
+from .geometry_utils import pull_vector_from_tangent_space
+from .geometry_utils import e1, e2, pull_tensor_from_tangent_space
 
 def plot_tangent_space_vector(ax, f0, **kwargs):
 	plot_vector3D(ax, pull_vector_from_tangent_space(f0), **kwargs)

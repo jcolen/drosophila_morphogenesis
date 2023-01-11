@@ -22,10 +22,17 @@ class AtlasDataset(torch.utils.data.Dataset):
 				 genotype,
 				 label,
 				 filename,
+				 drop_no_time=True,
 				 transform=ToTensor()):
-
+		
+		self.path = os.path.join(atlas_dir, genotype, label)
+		self.filename = filename
 		self.df = pd.read_csv(os.path.join(atlas_dir, genotype, label, 'dynamic_index.csv'))
-		self.df = self.df.dropna(axis=0)
+		if drop_no_time:
+			self.df = self.df.dropna(axis=0)
+		else:
+			self.df.loc[np.isnan(self.df.time), 'time'] = self.df.loc[np.isnan(self.df.time), 'eIdx']
+
 		self.values = {}
 
 		folders = self.df.folder.unique()

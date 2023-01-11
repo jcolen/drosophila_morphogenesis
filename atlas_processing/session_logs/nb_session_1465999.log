@@ -1,0 +1,403 @@
+  jupyter lab --no-browser --ip=${HOST_IP} --port 8100 
+[I 2023-01-09 09:22:22.098 ServerApp] jupyterlab | extension was successfully linked.
+[I 2023-01-09 09:22:23.446 ServerApp] jupyterlab_hdf | extension was found and enabled by nbclassic. Consider moving the extension to Jupyter Server's extension paths.
+[I 2023-01-09 09:22:23.447 ServerApp] jupyterlab_hdf | extension was successfully linked.
+[I 2023-01-09 09:22:23.467 ServerApp] nbresuse | extension was found and enabled by nbclassic. Consider moving the extension to Jupyter Server's extension paths.
+[I 2023-01-09 09:22:23.467 ServerApp] nbresuse | extension was successfully linked.
+[I 2023-01-09 09:22:23.467 ServerApp] nbclassic | extension was successfully linked.
+[I 2023-01-09 09:22:23.482 LabApp] JupyterLab extension loaded from /project/vitelli/ml_venv/lib/python3.7/site-packages/jupyterlab
+[I 2023-01-09 09:22:23.482 LabApp] JupyterLab application directory is /project/vitelli/ml_venv/share/jupyter/lab
+[I 2023-01-09 09:22:23.484 ServerApp] jupyterlab | extension was successfully loaded.
+[I 2023-01-09 09:22:23.485 ServerApp] jupyterlab_hdf | extension was successfully loaded.
+[I 2023-01-09 09:22:23.488 ServerApp] nbclassic | extension was successfully loaded.
+[I 2023-01-09 09:22:23.489 ServerApp] nbresuse | extension was successfully loaded.
+[I 2023-01-09 09:22:23.489 ServerApp] Serving notebooks from local directory: /project/vitelli/jonathan/REDO_fruitfly/src/atlas_processing
+[I 2023-01-09 09:22:23.489 ServerApp] Jupyter Server 1.6.4 is running at:
+[I 2023-01-09 09:22:23.489 ServerApp] http://10.50.251.51:8100/lab?token=...
+[I 2023-01-09 09:22:23.489 ServerApp]     http://127.0.0.1:8100/lab?token=...
+[I 2023-01-09 09:22:23.489 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[I 2023-01-09 10:33:28.854 ServerApp] 302 GET / (10.50.248.66) 0.37ms
+[I 2023-01-09 10:33:33.174 LabApp] Build is up to date
+[W 2023-01-09 10:33:33.207 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src/PCATranslation.ipynb?content=0&1673282013095 (10.50.248.66): No such file or directory: fruit_fly/REDO/src/PCATranslation.ipynb
+[W 2023-01-09 10:33:33.207 ServerApp] No such file or directory: fruit_fly/REDO/src/PCATranslation.ipynb
+[W 2023-01-09 10:33:33.208 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src/PCATranslation.ipynb?content=0&1673282013095 (10.50.248.66) 0.84ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:33:33.209 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:33:33.209 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282013095 (10.50.248.66) 1.01ms referer=http://localhost:8100/lab?
+[W 2023-01-09 10:33:33.252 ServerApp] 404 GET /terminals/websocket/1 (10.50.248.66) 12.28ms referer=None
+[E 2023-01-09 10:33:33.377 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:33:33.378 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282013263 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[W 2023-01-09 10:33:34.031 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src?1673282013904 (10.50.248.66): No such file or directory: fruit_fly/REDO/src
+[W 2023-01-09 10:33:34.031 ServerApp] No such file or directory: fruit_fly/REDO/src
+[W 2023-01-09 10:33:34.032 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src?1673282013904 (10.50.248.66) 0.62ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:33:36.785 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:33:36.787 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282016673 (10.50.248.66) 2.13ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:33:41.833 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:33:41.833 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282021714 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:33:46.878 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:33:46.878 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282026759 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:33:51.925 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:33:51.925 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282031808 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:33:56.973 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:33:56.973 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282036853 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:34:02.021 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:34:02.021 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282041900 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:34:07.075 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:34:07.075 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282046956 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:34:12.116 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:34:12.117 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282052001 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:34:17.170 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:34:17.170 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282057044 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:34:22.215 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:34:22.215 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282062096 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:34:27.257 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:34:27.257 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282067140 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:34:32.305 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:34:32.305 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282072185 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:34:37.358 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:34:37.358 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282077230 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:34:42.406 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:34:42.406 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282082284 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:34:47.456 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:34:47.456 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282087331 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:34:52.504 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:34:52.504 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282092379 (10.50.248.66) 0.71ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:34:57.553 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:34:57.553 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282097426 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:35:02.608 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:35:02.608 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282102482 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:35:07.658 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:35:07.658 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282107532 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:35:12.706 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:35:12.706 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282112582 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:35:17.753 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:35:17.753 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282117628 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:35:22.795 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:35:22.795 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282122675 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:35:27.842 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:35:27.843 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282127715 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:35:32.888 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:35:32.888 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282132764 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:35:37.935 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:35:37.935 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282137809 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:35:42.980 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:35:42.980 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282142853 (10.50.248.66) 0.71ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:35:48.021 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:35:48.021 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282147899 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:35:53.066 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:35:53.066 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282152939 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:35:58.109 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:35:58.109 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282157988 (10.50.248.66) 0.71ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:36:03.162 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:36:03.162 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282163031 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:36:08.204 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:36:08.204 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282168079 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:36:13.252 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:36:13.252 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282173121 (10.50.248.66) 0.71ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:36:18.292 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:36:18.292 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282178169 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:36:23.343 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:36:23.343 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282183209 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:36:28.390 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:36:28.391 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282188260 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:36:33.441 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:36:33.441 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282193308 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:36:38.489 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:36:38.489 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282198356 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:36:43.536 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:36:43.536 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282203403 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:36:48.590 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:36:48.590 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282208454 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:36:53.638 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:36:53.638 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282213504 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:36:58.683 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:36:58.683 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282218552 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:37:03.726 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:37:03.727 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282223597 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:37:08.774 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:37:08.774 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282228641 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:37:13.822 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:37:13.822 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282233688 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:37:18.869 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:37:18.869 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282238736 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:37:23.917 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:37:23.918 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282243785 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:37:28.965 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:37:28.965 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282248830 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:37:34.002 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:37:34.002 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282253874 (10.50.248.66) 0.74ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:37:39.053 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:37:39.053 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282258917 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:37:44.101 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:37:44.101 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282263965 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:37:49.149 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:37:49.149 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282269014 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:37:54.188 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:37:54.188 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282274057 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:37:59.230 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:37:59.230 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282279100 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:38:04.278 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:38:04.278 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282284139 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:38:09.323 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:38:09.323 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282289189 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:38:14.376 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:38:14.376 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282294236 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:38:19.418 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:38:19.418 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282299285 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:38:24.466 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:38:24.466 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282304328 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:38:29.514 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:38:29.514 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282309377 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:38:34.555 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:38:34.556 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282314422 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:38:39.603 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:38:39.603 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282319464 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:38:44.651 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:38:44.651 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282324518 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:38:49.698 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:38:49.699 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282329561 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:38:54.752 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:38:54.752 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282334612 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:38:59.799 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:38:59.800 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282339657 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:39:04.847 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:39:04.847 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282344713 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:39:09.895 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:39:09.895 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282349752 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:39:14.942 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:39:14.942 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282354806 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:39:19.996 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:39:19.996 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282359853 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:39:25.038 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:39:25.038 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282364904 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:39:30.091 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:39:30.091 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282369945 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:39:35.139 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:39:35.139 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282374999 (10.50.248.66) 0.98ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:39:40.198 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:39:40.198 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282380056 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:39:45.239 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:39:45.240 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282385100 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:39:50.288 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:39:50.288 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282390149 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:39:55.337 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:39:55.337 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282395200 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:40:00.388 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:40:00.388 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282400245 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:40:05.434 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:40:05.434 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282405296 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:40:10.488 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:40:10.488 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282410342 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:40:15.531 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:40:15.531 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282415391 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:40:20.577 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:40:20.577 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282420440 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:40:25.614 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:40:25.615 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282425476 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:40:30.671 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:40:30.671 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282430522 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:40:35.723 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:40:35.723 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282435577 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:40:40.776 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:40:40.776 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282440630 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:40:45.829 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:40:45.829 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282445679 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:40:50.871 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:40:50.872 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282450729 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:40:55.919 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:40:55.919 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282455771 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:41:00.969 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:41:00.969 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282460819 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:41:06.020 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:41:06.021 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282465870 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:41:11.073 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:41:11.073 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282470926 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:41:16.116 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:41:16.116 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282475969 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:41:21.162 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:41:21.162 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282481014 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:41:26.210 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:41:26.211 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282486058 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:41:31.257 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:41:31.257 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282491106 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:41:36.298 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:41:36.299 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282496150 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:41:41.341 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:41:41.341 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282501196 (10.50.248.66) 0.74ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:41:46.394 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:41:46.394 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282506242 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:41:51.441 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:41:51.442 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282511288 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:41:56.489 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:41:56.489 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282516336 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:42:01.529 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:42:01.529 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282521383 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:42:06.577 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:42:06.577 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282526427 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:42:11.630 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:42:11.630 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282531475 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:42:16.669 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:42:16.669 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282536522 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:42:21.806 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:42:21.806 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282541652 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:42:26.854 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:42:26.854 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282546703 (10.50.248.66) 0.71ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:42:31.971 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:42:31.971 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282551752 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:42:37.030 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:42:37.030 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282556873 (10.50.248.66) 0.71ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:42:42.071 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:42:42.071 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282561920 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:42:47.107 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:42:47.108 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282566960 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:42:52.150 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:42:52.150 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282571997 (10.50.248.66) 0.71ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:42:57.192 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:42:57.192 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282577039 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:43:02.239 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:43:02.239 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282582085 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:43:07.287 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:43:07.287 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282587128 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:43:12.338 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:43:12.338 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282592181 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:43:17.380 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:43:17.380 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282597229 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:43:22.422 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:43:22.422 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282602269 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:43:27.468 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:43:27.468 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282607311 (10.50.248.66) 0.72ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:43:32.511 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:43:32.512 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282612360 (10.50.248.66) 0.80ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:43:37.556 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:43:37.556 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282617400 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:43:42.610 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:43:42.610 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282622449 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab?
+[E 2023-01-09 10:43:47.652 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:43:47.652 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282627495 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab
+[E 2023-01-09 10:43:52.691 ServerApp] The request specified a file that does not exist.
+    relfpath: fruit_fly/REDO/src/tensor_dynamics_fitting.h5, uri: /ensemble, min_ndim: None, ixstr: None, subixstr: None, attr_keys: None
+[W 2023-01-09 10:43:52.692 ServerApp] 403 GET /hdf/contents/fruit_fly/REDO/src/tensor_dynamics_fitting.h5?uri=%2Fensemble&1673282632538 (10.50.248.66) 0.73ms referer=http://localhost:8100/lab
+slurmstepd: error: *** JOB 1465999 ON midway3-0307 CANCELLED AT 2023-01-09T10:43:53 ***
