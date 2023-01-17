@@ -276,6 +276,19 @@ def collect_library(data, priority, feature_names, control_names,
 				control[feature].attrs['t'] = links[key]['time'][()]
 				break
 
+	'''
+	Allow establishing units for each field
+	Do this by writing the statistics of each field as attributes
+	'''
+	fields = data.require_group('fields')
+	for field in fields:
+		f = fields[field]
+		f.attrs['std'] = np.std(f)
+		f.attrs['range'] = np.ptp(f)
+		f.attrs['mean'] = np.mean(f)
+		f.attrs['min'] = np.min(f)
+		f.attrs['max'] = np.max(f)
+
 def pca_library(data, pcas, window_length=5, re_pca=False):
 	'''
 	Create PCA libraries from the accumulated data
@@ -333,8 +346,6 @@ def pca_library(data, pcas, window_length=5, re_pca=False):
 		dataset = X_pca.create_dataset(key, data=X)
 		dataset.attrs['feature_names'] = feature_names
 		
-				
-
 		U = np.empty([t_max-t_min+1, pcas[key].n_components, len(control_names)])
 		
 		for i, feature in enumerate(control_names):
@@ -376,9 +387,16 @@ def pca_library(data, pcas, window_length=5, re_pca=False):
 			ds[:] = dot_pca
 			ds.attrs.update(smoother_kws)
 
-def collect_pca_data(h5f, key, tmin, tmax, keep):
+def collect_pca_data(h5f, key, tmin, tmax, keep, scale_units=False):
 	'''
 	Collect the PCA data froma	given h5f library and return X, U, X_dot, and the relevant variable names
+
+	New: Include the option to rescale components by their units
+		Each field has a characteristic unit and we include the option to unscale everything
+
+		the returned scale_array is the unit factor we need to multiply by to get to units of key / time
+		these are the units of the feature
+		Each feature should be multiplied by these units, and its coefficient should be divided by them
 	'''
 	t_X = h5f['t'][()].astype(int)
 	t_U = h5f['U_pca'].attrs['t']
@@ -398,34 +416,64 @@ def collect_pca_data(h5f, key, tmin, tmax, keep):
 	u_mask = np.logical_and(t_U >= tmin, t_U <= tmax)
 	t_mask = np.logical_and(x_mask, u_mask)
 	U = h5f['U_pca'][key][t_mask, ...][..., keep, :][()]
-		
-	return X, U, X_dot, times, feature_names, control_names
 
-def fit_sindy_model(h5f, key, tmin, tmax, keep, threshold=1e-1, alpha=1e-1):
+	scale_array = np.ones(X.shape[-1] + U.shape[-1])
+	if scale_units:
+		fields = h5f['fields']
+		for i, feature in enumerate(feature_names):
+			attrs = h5f['X_raw'][feature].attrs
+			for unit in attrs:
+				if unit in fields:
+					scale_array[i] /= fields[unit].attrs['std'] ** attrs[unit]
+				elif unit == 'space':
+					scale_array[i] *= fields['v'].attrs['std'] ** attrs[unit]
+		for i, feature in enumerate(control_names):
+			j = len(feature_names) + i
+			attrs = h5f['U_raw'][feature].attrs
+			for unit in attrs:
+				if unit in fields:
+					scale_array[j] /= fields[unit].attrs['std'] ** attrs[unit]
+				elif unit == 'space': #Spatial derivative means must multiply by a spatial unit
+					scale_array[j] *= fields['v'].attrs['std'] ** attrs[unit]
+		scale_array *= fields[key].attrs['std'] #Multiply everything by units of key
+		
+	return X, U, X_dot, times, feature_names, control_names, scale_array
+
+def fit_sindy_model(h5f, key, tmin, tmax, keep, threshold=1e-1, alpha=1e-1, scale_units=False):
 	'''
 	Fit a SINDy model on data filled by a given key in an h5py file
 	Fit range goes from tmin to tmax, and is applied on a set keep of PCA components
+
+	New: Include the option to rescale components by their units
+		Each field has a characteristic unit and we include the option to unscale everything
+		In general, the goal should be to use v as a reference
 	'''
-	X, U, X_dot = [], [], []
+	X, U, X_dot, scales = [], [], [], []
 	eIds = list(h5f.keys())
 	for eId in eIds:
-		x, u, x_dot, times, feature_names, control_names = collect_pca_data(
+		x, u, x_dot, times, feature_names, control_names, scale = collect_pca_data(
 			h5f[eId], 
 			key, 
 			tmin,
 			tmax,
-			keep)
-		X.append(x)
-		U.append(u)
+			keep,
+			scale_units)
+		X.append(x * scale[:len(feature_names)])
+		U.append(u * scale[len(feature_names):])
 		X_dot.append(x_dot)
-		#print(eId, X[-1].shape, U[-1].shape, X_dot[-1].shape)
-			
+		scales.append(scale)
+		#if scale_units and eId == 'ensemble':
+		#	for f, s in zip(feature_names + control_names, scale):
+		#		print(f, s)
+
+	scales = np.mean(scales, axis=0)
 	sindy = ps.SINDy(
 		feature_library=ps.IdentityLibrary(),
 		optimizer=ps.STLSQ(threshold=threshold, alpha=alpha),
 		feature_names=feature_names+control_names,
 	)
 	sindy.fit(x=X, x_dot=X_dot, u=U, multiple_trajectories=True)
+	sindy.model.steps[-1][1].optimizer.coef_[:] *= scales
 	sindy.print(lhs=['(%s)\'' % key])
 	return sindy
 	
