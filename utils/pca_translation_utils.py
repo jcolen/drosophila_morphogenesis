@@ -14,10 +14,12 @@ from math import ceil
 import h5py
 import pysindy as ps
 
-def residual(u, v):
+def residual(u0, v0):
 	'''
 	Residual metric from Streichan eLife paper
 	'''
+	u = u0.reshape([u0.shape[0], -1, *u0.shape[-2:]])
+	v = v0.reshape([v0.shape[0], -1, *v0.shape[-2:]])
 	umag = np.linalg.norm(u, axis=-3)												  
 	vmag = np.linalg.norm(v, axis=-3)												  
 
@@ -509,7 +511,6 @@ def evolve_rk4_grid(x0, xdot, pca, keep, t, tmin=0, tmax=10, step_size=0.2):
 		xtt = unpca(pca.transform(xtt)[:, keep], pca, keep).reshape(x[ii].shape)
 		x[ii+1] = xtt
 
-		
 	return x, tt
 
 def sindy_predict(data, key, sindy, pca, keep, tmin=None, tmax=None):
@@ -548,7 +549,7 @@ def sindy_predict(data, key, sindy, pca, keep, tmin=None, tmax=None):
 
 	return x_pred, x_int, times
 
-def sindy_predictions_plot(x_pred, x_int, x_model, times, keep, data):
+def sindy_predictions_plot(x_pred, x_int, x_model, times, keep, data, plot_fn=plot_tensor2D):
 	'''
 	Plot a summary of the predictions of a sindy model
 	'''
@@ -564,17 +565,20 @@ def sindy_predictions_plot(x_pred, x_int, x_model, times, keep, data):
 	xi = x_model.transform(xi.reshape([times.shape[0], -1]))[:, keep]
 	xi = unpca(xi, x_model, keep)
 
-	error = r2_score(
-		x_pred.reshape([x_pred.shape[0], -1]).T,
-		xi.reshape([x_pred.shape[0], -1]).T,
-		multioutput='raw_values'
-	)
+	#error = r2_score(
+	#error = mean_squared_error(
+	#	x_pred.reshape([x_pred.shape[0], -1]).T,
+	#	xi.reshape([x_pred.shape[0], -1]).T,
+	#	multioutput='raw_values'
+	#)
+	error = residual(x_pred, xi).mean(axis=(-2, -1))
 
 	v2 = np.linalg.norm(data['fields']['v'], axis=1).mean(axis=(1, 2))
 
 	ax.plot(times, error)
-	ax.set(ylim=[0, 1],
-		   ylabel='R2 Score',
+	ax.set(ylim=[0, 1], 
+		   #ylabel='R2 Score',
+		   ylabel='Error Rate',
 		   xlabel='Time')
 	ax2 = ax.twinx()
 	ax2.plot(data['t'], v2, color='red')
@@ -582,15 +586,14 @@ def sindy_predictions_plot(x_pred, x_int, x_model, times, keep, data):
 	ax2.set_ylabel('$v^2$', color='red')
 	ax.set_xlim([times.min(), times.max()])
 
-
-	offset = 5
+	offset = min(5, x_pred.shape[0] - ncols*step) 
 	for i in range(ncols):
 		ii = i*step + offset
-		plot_tensor2D(fig.add_subplot(gs[2, i]), x_pred[ii])
+		plot_fn(fig.add_subplot(gs[2, i]), x_pred[ii])
 		if i == 0:
 			plt.gca().set_ylabel('SINDy')
 
-		plot_tensor2D(fig.add_subplot(gs[3, i]), xi[ii])
+		plot_fn(fig.add_subplot(gs[3, i]), xi[ii])
 		if i == 0:
 			plt.gca().set_ylabel('Truth')
 		ax.axvline(times[ii], zorder=-1, color='black', linestyle='--')
@@ -626,4 +629,5 @@ def pca_predictions_plot(x_pred, x_int, x_model, times, keep):
 		ax[i].text(0.98, 0.98, 'R2=%g' % r2_score(pca_true[:, i], pca_pred[:, i]),
 				   fontsize=6, color='blue',
 				   transform=ax[i].transAxes, va='top', ha='right')
+		ax[i].tick_params(which='both', labelsize=6)
 	plt.tight_layout()

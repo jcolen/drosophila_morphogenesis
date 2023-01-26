@@ -54,11 +54,15 @@ def get_derivative_tensors(x, order=2):
 
 	diffY = ps.SmoothedFiniteDifference(d=1, axis=-2)
 	diffX = ps.SmoothedFiniteDifference(d=1, axis=-1)
+	diffY.smoother_kws['axis'] = -2
+	diffX.smoother_kws['axis'] = -1
 
 	xi = x.copy()
 
 	d = []
 	for i in range(1, order+1):
+		diffY.smoother_kws['axis'] = -(2+i)
+		diffX.smoother_kws['axis'] = -(1+i)
 		xi = np.stack([
 			diffY._differentiate(xi, YY),
 			diffX._differentiate(xi, XX),
@@ -105,6 +109,10 @@ def write_library_to_dataset(lib, glib, attrs=None):
 		if attrs is not None:
 			glib[k].attrs.update(attrs[k])
 	
+
+'''
+Tensor libraries for anisotropy fields
+'''
 
 def s2t_terms(x, group, key='Rnt'):
 	'''
@@ -254,6 +262,132 @@ def scalar2tensor_library(folder, embryoID, group, key='Rnt',
 	
 	s2t_terms(S, group, key=key)
 
+'''
+Scalar libraries for intensity fields
+'''
+
+def s2s_terms(x, group, key='Rnt'):
+	d1_x, d2_x = validate_key_and_derivatives(x, group, key, order=2)
+	lib = {}
+	attrs = {}
+
+	feat = key
+	lib[feat] = x
+	attrs[feat] = {key: 1, 'space': 0}
+
+	feat = '%s^2' % key
+	lib[feat] = x**2
+	attrs[feat] = {key: 2, 'space': 0}
+	
+	feat = 'grad(%s)^2' % key
+	lib[feat] = np.einsum('tyxi,tyxi->tyx', d1_x, d1_x)
+	attrs[feat] = {key: 2, 'space': 2}
+
+	feat = 'grad^2 %s' % key
+	lib[feat] = np.einsum('tyxii->tyx', d2_x)
+	attrs[feat] = {key: 1, 'space': 2}
+	
+	feat = '%s grad^2 %s' % (key, key)
+	lib[feat] = np.einsum('tyx,tyxii->tyx', x, d2_x)
+	attrs[feat] = {key: 2, 'space': 2}
+
+	write_library_to_dataset(lib, group.require_group('scalar_library'), attrs)
+
+def t2s_terms(x, group, key='m'):
+	d1_x, d2_x = validate_key_and_derivatives(x, group, key, order=2)
+	lib = {}
+	attrs = {}
+	
+	feat = 'Tr(%s)' % key
+	lib[feat] = np.einsum('tiiyx->tyx', x)
+	attrs[feat] = {key: 1, 'space': 0}
+	
+	feat = 'Tr(%s)^2' % key
+	lib[feat] = np.einsum('tiiyx->tyx', x)**2
+	attrs[feat] = {key: 2, 'space': 0}
+	
+	feat = 'grad(grad(%s))' % key
+	lib[feat] = np.einsum('tijyxij->tyx', d2_x)
+	attrs[feat] = {key: 1, 'space': 2}
+	
+	feat = 'grad^2 Tr(%s)' % key
+	lib[feat] = np.einsum('tiiyxjj->tyx', d2_x)
+	attrs[feat] = {key: 1, 'space': 2}
+	
+	feat = 'div(%s) div(%s)' % (key, key)
+	lib[feat] = np.einsum('tijyxj,tikyxk->tyx', d1_x, d1_x)
+	attrs[feat] = {key: 2, 'space': 2}
+	
+	feat = 'Tr(%s) grad^2 Tr(%s)' % (key, key)
+	lib[feat] = np.einsum('tiiyx,tjjyxkk->tyx', x, d2_x)
+	attrs[feat] = {key: 2, 'space': 2}
+	
+	feat = 'grad(Tr(%s))^2' % key
+	lib[feat] = np.einsum('tiiyxj,tkkyxj->tyx', d1_x, d1_x)
+	attrs[feat] = {key: 2, 'space': 2}
+	
+	write_library_to_dataset(lib, group.require_group('scalar_library'), attrs)
+
+def v2s_terms(x, group, key='v'):
+	'''
+	Compute terms mapping vectors to symmetric tensors
+	'''
+	d1_x = validate_key_and_derivatives(x, group, key, 1)[0]
+
+	lib = {}
+	attrs = {}
+	
+	feat = '%s^2' % key
+	lib[feat] = np.einsum('tiyx,tiyx->tyx', x, x)
+	attrs[feat] = {key: 2, 'space': 0}
+
+	feat = 'div %s' % key
+	lib[feat] = np.einsum('tiyxi->tyx', d1_x)
+	attrs[feat] = {key: 1, 'space': 1}
+
+	feat = '(div %s)^2' % key
+	lib[feat] = np.einsum('tiyxi,tjyxj->tyx', d1_x, d1_x)
+	attrs[feat] = {key: 2, 'space': 2}
+
+	feat = '(grad %s)^2' % key
+	lib[feat] = np.einsum('tiyxj,tiyxj->tyx', d1_x, d1_x)
+	attrs[feat] = {key: 2, 'space': 2}
+
+	write_library_to_dataset(lib, group.require_group('scalar_library'), attrs)
+
+def veltensor2scalar_library(folder, embryoID, group, key='m',
+							 pca=True, t_threshold=0.95, v_threshold=0.9):
+	'''
+	Build a mixed library of velocities and tensors
+	'''
+	if pca:
+		try:
+			T = unpca_embryo_data(folder, embryoID, 'tensor', t_threshold)
+			V = unpca_embryo_data(folder, embryoID, 'velocity', v_threshold)
+		except Exception as e:
+			print(e)
+			return
+	else:
+		T = np.load(os.path.join(folder, embryoID, 'tensor2D.npy'), mmap_mode='r')
+		V = np.load(os.path.join(folder, embryoID, 'velocity2D.npy'), mmap_mode='r')
+
+	T = T.reshape([T.shape[0], 2, 2, *T.shape[-2:]])
+
+	t2s_terms(T, group, key=key)
+	v2s_terms(V, group)
+
+def scalar2scalar_library(folder, embryoID, group, key='Rnt', 
+						  pca=True, s_threshold=0.95):
+	'''
+	Build a library of just scalar information
+	'''
+	if pca:
+		S = unpca_embryo_data(folder, embryoID, 'raw', s_threshold)
+	else:
+		S = np.load(os.path.join(folder, embryoID, 'raw2D.npy'), mmap_mode='r')
+	
+	s2s_terms(S, group, key=key)
+
 def build_ensemble_derivative_library(
 		directory,
 		filename,
@@ -263,8 +397,8 @@ def build_ensemble_derivative_library(
 	Build a library from ensemble-averaged information
 	'''
 	with h5py.File(os.path.join(directory, filename), 'a') as h5f:
-		if 'ensemble' in h5f:
-			del h5f['ensemble']
+		#if 'ensemble' in h5f:
+		#	del h5f['ensemble']
 		group = h5f.require_group('ensemble')
 		if not 'time' in group:
 			group.create_dataset('time', data=np.load(os.path.join(directory, 'ensemble', 't.npy')))
@@ -293,10 +427,9 @@ def build_dynamic_derivative_library(
 
 if __name__=='__main__':
 	datadir = '/project/vitelli/jonathan/REDO_fruitfly/MLData'
-
-	transform = Reshape2DField()
+	'''
 	dirs = {
-		#'c': ['WT', 'ECad-GFP'],
+		'c': ['WT', 'ECad-GFP'],
 		'm': ['WT', 'sqh-mCherry'],
 	}
 	for key in dirs:
@@ -305,19 +438,29 @@ if __name__=='__main__':
 			'library_PCA.h5',
 			veltensor2tensor_library,
 			key=key)
+		build_dynamic_derivative_library(
+			os.path.join(datadir, *dirs[key]),
+			'library_PCA.h5',
+			veltensor2scalar_library,
+			key=key)
 	'''
 	dirs = {
-		'Rnt': ['WT', 'Runt'],
-		'Eve': ['WT', 'Even_Skipped'],
-		'Ftz': ['WT', 'Fushi_Tarazu'],
-		'Hry': ['WT', 'Hairy'],
-		'Slp': ['WT', 'Sloppy_Paired'],
-		'Prd': ['WT', 'Paired'],
+		#'Rnt': ['WT', 'Runt'],
+		#'Eve': ['WT', 'Even_Skipped'],
+		#'Ftz': ['WT', 'Fushi_Tarazu'],
+		#'Hry': ['WT', 'Hairy'],
+		#'Slp': ['WT', 'Sloppy_Paired'],
+		#'Prd': ['WT', 'Paired'],
+		'Trt': ['WT', 'Tartan'],
 	}
 	for key in dirs:
 		build_ensemble_derivative_library(
 			os.path.join(datadir, *dirs[key]),
 			'library_PCA.h5',
+			scalar2scalar_library,
+			key=key)
+		build_ensemble_derivative_library(
+			os.path.join(datadir, *dirs[key]),
+			'library_PCA.h5',
 			scalar2tensor_library,
 			key=key)
-	'''

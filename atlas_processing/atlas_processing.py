@@ -161,7 +161,8 @@ savedirs = [
 	#'WT/moesin-GFP',
 	#'WT/utr-mCherry',
 	#'WT/Sqh_RokK116A-GFP',
-	'WT/histone-RFP',
+	#'WT/histone-RFP',
+	'WT/Tartan/',
 	#'WT/Bazooka-GFP',
 	#'WT/Runt',
 	#'WT/Even_Skipped',
@@ -177,9 +178,9 @@ savedirs = [
 
 for savedir in savedirs:
 	fulldir = os.path.join(basedir, savedir)
-	#df = convert_matstruct_to_csv(fulldir, prefix='static')
+	df = convert_matstruct_to_csv(fulldir, prefix='static')
 	#print(fulldir, len(df))
-	#build_ensemble_timeline(fulldir, init_unc=1)
-	collect_velocity_fields(fulldir)
+	build_ensemble_timeline(fulldir, init_unc=1)
+	#collect_velocity_fields(fulldir)
 	#collect_anisotropy_tensor(fulldir)
 	#push_to_embryo_surface(fulldir)
