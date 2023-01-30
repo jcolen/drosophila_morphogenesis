@@ -8,6 +8,23 @@ from .geometry_utils import mesh
 plt.rcParams['image.origin'] = 'lower'
 plt.rcParams['image.cmap'] = 'inferno'
 
+def residual(u0, v0):
+	'''
+	Residual metric from Streichan eLife paper
+	'''
+	u = u0.reshape([u0.shape[0], -1, *u0.shape[-2:]])
+	v = v0.reshape([v0.shape[0], -1, *v0.shape[-2:]])
+	umag = np.linalg.norm(u, axis=-3)												  
+	vmag = np.linalg.norm(v, axis=-3)												  
+
+	uavg = np.sqrt((umag**2).mean(axis=(-2, -1), keepdims=True))					
+	vavg = np.sqrt((vmag**2).mean(axis=(-2, -1), keepdims=True))					
+
+	res = uavg**2 * vmag**2 + vavg**2 * umag**2 - 2 * uavg * vavg * np.einsum('...ijk,...ijk->...jk', u, v)
+	res /= 2 * vavg**2 * uavg**2														
+	return res 
+
+
 '''
 2D plotting
 '''
@@ -21,7 +38,7 @@ def color_2D(ax, f, vmax_std=None, **im_kwargs):
 		ax.imshow(f, **im_kwargs)
 	ax.set(xticks=[], yticks=[])
 
-def plot_tensor2D(ax, f0, skip=20, both=False, **im_kwargs):
+def plot_tensor2D(ax, f0, skip=20, both=False, linecolor='white', linewidth=0.005, **im_kwargs):
 	f = f0.copy()
 	f = f.reshape([4, *f.shape[-2:]])
 	color_2D(ax, np.linalg.norm(f, axis=0), **im_kwargs)
@@ -31,11 +48,17 @@ def plot_tensor2D(ax, f0, skip=20, both=False, **im_kwargs):
 	Y = Y.flatten()
 	
 	f = f.reshape([2, 2, *f.shape[-2:]])
+	#Ensure we're using deviatoric part
+	trf = np.einsum('kkyx->yx', f)
+	if np.mean(trf) != 0:
+		f -= 0.5 * np.eye(2)[..., None, None] * trf
+
 	f = f.transpose(2, 3, 0, 1)[::skip, ::skip]
 	f = f.reshape([-1, *f.shape[-2:]])
 	el, ev = np.linalg.eig(f)
+	ev *= el[:, None, :]
 
-	qwargs = dict(pivot='middle', color='white', linewidth=0.5,
+	qwargs = dict(pivot='middle', color=linecolor, width=linewidth,
 				  headwidth=0, headlength=0, headaxislength=0)
 
 	if both:
@@ -46,15 +69,13 @@ def plot_tensor2D(ax, f0, skip=20, both=False, **im_kwargs):
 		ev = np.array([ev[i, :, ei] for i, ei in enumerate(order)])
 		ax.quiver(X, Y, ev[:, 1], ev[:, 0], **qwargs)
 
-def plot_vector2D(ax, f, skip=10, **im_kwargs):
-	color_2D(ax, np.linalg.norm(f, axis=0), **im_kwargs)
-	
-	qwargs = dict(pivot='middle', color='white', width=0.005)
+def plot_vector2D(ax, f, skip=10, color='black', width=0.005, **kwargs):
 	Y, X = np.mgrid[0:f.shape[-2]:skip, 0:f.shape[-1]:skip]
 	X = X.flatten()
 	Y = Y.flatten()
 	f0 = f[:, ::skip, ::skip].reshape([2, -1])
-	ax.quiver(X, Y, f0[1], f0[0], **qwargs)
+	ax.quiver(X, Y, f0[1], f0[0], pivot='middle', color=color, width=width, **kwargs)
+	ax.set(xticks=[], yticks=[])
 
 '''
 3D plotting

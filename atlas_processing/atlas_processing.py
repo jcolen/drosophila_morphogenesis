@@ -13,7 +13,7 @@ from skimage.transform import resize
 from tqdm import tqdm
 from scipy.io import loadmat
 
-basedir = '/project/vitelli/jonathan/REDO_fruitfly/MLData'
+basedir = '/project/vitelli/jonathan/REDO_fruitfly/src/data'
 
 def convert_matstruct_to_csv(savedir, prefix='dynamic'):
 	data = loadmat(os.path.join(savedir, '%s_queried_sample.mat' % prefix))

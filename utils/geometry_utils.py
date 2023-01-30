@@ -6,8 +6,8 @@ from sklearn.neighbors import KDTree
 import numpy as np
 import os
 
-basedir = '/project/vitelli/jonathan/REDO_fruitfly/'
-geo_dir = os.path.join(basedir, 'MLData', 'embryo_geometry')
+basedir = '/project/vitelli/jonathan/REDO_fruitfly/src'
+geo_dir = os.path.join(basedir, 'data', 'embryo_geometry')
 from fenics import Mesh
 
 mesh = Mesh(os.path.join(geo_dir, 'embryo_coarse_noll.xml'))
