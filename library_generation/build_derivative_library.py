@@ -79,7 +79,7 @@ if __name__=='__main__':
 	}
 	libfuncs = [
 		#scalar2scalar_library,
-		scalar2tensor_library,
+		#scalar2tensor_library,
 		scalar2symtensor_library,
 	]
 	for key in dirs:

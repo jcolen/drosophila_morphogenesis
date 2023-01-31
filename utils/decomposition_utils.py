@@ -15,9 +15,10 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 
 class SVDPipeline(Pipeline):
-	def __init__(self, n_components=16, whiten=True):
+	def __init__(self, n_components=16, whiten=True, crop=0):
 		self.n_components = n_components
 		self.whiten = whiten
+		self.crop = crop
 		steps = [
 			('scaler', StandardScaler(with_std=False)),
 			('fitter', TruncatedSVD(n_components=n_components)),
@@ -30,13 +31,20 @@ class SVDPipeline(Pipeline):
 		X is the data used for fitting the Truncated SVD
 		y0 is the data used for fitting the Standard Scaler
 		'''
-		self.data_shape_ = X.shape[1:]
+		if self.crop > 0:
+			Xt = X[..., self.crop:-self.crop, self.crop:-self.crop]
+			y0t = y0[..., self.crop:-self.crop, self.crop:-self.crop]
+		else:
+			Xt = X
+			y0t = y0
+
+		self.data_shape_ = Xt.shape[1:]
 		
-		if not y0.shape[1:] == self.data_shape_:
+		if not y0t.shape[1:] == self.data_shape_:
 			raise ValueError('X and y0 should have the same shape after n_samples')
 		
-		Xt = X.reshape([X.shape[0], -1])
-		y0t = y0.reshape([y0.shape[0], -1])
+		Xt = Xt.reshape([Xt.shape[0], -1])
+		y0t = y0t.reshape([y0t.shape[0], -1])
 		
 		self.steps[0][1].fit(y0t)
 		
@@ -60,12 +68,18 @@ class SVDPipeline(Pipeline):
 
 	def transform(self, X):
 		#Check that we can reshape to data_shape without changing number of samples
+		if np.prod(X.shape[1:]) != np.prod(self.data_shape_):
+			uncropped_shape = [*self.data_shape_[:-2], self.data_shape_[-2]+2*self.crop, self.data_shape_[-1]+2*self.crop]
+			if np.prod(X.shape[1:]) != np.prod(uncropped_shape):
+				raise ValueError('X should be resizable to [1, %s] or croppable with size %d' % (str(self.data_shape_), self.crop))
+			Xt = X.reshape([X.shape[0], *uncropped_shape])
+			if self.crop > 0:
+				Xt = Xt[..., self.crop:-self.crop, self.crop:-self.crop]
+		else:
+			Xt = X
 		
-		if len(X.shape) > 2 and X.shape[1:] != self.data_shape_ and np.prod(X.shape[1:]) != np.prod(self.data_shape_):
-			raise ValueError('X should have shape [-1, %s]' % str(self.data_shape_))
-		
-		X = X.reshape([X.shape[0], -1])
-		Xt = super(SVDPipeline, self).transform(X)
+		Xt = Xt.reshape([Xt.shape[0], -1])
+		Xt = super(SVDPipeline, self).transform(Xt)
 		
 		if self.whiten:
 			Xt /= np.sqrt(self.steps[1][1].explained_variance_)
@@ -85,20 +99,24 @@ class SVDPipeline(Pipeline):
 			X = super(SVDPipeline, self).inverse_transform(Xt)
 		X = X.reshape([X.shape[0], *self.data_shape_])
 		return X
-		
-def unpca(d, model, keep):
-	'''
-	Undo PCA using a subset of learned components
-	'''
-	if d.shape[1] != model.n_components_:
-		di = np.zeros([d.shape[0], keep.shape[0]])
-		di[:, keep] = d
-		d = di
-	d = model.inverse_transform(d)
-	d = d.reshape([d.shape[0], -1, 236, 200])
-	return d
 
-def build_decomposition_model(dataset, model_type=SVDPipeline, n_components=16, tmin=0, tmax=60):
+	def score(self, X, metric=residual, multioutput='raw_values'):
+		y = self.inverse_transform(self.transform(X))
+		if self.crop > 0:
+			X = X[..., self.crop:-self.crop, self.crop:-self.crop]
+
+		if metric == residual:
+			score = residual(X, y)
+			if multioutput == 'uniform_average': 
+				return np.mean(score)
+			else:
+				return score
+		else:
+			score = metric(X, y, multioutput=multioutput)
+			return score
+
+		
+def build_decomposition_model(dataset, model_type=SVDPipeline, tmin=0, tmax=60, **model_kwargs):
 	'''
 	Learn a decomposition model on an AtlasDataset object
 	'''
@@ -119,7 +137,7 @@ def build_decomposition_model(dataset, model_type=SVDPipeline, n_components=16, 
 		y0.append(e_data.reshape([t, -1, h, w]))
 	y0 = np.concatenate(y0, axis=0)
 
-	model = model_type(n_components=n_components, whiten=True)
+	model = model_type(whiten=True, **model_kwargs)
 
 	train_mask = (df.set == 'train') & (df.time >= tmin) & (df.time <= tmax)
 	train = y0[df[train_mask].index]
@@ -133,7 +151,7 @@ def build_decomposition_model(dataset, model_type=SVDPipeline, n_components=16, 
 
 	params = model.transform(y0)
 	y = model.inverse_transform(params)
-	df['res'] = residual(y, y0).mean(axis=(-1, -2))
+	df['res'] = model.score(y0, metric=residual).mean(axis=(-2, -1))
 	df['mag'] = np.linalg.norm(y, axis=1).mean(axis=(-1, -2))
 	df = pd.concat([df, pd.DataFrame(params).add_prefix('param')], axis=1)
 
@@ -142,7 +160,7 @@ def build_decomposition_model(dataset, model_type=SVDPipeline, n_components=16, 
 def get_decomposition_results(dataset, 
 							  overwrite=False,
 							  model_type=SVDPipeline,
-							  n_components=16):
+							  **model_kwargs):
 	'''
 	Get results on a dataset, loading from file if it already exists
 	Create new model and save it if none is found on that folder
@@ -156,7 +174,7 @@ def get_decomposition_results(dataset,
 		df = pd.read_csv(path+'.csv')
 	else:
 		print('Building new SVDPipeline for this dataset')
-		model, df = build_decomposition_model(dataset, model_type, n_components=n_components)
+		model, df = build_decomposition_model(dataset, model_type, **model_kwargs)
 		pk.dump(model, open(path+'.pkl', 'wb'))
 		df.to_csv(path+'.csv')
 		

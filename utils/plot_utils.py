@@ -38,7 +38,7 @@ def color_2D(ax, f, vmax_std=None, **im_kwargs):
 		ax.imshow(f, **im_kwargs)
 	ax.set(xticks=[], yticks=[])
 
-def plot_tensor2D(ax, f0, skip=20, both=False, linecolor='white', linewidth=0.005, **im_kwargs):
+def plot_tensor2D(ax, f0, skip=20, both=False, linecolor='white', linewidth=0.007, **im_kwargs):
 	f = f0.copy()
 	f = f.reshape([4, *f.shape[-2:]])
 	color_2D(ax, np.linalg.norm(f, axis=0), **im_kwargs)

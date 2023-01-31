@@ -237,7 +237,6 @@ def collect_decomposed_data(h5f, key, tmin, tmax, keep, scale_units=False, mater
 	if material_derivative:
 		adv = 'v dot grad %s' % key
 		if adv in feature_names:
-			#print('Adding advection')
 			loc = feature_names.index(adv)
 			X_dot += X[..., loc:loc+1]
 			X = np.delete(X, loc, axis=-1)
@@ -368,8 +367,11 @@ def sindy_predict(data, key, sindy, model, keep, tmin=None, tmax=None):
 	if tmax is None:
 		tmax = min(np.max(t_X), np.max(t_U))
 	time = t_X[np.logical_and(t_X >= tmin, t_X <= tmax)]
-	
+
 	x_true = data['fields'][key]
+	if model.crop > 0:
+		crop = model.crop
+		x_true = x_true[..., crop:-crop, crop:-crop]
 	x_int = interp1d(t_X, x_true, axis=0)
 	ic = x_int(tmin)
 	
@@ -378,23 +380,23 @@ def sindy_predict(data, key, sindy, model, keep, tmin=None, tmax=None):
 	for i, feature in enumerate(sindy.feature_names):
 		if feature in data['X_raw']:
 			t_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
-			x_dot_pred += coefs[i] * data['X_raw'][feature][t_mask, ...]
+			x_dot_pred += coefs[i] * data['X_raw'][feature][t_mask, ...][..., crop:-crop, crop:-crop]
 		else:
 			t_mask = np.logical_and(t_U >= tmin, t_U <= tmax)
-			x_dot_pred += coefs[i] * data['U_raw'][feature][t_mask, ...]
+			x_dot_pred += coefs[i] * data['U_raw'][feature][t_mask, ...][..., crop:-crop, crop:-crop]
 	
 	if sindy.material_derivative_:
 		adv = 'v dot grad %s' % key
 		if adv in data['X_raw']:
 			#print('Subtracting advection')
 			t_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
-			x_dot_pred -= data['X_raw'][adv][t_mask, ...]
+			x_dot_pred -= data['X_raw'][adv][t_mask, ...][..., crop:-crop, crop:-crop]
 
 		cor = '[O, %s]' % key
 		if cor in data['X_raw']:
 			#print('Adding co-rotation')
 			t_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
-			x_dot_pred += data['X_raw'][cor][t_mask, ...]
+			x_dot_pred += data['X_raw'][cor][t_mask, ...][..., crop:-crop, crop:-crop]
 	
 	x_pred, times = evolve_rk4_grid(ic, x_dot_pred, model, keep,
 									t=time, tmin=tmin, tmax=tmax, step_size=0.2)

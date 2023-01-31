@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.join(basedir, 'src'))
 import warnings
 from utils.dataset import *
 from utils.translation_utils import *
+from utils.decomposition_utils import *
 
 import pandas as pd
 import pickle as pk
@@ -17,7 +18,7 @@ from tqdm import tqdm
 import pysindy as ps
 from scipy.io import loadmat
 
-def project_embryo_data(folder, embryoID, base, threshold=0.95, model_type=SVD_Pipeline):
+def project_embryo_data(folder, embryoID, base, threshold=0.95, model_type=SVDPipeline):
 	'''
 	Get the PCA data for a given embryoID
 	base - velocity, tensor, etc. tells us what PCA to look for
@@ -100,6 +101,9 @@ def write_library_to_dataset(lib, glib, attrs=None):
 	'''
 	for k in lib:
 		if not k in glib:
+			glib.create_dataset(k, data=lib[k])
+		elif not np.array_equal(glib[k], lib[k]):
+			del glib[k]
 			glib.create_dataset(k, data=lib[k])
 		if attrs is not None:
 			glib[k].attrs.update(attrs[k])
