@@ -249,6 +249,13 @@ def collect_decomposed_data(h5f, key, tmin, tmax, keep, scale_units=False, mater
 			X = np.delete(X, loc, axis=-1)
 			feature_names.remove(cor)
 
+	#Eliminate other advection terms because they involve gradients of proteins
+	adv = [feature for feature in feature_names if 'v dot grad' in feature]
+	for a in adv:
+		loc = feature_names.index(a)
+		X = np.delete(X, loc, axis=-1)
+		feature_names.remove(a)
+
 	x_mask = np.logical_and(t_U >= np.min(t_X), t_U <= np.max(t_X))
 	u_mask = np.logical_and(t_U >= tmin, t_U <= tmax)
 	t_mask = np.logical_and(x_mask, u_mask)
@@ -257,22 +264,22 @@ def collect_decomposed_data(h5f, key, tmin, tmax, keep, scale_units=False, mater
 	scale_array = np.ones(X.shape[-1] + U.shape[-1])
 	if scale_units:
 		fields = h5f['fields']
-		for i, feature in enumerate(feature_names):
-			attrs = h5f['X_raw'][feature].attrs
-			for unit in attrs:
-				if unit in fields:
-					scale_array[i] /= fields[unit].attrs['std'] ** attrs[unit]
-				elif unit == 'space':
-					scale_array[i] *= fields['v'].attrs['std'] ** attrs[unit]
-		for i, feature in enumerate(control_names):
-			j = len(feature_names) + i
-			attrs = h5f['U_raw'][feature].attrs
-			for unit in attrs:
-				if unit in fields:
-					scale_array[j] /= fields[unit].attrs['std'] ** attrs[unit]
-				elif unit == 'space': #Spatial derivative means must multiply by a spatial unit
-					scale_array[j] *= fields['v'].attrs['std'] ** attrs[unit]
-		scale_array *= fields[key].attrs['std'] #Multiply everything by units of key
+		base = fields[key].attrs['std']
+		def find_scales(group, features):
+			scales = np.ones(len(features)) #* base #Units of key
+			for i, feature in enumerate(features):
+				attrs = group[feature].attrs
+				for unit in attrs:
+					if unit in fields and not unit == 'v':
+						scales[i] /= (fields[unit].attrs['std'] / base) ** attrs[unit]
+					#if unit in fields:
+					#	scales[i] /= fields[unit].attrs['std'] * attrs[unit]
+					#elif unit == 'space': #Spatial derivative means multiply by a spatial unit
+					#	scales[i] *= fields['v'].attrs['std'] ** attrs[unit]
+			return scales
+
+		scale_array[:X.shape[-1]] = find_scales(h5f['X_raw'], feature_names)
+		scale_array[X.shape[-1]:] = find_scales(h5f['U_raw'], control_names)
 		
 	return X, U, X_dot, times, feature_names, control_names, scale_array
 
@@ -337,7 +344,8 @@ def evolve_rk4_grid(x0, xdot, model, keep, t, tmin=0, tmax=10, step_size=0.2):
 	x[0] = x0
 			
 	interp = interp1d(t, xdot, axis=0)
-	for ii in tqdm(range(len(tt)-1)):
+	#for ii in tqdm(range(len(tt)-1)):
+	for ii in range(len(tt)-1):
 		k1 = interp(tt[ii])
 		k2 = interp(tt[ii] + 0.5 * step_size)
 		k3 = interp(tt[ii] + 0.5 * step_size)

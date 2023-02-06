@@ -15,6 +15,7 @@ source /home/jcolen/.bashrc
 module load python
 conda activate /project/vitelli/ml_venv
 
-cd /project/vitelli/jonathan/REDO_fruitfly/src
-#python atlas_processing/build_derivative_library.py
-python translation_vae.py
+cd /project/vitelli/jonathan/REDO_fruitfly/src/vae_models
+beta=1e-6
+beta=1e-3
+python translation_vae.py --beta $beta
