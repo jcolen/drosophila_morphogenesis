@@ -155,32 +155,34 @@ def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3):
 	for key in movies:
 		np.save(os.path.join(outdir, key), np.stack(movies[key]))
 
-savedirs = [
-	#'WT/ECad-GFP',
-	#'WT/sqh-mCherry',
-	#'WT/moesin-GFP',
-	#'WT/utr-mCherry',
-	#'WT/Sqh_RokK116A-GFP',
-	#'WT/histone-RFP',
-	'WT/Tartan/',
-	#'WT/Bazooka-GFP',
-	#'WT/Runt',
-	#'WT/Even_Skipped',
-	#'WT/Fushi_Tarazu',
-	#'WT/Hairy',
-	#'WT/Paired',
-	#'WT/Sloppy_Paired',
-	#'Even-Skipped[r13]/Spaghetti_Squash-GFP',
-	#'TollRM9/Spaghetti_Squash-GFP',
-	#'optoRhoGEF2_sqhCherry/headIllumination',
-	#'optoRhoGEF2_sqhCherry/singlePlaneIllumination'
-]
+if __name__=='__main__':
 
-for savedir in savedirs:
-	fulldir = os.path.join(basedir, savedir)
-	df = convert_matstruct_to_csv(fulldir, prefix='static')
-	#print(fulldir, len(df))
-	build_ensemble_timeline(fulldir, init_unc=1)
-	#collect_velocity_fields(fulldir)
-	#collect_anisotropy_tensor(fulldir)
-	#push_to_embryo_surface(fulldir)
+	savedirs = [
+		#'WT/ECad-GFP',
+		#'WT/sqh-mCherry',
+		#'WT/moesin-GFP',
+		#'WT/utr-mCherry',
+		#'WT/Sqh_RokK116A-GFP',
+		#'WT/histone-RFP',
+		'WT/Tartan/',
+		#'WT/Bazooka-GFP',
+		#'WT/Runt',
+		#'WT/Even_Skipped',
+		#'WT/Fushi_Tarazu',
+		#'WT/Hairy',
+		#'WT/Paired',
+		#'WT/Sloppy_Paired',
+		#'Even-Skipped[r13]/Spaghetti_Squash-GFP',
+		#'TollRM9/Spaghetti_Squash-GFP',
+		#'optoRhoGEF2_sqhCherry/headIllumination',
+		#'optoRhoGEF2_sqhCherry/singlePlaneIllumination'
+	]
+
+	for savedir in savedirs:
+		fulldir = os.path.join(basedir, savedir)
+		df = convert_matstruct_to_csv(fulldir, prefix='static')
+		#print(fulldir, len(df))
+		build_ensemble_timeline(fulldir, init_unc=1)
+		#collect_velocity_fields(fulldir)
+		#collect_anisotropy_tensor(fulldir)
+		#push_to_embryo_surface(fulldir)

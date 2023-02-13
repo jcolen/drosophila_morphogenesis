@@ -7,9 +7,9 @@ basedir = '/project/vitelli/jonathan/REDO_fruitfly/'
 sys.path.insert(0, os.path.join(basedir, 'src'))
 from tqdm import tqdm
 
-from tensor_library import scalar2tensor_library, veltensor2tensor_library
-from scalar_library import scalar2scalar_library, veltensor2scalar_library
-from symmetric_tensor_library import veltensor2symtensor_library, scalar2symtensor_library
+from tensor_library import build_tensor_library
+from vector_library import build_vector_library
+from scalar_library import build_scalar_library
 
 def build_ensemble_derivative_library(
 		directory,
@@ -51,23 +51,29 @@ def build_dynamic_derivative_library(
 if __name__=='__main__':
 	datadir = '/project/vitelli/jonathan/REDO_fruitfly/src/data'
 
-	dirs = {
-		'c': ['WT', 'ECad-GFP'],
-		'm': ['WT', 'sqh-mCherry'],
-	}
-
-	libfuncs = [
-		#veltensor2tensor_library,
-		#veltensor2scalar_library,
-		veltensor2symtensor_library,
+	sets = [
+		('c_ij', ['WT', 'ECad-GFP'], 'tensor'),
+		('c', ['WT', 'ECad-GFP'], 'cyt'),
+	#	('m_ij', ['WT', 'sqh-mCherry'], 'tensor'),
+		('v', ['WT', 'ECad-GFP'], 'velocity'),
 	]
-	for key in dirs:
-		for libfunc in libfuncs:
-			build_dynamic_derivative_library(
-				os.path.join(datadir, *dirs[key]),
-				'library_PCA.h5',
-				libfunc,
-				key=key)
+
+	for key, path, base in sets:
+		if base == 'tensor':
+			libfunc = build_tensor_library
+		elif base == 'velocity': 
+			libfunc = build_vector_library
+		else:
+			libfunc = build_scalar_library
+
+		build_dynamic_derivative_library(
+			os.path.join(datadir, *path),
+			'derivative_library.h5',
+			libfunc,
+			key=key,
+			base=base)
+
+	'''
 	dirs = {
 		'Rnt': ['WT', 'Runt'],
 		'Eve': ['WT', 'Even_Skipped'],
@@ -89,3 +95,4 @@ if __name__=='__main__':
 				'library_PCA.h5',
 				libfunc,
 				key=key)
+	'''

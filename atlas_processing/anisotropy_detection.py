@@ -9,17 +9,20 @@ from scipy.io import loadmat
 
 from scipy import ndimage
 from skimage import transform
-import windowed_radon as wr
+import atlas_processing.windowed_radon as wr
+
 
 from skimage.morphology import erosion, dilation, disk
 from PIL import Image
 from skimage.transform import resize
 
-from atlas_processing import *
-
-
 cell_size = 8
 structure = disk(cell_size)
+
+piv_geometry = loadmat('/project/vitelli/jonathan/REDO_fruitfly/flydrive.synology.me/minimalData/Atlas_Data/embryo_geometry/embryo_rectPIVscale_fundamentalForms.mat')
+pix_geometry = loadmat('/project/vitelli/jonathan/REDO_fruitfly/flydrive.synology.me/minimalData/vitelli_sharing/pixel_coordinates.mat')
+Xpiv, Ypiv = piv_geometry['X0'][0], piv_geometry['Y0'][:, 0]
+Xpix, Ypix = pix_geometry['XX'][0], pix_geometry['YY'][:, 0]
 
 def cytosolic_normalize(frame):
 	background = dilation(erosion(frame, structure), structure)

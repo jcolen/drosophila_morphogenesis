@@ -25,15 +25,14 @@ def project_embryo_data(folder, embryoID, base, threshold=0.95, model_type=SVDPi
 	return the inverse_transformed PCA data keeping only terms up to a given explained variance
 	'''
 	#Check if SVDPipeline exists for this data
-	path = os.path.join(folder, '%s_%s' % (base, model_type.__name__))
+	path = os.path.join(folder, 'decomposition_models', '%s_%s' % (base, model_type.__name__))
 	print('Checking for  %s for this dataset' % model_type.__name__)
-	label = os.path.basename(folder)
-	genotype = os.path.basename(folder[:folder.index(label)-1])
-	dataset = AtlasDataset(genotype, label, '%s2D' % base, transform=Reshape2DField())
-	model, df = get_decomposition_results(dataset, model_type=model_type)
+
+	model = pk.load(open(path+'.pkl', 'rb'))
+	df = pd.read_csv(path+'.csv')
 	
 	df = df[df.embryoID == embryoID]
-	keep = np.cumsum(model.explained_variance_ratio_) <= threshold
+	keep = np.cumsum(model['svd'].explained_variance_ratio_) <= threshold
 	params = df.filter(like='param', axis=1).values[:, keep]
 
 	return model.inverse_transform(params, keep)

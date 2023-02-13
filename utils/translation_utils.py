@@ -7,13 +7,14 @@ from utils.decomposition_utils import *
 
 import pickle as pk
 from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.model_selection import train_test_split
 from scipy.interpolate import interp1d
 from tqdm import tqdm
 from math import ceil
 import h5py
 import pysindy as ps
 
-def fill_group_info(data, embryoID, libraries, prgs, library):
+def fill_group_info(data, embryoID, libraries, prgs):
 	'''
 	Fill an embryo group with links, fields, and determine the feature names
 	'''
@@ -24,30 +25,34 @@ def fill_group_info(data, embryoID, libraries, prgs, library):
 	control_names = set()
 	for key in prgs:
 		if not key in links:
-			links[key] = h5py.ExternalLink(os.path.join(prgs[key], 'library_PCA.h5'), '/ensemble')
+			links[key] = h5py.ExternalLink(os.path.join(prgs[key], 'derivative_library.h5'), '/ensemble')
 			fields[key] = h5py.SoftLink(os.path.join(links.name, key, key))
 		control_names = control_names.union(links[key][library].keys())
 	control_names = list(control_names)
 
 	feature_names = set()
-	for i, key in enumerate(libraries.keys()):
+	for i, info in enumerate(libraries):
+		key, path, library, decomposition = info
 		if i == 0:
 			if 't' in group:
-				del group['t'], fields['v']
+				del group['t']
 			group['t'] = h5py.SoftLink(os.path.join(links.name, key, 'time'))
-			fields['v'] = h5py.SoftLink(os.path.join(links.name, key, 'v'))
 		if not key in links:
-			links[key] = h5py.ExternalLink(os.path.join(libraries[key], 'library_PCA.h5'), group.name)
-			fields[key] = h5py.SoftLink(os.path.join(links.name, key, library, key))
-		feature_names = feature_names.union(links[key][library].keys())
+			links[key] = h5py.ExternalLink(os.path.join(path, 'derivative_library.h5'), group.name)
+			fields[key] = h5py.SoftLink(os.path.join(links.name, key, key))
+		
+		sub_features = [ sf for sf in links[key][library] if key in links[key][library][sf].attrs]
+		feature_names = feature_names.union(sub_features)
+		#feature_names = feature_names.union(links[key][library].keys())
 	feature_names = list(feature_names)
 	
 	return group, feature_names, control_names
 
-def collect_library(data, priority, feature_names, control_names, 
+def collect_library(data,
+					libraries,
+					feature_names, 
+					control_names=None,
 					group='tensor_library',
-					mixed_features=None,
-					mixed_features_attrs=None,
 					extra_functions=None,
 					control_offset=0):
 	'''
@@ -58,32 +63,25 @@ def collect_library(data, priority, feature_names, control_names,
 	raw = data.require_group('X_raw')
 	for feature in feature_names:
 		if not feature in raw:
-			for key in priority:
+			for key, _, group, _ in libraries:
 				if feature in links[key][group]:
 					path = os.path.join(links.name, key, group, feature)
 					raw[feature] = h5py.SoftLink(path)
 					break
-	
-	control = data.require_group('U_raw')
-	control.attrs['offset'] = control_offset
-	for feature in control_names:
-		if feature in control:
-			continue
-			#del control[feature]
-		for key in links:
-			if feature in links[key][group]:
-				path = os.path.join(links.name, key, group, feature)
-				control[feature] = h5py.SoftLink(path)
-				control[feature].attrs['t'] = links[key]['time'][()]
-				break
-	
-	if mixed_features:
-		for feature in mixed_features:
-			feature_names.append(feature)
-			if feature not in raw:
-				raw[feature] = mixed_features[feature](raw)
-			if mixed_features_attrs is not None:
-				raw[feature].attrs.update(mixed_features_attrs[feature])
+
+	if control_names is not None:
+		control = data.require_group('U_raw')
+		control.attrs['offset'] = control_offset
+		for feature in control_names:
+			if feature in control:
+				continue
+				#del control[feature]
+			for key in links:
+				if feature in links[key][group]:
+					path = os.path.join(links.name, key, group, feature)
+					control[feature] = h5py.SoftLink(path)
+					control[feature].attrs['t'] = links[key]['time'][()]
+					break
 
 	if extra_functions:
 		for extra_function in extra_functions:
@@ -117,7 +115,12 @@ def get_control_timeline(data, libraries):
 	print('Control time range: [%d, %d]' % (t_min, t_max))
 	return np.arange(t_min, t_max+1)
 
-def decompose_library(data, libraries, library, window_length=5, re_model=False):
+def decompose_library(data, 
+					  libraries,
+					  window_length=5, 
+					  t_min=5, 
+					  t_max=50,
+					  re_model=False):
 	'''
 	Create PCA libraries from the accumulated data
 	Each PCA library should be of shape [T, P, L]
@@ -138,24 +141,35 @@ def decompose_library(data, libraries, library, window_length=5, re_model=False)
 	X_cpt = data.require_group('X_cpt')
 	X_dot = data.require_group('X_dot')
 	X_dot_cpt = data.require_group('X_dot_cpt')
-	U_cpt = data.require_group('U_cpt')
 
 	X_cpt.attrs['t'] = data['t']
 	X_dot.attrs['t'] = data['t']
 	X_dot_cpt.attrs['t'] = data['t']
-	U_cpt.attrs['t'] = get_control_timeline(data, libraries)
+	
+	if 'U_raw' in data:
+		U_cpt = data.require_group('U_cpt')
+		U_cpt.attrs['t'] = get_control_timeline(data, libraries)
 
-	t_min, t_max = np.min(U_cpt.attrs['t']), np.max(U_cpt.attrs['t'])
+		t_min, t_max = np.min(U_cpt.attrs['t']), np.max(U_cpt.attrs['t'])
+		controls = list(data['U_raw'].keys())
+	else:
+		controls = []
 
 	features = list(data['X_raw'].keys())
-	controls = list(data['U_raw'].keys())
 						 
-	for key in libraries:
-		model = get_decomposition_model(data, key, library)
+	for key, path, library, decomposition in libraries:
+		if decomposition is None:
+			continue
+		model = get_decomposition_model(data, key, decomposition)
+		
+		def overwrite_dataset(group, key, data, features):
+			if key in group:
+				del group[key]
+			group.create_dataset(key, data=data)
+			group[key].attrs['feature_names'] = features
 
 		X = np.empty([X_cpt.attrs['t'].shape[0], model.n_components, len(features)])
-		U = np.empty([t_max-t_min+1, model.n_components, len(controls)])
-
+		not_included = []
 		for i, feature in enumerate(features):
 			if not re_model and \
 					key in X_cpt and \
@@ -163,28 +177,27 @@ def decompose_library(data, libraries, library, window_length=5, re_model=False)
 				loc = np.argwhere(X_cpt[key].attrs['feature_names'] == feature)[0, 0]
 				X[..., i] = X_cpt[key][..., loc][()]
 			else:
-				X[..., i] = decompose_trajectory(data['X_raw'][feature][()], model)
+				if model.can_transform(data['X_raw'][feature]):
+					X[..., i] = model.transform(data['X_raw'][feature], remove_mean=True)
+				else:
+					not_included.append(i)
+		X = np.delete(X, not_included, axis=-1)
+		overwrite_dataset(X_cpt, key, X, [f for i, f in enumerate(features) if not i in not_included])
 
-		for i, feature in enumerate(controls):
-			if not re_model and \
-					key in U_cpt and \
-					feature in U_cpt[key].attrs['feature_names']:
-				loc = np.argwhere(U_cpt[key].attrs['feature_names'] == feature)[0, 0]
-				U[..., i] =U_cpt[key][..., loc][()]
-			else:
-				ui = data['U_raw'][feature]
-				t = ui.attrs['t'] + data['U_raw'].attrs['offset']
-				ui = ui[np.logical_and(t >= t_min, t <= t_max), ...]
-				U[..., i] = decompose_trajectory(ui[()], model)
-
-		def overwrite_dataset(group, key, data, features):
-			if key in group:
-				del group[key]
-			group.create_dataset(key, data=data)
-			group[key].attrs['feature_names'] = features
-		
-		overwrite_dataset(X_cpt, key, X, features)
-		overwrite_dataset(U_cpt, key, U, controls)
+		if 'U_raw' in data:
+			U = np.empty([t_max-t_min+1, model.n_components, len(controls)])
+			for i, feature in enumerate(controls):
+				if not re_model and \
+						key in U_cpt and \
+						feature in U_cpt[key].attrs['feature_names']:
+					loc = np.argwhere(U_cpt[key].attrs['feature_names'] == feature)[0, 0]
+					U[..., i] =U_cpt[key][..., loc][()]
+				else:
+					ui = data['U_raw'][feature]
+					t = ui.attrs['t'] + data['U_raw'].attrs['offset']
+					ui = ui[np.logical_and(t >= t_min, t <= t_max), ...]
+					U[..., i] = model.transform(data['U_raw'][feature], remove_mean=True)
+			overwrite_dataset(U_cpt, key, U, controls)
 		
 		compute = False
 		if key not in X_dot:
@@ -203,32 +216,31 @@ def decompose_library(data, libraries, library, window_length=5, re_model=False)
 			ds = X_dot.require_dataset(key, shape=dot.shape, dtype=dot.dtype)
 			ds[:] = dot
 			ds.attrs.update(smoother_kws)
-			
-		dot_cpt = decompose_trajectory(X_dot[key][()], model)[..., None]
+
+		dot_cpt = model.transform(X_dot[key], remove_mean=True)[..., None]
 		ds = X_dot_cpt.require_dataset(key, shape=dot_cpt.shape, dtype=dot_cpt.dtype)
 		ds[:] = dot_cpt
 		ds.attrs.update(X_dot[key].attrs)
 
-def collect_decomposed_data(h5f, key, tmin, tmax, keep, scale_units=False, material_derivative=True):
+def collect_decomposed_data(h5f, key, tmin, tmax, keep, material_derivative=True):
 	'''
-	Collect the PCA data froma	given h5f library and return X, U, X_dot, and the relevant variable names
-
-	New: Include the option to rescale components by their units
-		Each field has a characteristic unit and we include the option to unscale everything
-
-		the returned scale_array is the unit factor we need to multiply by to get to units of key / time
-		these are the units of the feature
-		Each feature should be multiplied by these units, and its coefficient should be divided by them
+	Collect the PCA data from a	given h5f library and return X, U, X_dot, and the relevant variable names
 	'''
 	t_X = h5f['t'][()].astype(int)
-	t_U = h5f['U_cpt'].attrs['t']
 	
 	feature_names = list(h5f['X_cpt'][key].attrs['feature_names'])
-	control_names = list(h5f['U_cpt'][key].attrs['feature_names'])
 
-	u_mask = np.logical_and(t_X >= np.min(t_U), t_X <= np.max(t_U))
 	x_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
-	t_mask = np.logical_and(x_mask, u_mask)
+
+	if 'U_cpt' in h5f:
+		t_U = h5f['U_cpt'].attrs['t']
+		control_names = list(h5f['U_cpt'][key].attrs['feature_names'])
+		u_mask = np.logical_and(t_X >= np.min(t_U), t_X <= np.max(t_U))
+		t_mask = np.logical_and(x_mask, u_mask)
+	else:
+		t_mask = x_mask
+
+
 	times = t_X[t_mask]
 
 	X = h5f['X_cpt'][key][t_mask, ...][..., keep, :][()]
@@ -245,77 +257,79 @@ def collect_decomposed_data(h5f, key, tmin, tmax, keep, scale_units=False, mater
 		cor = '[O, %s]' % key
 		if cor in feature_names:
 			loc = feature_names.index(cor)
-			X_dot -= X[..., loc:loc+1]
+			X_dot += X[..., loc:loc+1]
 			X = np.delete(X, loc, axis=-1)
 			feature_names.remove(cor)
 
 	#Eliminate other advection terms because they involve gradients of proteins
-	adv = [feature for feature in feature_names if 'v dot grad' in feature]
+	adv = [feature for feature in feature_names if 'v dot grad' in feature]# or 'E_active' in feature]
 	for a in adv:
 		loc = feature_names.index(a)
 		X = np.delete(X, loc, axis=-1)
 		feature_names.remove(a)
 
-	x_mask = np.logical_and(t_U >= np.min(t_X), t_U <= np.max(t_X))
-	u_mask = np.logical_and(t_U >= tmin, t_U <= tmax)
-	t_mask = np.logical_and(x_mask, u_mask)
-	U = h5f['U_cpt'][key][t_mask, ...][..., keep, :][()]
+	if 'U_cpt' in h5f:
+		x_mask = np.logical_and(t_U >= np.min(t_X), t_U <= np.max(t_X))
+		u_mask = np.logical_and(t_U >= tmin, t_U <= tmax)
+		t_mask = np.logical_and(x_mask, u_mask)
+		U = h5f['U_cpt'][key][t_mask, ...][..., keep, :][()]
 
-	scale_array = np.ones(X.shape[-1] + U.shape[-1])
-	if scale_units:
-		fields = h5f['fields']
-		base = fields[key].attrs['std']
-		def find_scales(group, features):
-			scales = np.ones(len(features)) #* base #Units of key
-			for i, feature in enumerate(features):
-				attrs = group[feature].attrs
-				for unit in attrs:
-					if unit in fields and not unit == 'v':
-						scales[i] /= (fields[unit].attrs['std'] / base) ** attrs[unit]
-					#if unit in fields:
-					#	scales[i] /= fields[unit].attrs['std'] * attrs[unit]
-					#elif unit == 'space': #Spatial derivative means multiply by a spatial unit
-					#	scales[i] *= fields['v'].attrs['std'] ** attrs[unit]
-			return scales
+		feature_names = feature_names + control_names
+		X = np.concatenate([X, U], axis=-1)
+	
+	return X, X_dot, feature_names
 
-		scale_array[:X.shape[-1]] = find_scales(h5f['X_raw'], feature_names)
-		scale_array[X.shape[-1]:] = find_scales(h5f['U_raw'], control_names)
-		
-	return X, U, X_dot, times, feature_names, control_names, scale_array
-
-def fit_sindy_model(h5f, key, tmin, tmax, keep, threshold=1e-1, alpha=1e-1, scale_units=False, material_derivative=False):
+def fit_sindy_model(h5f, key, tmin, tmax, keep, 
+					threshold=1e-1, 
+					alpha=1e-1, 
+					n_models=5,
+					n_candidates_to_drop=5,
+					scale_units=False, 
+					material_derivative=False):
 	'''
 	Fit a SINDy model on data filled by a given key in an h5py file
 	Fit range goes from tmin to tmax, and is applied on a set keep of PCA components
-
-	New: Include the option to rescale components by their units
-		Each field has a characteristic unit and we include the option to unscale everything
-		In general, the goal should be to use v as a reference
 	'''
-	X, U, X_dot, scales = [], [], [], []
+	X, X_dot = [], []
 	eIds = list(h5f.keys())
 	for eId in eIds:
-		x, u, x_dot, times, feature_names, control_names, scale = collect_decomposed_data(
+		x, x_dot, feature_names = collect_decomposed_data(
 			h5f[eId], 
 			key, 
 			tmin,
 			tmax,
 			keep,
-			scale_units,
 			material_derivative)
-		X.append(x * scale[:len(feature_names)])
-		U.append(u * scale[len(feature_names):])
+		X.append(x)
 		X_dot.append(x_dot)
-		scales.append(scale)
 
-	scales = np.mean(scales, axis=0)
+	optimizer = ps.STLSQ(threshold=threshold, alpha=alpha, normalize_columns=scale_units)
+	if n_models > 1:
+		bagging = True
+		n_candidates_to_drop = None if n_candidates_to_drop == 0 else n_candidates_to_drop
+		optimizer = ps.EnsembleOptimizer(
+			opt=optimizer,
+			bagging=True,
+			library_ensemble=n_candidates_to_drop is not None,
+			n_models=n_models,
+			n_candidates_to_drop=n_candidates_to_drop)
+
 	sindy = ps.SINDy(
 		feature_library=ps.IdentityLibrary(),
-		optimizer=ps.STLSQ(threshold=threshold, alpha=alpha),
-		feature_names=feature_names+control_names,
+		optimizer=optimizer,
+		feature_names=feature_names,
 	)
-	sindy.fit(x=X, x_dot=X_dot, u=U, multiple_trajectories=True)
-	sindy.model.steps[-1][1].optimizer.coef_[:] *= scales
+
+	if len(X) > 1:
+		X_train, X_test, X_dot_train, X_dot_test = train_test_split(X, X_dot, test_size=0.33)
+	else:
+		X_train = X
+		X_dot_train = X_dot
+
+	X_train = np.concatenate(X_train, axis=0)
+	X_dot_train = np.concatenate(X_dot_train, axis=0)
+		
+	sindy.fit(x=X_train, x_dot=X_dot_train)
 
 	if material_derivative:
 		sindy.print(lhs=['D_t %s ' % key])
@@ -368,18 +382,19 @@ def sindy_predict(data, key, sindy, model, keep, tmin=None, tmax=None):
 	'''
 	#Collect library from h5py dataset
 	t_X = data['t'][()].astype(int)
-	t_U = data['U_cpt'].attrs['t']
+	if 'U_cpt' in data:	
+		t_U = data['U_cpt'].attrs['t']
+		if tmin is None:
+			tmin = max(np.min(t_X), np.min(t_U))
+		if tmax is None:
+			tmax = min(np.max(t_X), np.max(t_U))
+	else:
+		if tmin is None: tmin = np.min(t_X)
+		if tmax is None: tmax = np.max(t_X)
 	
-	if tmin is None:
-		tmin = max(np.min(t_X), np.min(t_U))
-	if tmax is None:
-		tmax = min(np.max(t_X), np.max(t_U))
 	time = t_X[np.logical_and(t_X >= tmin, t_X <= tmax)]
 
 	x_true = data['fields'][key]
-	if model.crop > 0:
-		crop = model.crop
-		x_true = x_true[..., crop:-crop, crop:-crop]
 	x_int = interp1d(t_X, x_true, axis=0)
 	ic = x_int(tmin)
 	
@@ -388,23 +403,21 @@ def sindy_predict(data, key, sindy, model, keep, tmin=None, tmax=None):
 	for i, feature in enumerate(sindy.feature_names):
 		if feature in data['X_raw']:
 			t_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
-			x_dot_pred += coefs[i] * data['X_raw'][feature][t_mask, ...][..., crop:-crop, crop:-crop]
+			x_dot_pred += coefs[i] * data['X_raw'][feature][t_mask, ...]
 		else:
 			t_mask = np.logical_and(t_U >= tmin, t_U <= tmax)
-			x_dot_pred += coefs[i] * data['U_raw'][feature][t_mask, ...][..., crop:-crop, crop:-crop]
+			x_dot_pred += coefs[i] * data['U_raw'][feature][t_mask, ...]
 	
 	if sindy.material_derivative_:
 		adv = 'v dot grad %s' % key
 		if adv in data['X_raw']:
-			#print('Subtracting advection')
 			t_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
-			x_dot_pred -= data['X_raw'][adv][t_mask, ...][..., crop:-crop, crop:-crop]
+			x_dot_pred -= data['X_raw'][adv][t_mask, ...]
 
 		cor = '[O, %s]' % key
 		if cor in data['X_raw']:
-			#print('Adding co-rotation')
 			t_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
-			x_dot_pred += data['X_raw'][cor][t_mask, ...][..., crop:-crop, crop:-crop]
+			x_dot_pred -= data['X_raw'][cor][t_mask, ...]
 	
 	x_pred, times = evolve_rk4_grid(ic, x_dot_pred, model, keep,
 									t=time, tmin=tmin, tmax=tmax, step_size=0.2)
@@ -418,18 +431,32 @@ def sindy_predictions_plot(x_pred, x_int, x_model, times, keep, data, plot_fn=pl
 	ncols = 4
 	step = x_pred.shape[0] // ncols
 
-	fig = plt.figure(dpi=150, figsize=(1*ncols, 5))
-	gs = fig.add_gridspec(4, ncols)
+	x_true = x_int(times)
+	x_true = x_model.inverse_transform(x_model.transform(x_true)[:, keep], keep)
 
-	ax = fig.add_subplot(gs[:2, :])
+	mask = x_model['masker'].mask_
+	ys, xs = np.where(mask != 0)
+	crop_mask = np.s_[..., min(ys):max(ys)+1, min(xs):max(xs)+1]
+	mask = mask[crop_mask]
 
-	xi = x_int(times)
-	xi = x_model.inverse_transform(x_model.transform(xi)[:, keep], keep)
+	x_pred = x_pred[crop_mask]
+	x_true = x_true[crop_mask]
 
-	error = residual(x_pred, xi).mean(axis=(-2, -1))
+	x_true = x_true.reshape([x_true.shape[0], -1, *x_true.shape[-2:]])
+	x_norm = np.linalg.norm(x_true, axis=1)[:, mask]
+	vmin = x_norm.min()
+	vmax = x_norm.max()
+
+	res = residual(x_pred, x_true)
+	error = res.mean(axis=(-2, -1))
+
+	x_true[..., ~mask] = np.nan
+	x_pred[..., ~mask] = np.nan
+	res[..., ~mask] = np.nan
 
 	v2 = np.linalg.norm(data['fields']['v'], axis=1).mean(axis=(1, 2))
 
+	fig, ax = plt.subplots(1, 1, figsize=(2, 2))
 	ax.plot(times, error)
 	ax.set(ylim=[0, 1], 
 		   ylabel='Error Rate',
@@ -440,17 +467,25 @@ def sindy_predictions_plot(x_pred, x_int, x_model, times, keep, data, plot_fn=pl
 	ax2.set_ylabel('$v^2$', color='red')
 	ax.set_xlim([times.min(), times.max()])
 
+	axis = ax
+
+	fig, ax = plt.subplots(3, ncols, figsize=(1*ncols, 3))
+
 	offset = min(5, x_pred.shape[0] - ncols*step) 
 	for i in range(ncols):
 		ii = i*step + offset
-		plot_fn(fig.add_subplot(gs[2, i]), x_pred[ii])
-		if i == 0:
-			plt.gca().set_ylabel('SINDy')
+		plot_fn(ax[0, i], x_pred[ii], vmin=vmin, vmax=vmax)
+		plot_fn(ax[1, i], x_true[ii], vmin=vmin, vmax=vmax)
+		color_2D(ax[2, i], res[ii], vmin=0, vmax=0.05, cmap='jet')
 
-		plot_fn(fig.add_subplot(gs[3, i]), xi[ii])
-		if i == 0:
-			plt.gca().set_ylabel('Truth')
-		ax.axvline(times[ii], zorder=-1, color='black', linestyle='--')
+		axis.axvline(times[ii], zorder=-1, color='black', linestyle='--')
+
+	for a in ax.flatten():
+		a.set_aspect('auto')
+
+	ax[0, 0].set_ylabel('SINDy')
+	ax[1, 0].set_ylabel('Experiment')
+	ax[2, 0].set_ylabel('Error')
 
 	plt.tight_layout()
 	

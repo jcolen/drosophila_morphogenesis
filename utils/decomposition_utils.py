@@ -9,101 +9,175 @@ import seaborn as sns
 import pickle as pk
 
 from math import ceil
+import h5py
 
 from sklearn.decomposition import TruncatedSVD, PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
+from sklearn.base import BaseEstimator, TransformerMixin
+
+class StandardShaper(BaseEstimator, TransformerMixin):
+	def fit(self, X, y0=None):
+		'''
+		Figure out how to reshape X to shape n_samples, _, Y, X
+		'''
+		self.data_shape_ = X.shape[-2:]
+		self.n_samples_  = X.shape[0]
+
+		X = X.reshape([self.n_samples_, -1, *self.data_shape_])
+		self.n_vec_components_ = X.shape[1]
+
+		return self
+
+	@property
+	def n_features_in_(self):
+		return self.n_vec_components_ * np.prod(self.data_shape_)
+
+	def transform(self, X):
+		n_samples = X.shape[0]
+		return X.reshape([n_samples, self.n_vec_components_, *self.data_shape_])
+	
+	def inverse_transform(self, X):
+		return X
+			
+
+class LeftRightSymmetrize(BaseEstimator, TransformerMixin):
+	def fit(self, X, y0=None):
+		'''
+		Assume X has shape [n_samples, _, Y, X]
+		'''
+		self.n_vec_components_ = X.shape[1]
+		return self
+
+	def transform(self, X):
+		#X_flip = np.flip(X, axis=-2) #Flip DV axis
+		X_flip = X[..., ::-1, :].copy()
+
+		#Invert DV component of vector field
+		if self.n_vec_components_ == 2:
+			X_flip[..., 0, :, :] *= -1
+
+		#Invert off-diagonal components of tensor field
+		elif self.n_vec_components_ == 4:
+			X_flip[:, 1:3] *= -1
+		
+		return 0.5 * (X +  X_flip)
+
+	def inverse_transform(self, X):
+		return X
+
+class Masker(BaseEstimator, TransformerMixin):
+	def __init__(self, crop=0, mask=None):
+		self.crop = crop
+		self.mask = mask
+		super(Masker, self).__init__()
+	
+	def fit(self, X, y0=None):
+		self.mask_ = np.ones(X.shape[-2:], dtype=np.bool)
+
+		if self.mask is not None:
+			self.mask_ = np.logical_and(self.mask_, self.mask)
+
+		if self.crop > 0:
+			mask = np.zeros_like(self.mask_)
+			mask[self.crop:-self.crop, self.crop:-self.crop] = True
+			self.mask_ = np.logical_and(self.mask_, mask)
+
+		self.n_features_out_ = np.count_nonzero(self.mask_)
+		return self
+		
+	def transform(self, X):
+		Xt = X.reshape([X.shape[0], -1, *self.mask_.shape])
+		Xt = Xt[..., self.mask_]
+		return Xt.reshape([Xt.shape[0], -1])
+
+	def inverse_transform(self, X):
+		'''
+		Re-apply spatial structure and fill in masked regions with zeros
+		'''
+		X = X.reshape([X.shape[0], -1, self.n_features_out_])
+		Xt = np.zeros([*X.shape[:2], *self.mask_.shape])
+		Xt[..., self.mask_] = X
+
+		return Xt
 
 class SVDPipeline(Pipeline):
-	def __init__(self, n_components=16, whiten=True, crop=0):
+	def __init__(self, n_components=16, whiten=True, crop=0, mask=None, lrsym=True):
 		self.n_components = n_components
 		self.whiten = whiten
 		self.crop = crop
+		self.mask = mask
+		self.lrsym = lrsym
 		steps = [
+			('shaper', StandardShaper()),
+			('masker', Masker(crop=crop, mask=mask)),
 			('scaler', StandardScaler(with_std=False)),
-			('fitter', TruncatedSVD(n_components=n_components)),
+			('svd', TruncatedSVD(n_components=n_components)),
 		]
-		super(SVDPipeline, self).__init__(steps)
+
+		if lrsym:
+			steps.insert(1, ('leftright', LeftRightSymmetrize()))
 		
+		super(SVDPipeline, self).__init__(steps)
+	
+	def __getitem__(self, key):
+		return self.named_steps[key]
+
+	def can_transform(self, X):
+		return self.n_features_in_ == np.prod(X.shape[1:])
 	
 	def fit(self, X, y0):
 		'''
 		X is the data used for fitting the Truncated SVD
 		y0 is the data used for fitting the Standard Scaler
 		'''
-		if self.crop > 0:
-			Xt = X[..., self.crop:-self.crop, self.crop:-self.crop]
-			y0t = y0[..., self.crop:-self.crop, self.crop:-self.crop]
-		else:
-			Xt = X
-			y0t = y0
+		for i in range(len(self.steps)):
+			if self.steps[i][0] == 'scaler':
+				self.steps[i][1].fit(y0)
+			else:
+				self.steps[i][1].fit(X, y0)
 
-		self.data_shape_ = Xt.shape[1:]
-		
-		if not y0t.shape[1:] == self.data_shape_:
-			raise ValueError('X and y0 should have the same shape after n_samples')
-		
-		Xt = Xt.reshape([Xt.shape[0], -1])
-		y0t = y0t.reshape([y0t.shape[0], -1])
-		
-		self.steps[0][1].fit(y0t)
-		
-		Xt = self.steps[0][1].transform(Xt)
-		self.steps[1][1].fit(Xt)
-		
-		# Standard Scaler attributes
-		self.scale_ = self.steps[0][1].scale_
-		self.mean_ = self.steps[0][1].mean_
-		self.var_ = self.steps[0][1].var_
-		
-		# Truncated SVD attributes
-		self.components_ = self.steps[1][1].components_
-		self.n_components_ = self.n_components
-		self.explained_variance_ = self.steps[1][1].explained_variance_
-		self.explained_variance_ratio_ = self.steps[1][1].explained_variance_ratio_
-		self.singular_values_ = self.steps[1][1].singular_values_
-		self.n_samples_ = X.shape[0]
-
+			X = self.steps[i][1].transform(X)
+			y0 = self.steps[i][1].transform(y0)
+			
 		return self
 
-	def transform(self, X):
-		#Check that we can reshape to data_shape without changing number of samples
-		if np.prod(X.shape[1:]) != np.prod(self.data_shape_):
-			uncropped_shape = [*self.data_shape_[:-2], self.data_shape_[-2]+2*self.crop, self.data_shape_[-1]+2*self.crop]
-			if np.prod(X.shape[1:]) != np.prod(uncropped_shape):
-				raise ValueError('X should be resizable to [1, %s] or croppable with size %d' % (str(self.data_shape_), self.crop))
-			Xt = X.reshape([X.shape[0], *uncropped_shape])
-			if self.crop > 0:
-				Xt = Xt[..., self.crop:-self.crop, self.crop:-self.crop]
-		else:
-			Xt = X
-		
-		Xt = Xt.reshape([Xt.shape[0], -1])
-		Xt = super(SVDPipeline, self).transform(Xt)
-		
+	def transform(self, X, remove_mean=False):
+		if isinstance(X, h5py.Dataset):
+			X = X[()]
+
+		if remove_mean:
+			mean = self.inverse_transform(np.zeros([1, self['svd'].n_components]))
+			mean = mean.reshape([-1, *X.shape[1:]])
+			X += mean[0]
+
+		Xt = super(SVDPipeline, self).transform(X)
 		if self.whiten:
-			Xt /= np.sqrt(self.steps[1][1].explained_variance_)
-		
+			return Xt / np.sqrt(self['svd'].explained_variance_)
 		return Xt
 
 	def inverse_transform(self, Xt, keep=None):
 		if keep is not None:
-			X = np.zeros([Xt.shape[0], self.n_components_])
-			X[:, keep] = Xt
+			X = np.zeros([Xt.shape[0], self['svd'].n_components])
+			if Xt.shape[-1] == keep.shape[0]:
+				X[:, keep] = Xt[:, keep]
+			else:
+				X[:, keep] = Xt
 			Xt = X
 		
 		if self.whiten:
-			X = Xt * np.sqrt(self.steps[1][1].explained_variance_)
-			X = super(SVDPipeline, self).inverse_transform(X)
+			factor = np.sqrt(self['svd'].explained_variance_)
+			return super(SVDPipeline, self).inverse_transform(Xt * factor)
 		else:
-			X = super(SVDPipeline, self).inverse_transform(Xt)
-		X = X.reshape([X.shape[0], *self.data_shape_])
-		return X
+			return super(SVDPipeline, self).inverse_transform(Xt)
+			
 
 	def score(self, X, metric=residual, multioutput='raw_values'):
 		y = self.inverse_transform(self.transform(X))
-		if self.crop > 0:
-			X = X[..., self.crop:-self.crop, self.crop:-self.crop]
+
+		#Only score in the masked regions
+		X = X[..., self['masker'].mask]
+		y = y[..., self['masker'].mask]
 
 		if metric == residual:
 			score = residual(X, y)
@@ -114,8 +188,8 @@ class SVDPipeline(Pipeline):
 		else:
 			score = metric(X, y, multioutput=multioutput)
 			return score
-
 		
+from torchvision.transforms import Compose
 def build_decomposition_model(dataset, model_type=SVDPipeline, tmin=0, tmax=60, **model_kwargs):
 	'''
 	Learn a decomposition model on an AtlasDataset object
@@ -136,6 +210,14 @@ def build_decomposition_model(dataset, model_type=SVDPipeline, tmin=0, tmax=60, 
 		h, w = e_data.shape[-2:]
 		y0.append(e_data.reshape([t, -1, h, w]))
 	y0 = np.concatenate(y0, axis=0)
+
+	if isinstance(dataset.transform, Compose) and isinstance (dataset.transform.transforms[1], Smooth2D):
+		sigma = dataset.transform.transforms[1].sigma
+		y0 = np.stack([
+			np.stack([
+				gaussian_filter(y0[t, c], sigma=sigma) \
+				for c in range(y0.shape[1])]) \
+			for t in range(y0.shape[0])])
 
 	model = model_type(whiten=True, **model_kwargs)
 
@@ -160,14 +242,16 @@ def build_decomposition_model(dataset, model_type=SVDPipeline, tmin=0, tmax=60, 
 def get_decomposition_results(dataset, 
 							  overwrite=False,
 							  model_type=SVDPipeline,
+							  model_name=None,
 							  **model_kwargs):
 	'''
 	Get results on a dataset, loading from file if it already exists
 	Create new model and save it if none is found on that folder
 	'''
 	base = dataset.filename[:-2]
-	model_name = model_type.__name__
-	path = os.path.join(dataset.path, '%s_%s' % (base, model_name))
+	if model_name is None:
+		model_name = model_type.__name__
+	path = os.path.join(dataset.path, 'decomposition_models', '%s_%s' % (base, model_name))
 	if not overwrite and os.path.exists(path+'.pkl'):
 		print('Found SVDPipeline for this dataset!')
 		model = pk.load(open(path+'.pkl', 'rb'))
@@ -277,14 +361,11 @@ def decompose_trajectory(x, x_model, zero_mean=True):
 		xi -= np.mean(xi, axis=0, keepdims=True)
 	return xi
 
-def get_decomposition_model(data, key, library, model_type=SVDPipeline):
+def get_decomposition_model(data, key, model_name):
 	'''
 	Collect a decomposition model given an h5py dataset
 	'''
-	lib_key = library[:library.index('library')]
 	path = os.path.dirname(data['links'].get(key, getlink=True).filename)
-	if lib_key == 'symmetric_':
-		lib_key = 'tensor_'
-	model_name = os.path.join(path, lib_key+'%s.pkl' % model_type.__name__)
+	model_name = os.path.join(path, 'decomposition_models', model_name)
 	return pk.load(open(model_name, 'rb'))
 

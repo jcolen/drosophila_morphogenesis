@@ -3,11 +3,24 @@ import numpy as np
 import pandas as pd
 import torch
 
+from scipy.ndimage import gaussian_filter
 from tqdm import tqdm
 
 class Reshape2DField(object):
 	def __call__(self, sample):
 		sample['value'] = sample['value'].reshape([-1, *sample['value'].shape[-2:]])
+		return sample
+
+class Smooth2D(object):
+	def __init__(self, sigma=3):
+		self.sigma = sigma
+
+	def __call__(self, sample):
+		'''
+		sample['value'] is a [C, Y, X] field
+		'''
+		sample['value'] = np.stack([gaussian_filter(sample['value'][c], sigma=self.sigma) \
+			for c in range(sample['value'].shape[0])], axis=0)
 		return sample
 
 class ToTensor(object):

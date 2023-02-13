@@ -14,6 +14,7 @@ def residual(u0, v0):
 	'''
 	u = u0.reshape([u0.shape[0], -1, *u0.shape[-2:]])
 	v = v0.reshape([v0.shape[0], -1, *v0.shape[-2:]])
+
 	umag = np.linalg.norm(u, axis=-3)												  
 	vmag = np.linalg.norm(v, axis=-3)												  
 
@@ -48,6 +49,7 @@ def plot_tensor2D(ax, f0, skip=20, both=False, linecolor='white', linewidth=0.00
 	Y = Y.flatten()
 	
 	f = f.reshape([2, 2, *f.shape[-2:]])
+	f = np.nan_to_num(f)
 	#Ensure we're using deviatoric part
 	trf = np.einsum('kkyx->yx', f)
 	if np.mean(trf) != 0:
