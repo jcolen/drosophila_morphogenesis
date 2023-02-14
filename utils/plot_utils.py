@@ -25,6 +25,19 @@ def residual(u0, v0):
 	res /= 2 * vavg**2 * uavg**2														
 	return res 
 
+def mean_norm_residual(input, target):
+	'''
+	Mean-squared error normalized by magnitude of target
+	'''
+	u = input.reshape([input.shape[0], -1, *input.shape[-2:]])
+	v = target.reshape([target.shape[0], -1, *target.shape[-2:]])
+
+	res = np.power(u - v, 2).sum(axis=-3)
+	mean = np.linalg.norm(v, axis=-3)
+	res /= mean**2
+
+	return res
+
 
 '''
 2D plotting

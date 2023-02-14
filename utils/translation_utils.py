@@ -13,6 +13,7 @@ from tqdm import tqdm
 from math import ceil
 import h5py
 import pysindy as ps
+from sindy.fly_sindy import FlySINDy
 
 def fill_group_info(data, embryoID, libraries, prgs):
 	'''
@@ -222,29 +223,17 @@ def decompose_library(data,
 		ds[:] = dot_cpt
 		ds.attrs.update(X_dot[key].attrs)
 
-def collect_decomposed_data(h5f, key, tmin, tmax, keep, material_derivative=True):
+def collect_decomposed_data(h5f, key, tmin, tmax, material_derivative=True):
 	'''
 	Collect the PCA data from a	given h5f library and return X, U, X_dot, and the relevant variable names
 	'''
 	t_X = h5f['t'][()].astype(int)
-	
-	feature_names = list(h5f['X_cpt'][key].attrs['feature_names'])
-
-	x_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
-
-	if 'U_cpt' in h5f:
-		t_U = h5f['U_cpt'].attrs['t']
-		control_names = list(h5f['U_cpt'][key].attrs['feature_names'])
-		u_mask = np.logical_and(t_X >= np.min(t_U), t_X <= np.max(t_U))
-		t_mask = np.logical_and(x_mask, u_mask)
-	else:
-		t_mask = x_mask
-
-
+	t_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
 	times = t_X[t_mask]
 
-	X = h5f['X_cpt'][key][t_mask, ...][..., keep, :][()]
-	X_dot = h5f['X_dot_cpt'][key][t_mask, ...][..., keep, :][()]
+	feature_names = list(h5f['X_cpt'][key].attrs['feature_names'])
+	X = h5f['X_cpt'][key][t_mask, ...]
+	X_dot = h5f['X_dot_cpt'][key][t_mask, ...]
 
 	if material_derivative:
 		adv = 'v dot grad %s' % key
@@ -268,11 +257,20 @@ def collect_decomposed_data(h5f, key, tmin, tmax, keep, material_derivative=True
 		X = np.delete(X, loc, axis=-1)
 		feature_names.remove(a)
 
+	#If we have control fields, add them in
 	if 'U_cpt' in h5f:
+		t_U = h5f['U_cpt'].attrs['t']
+		control_names = list(h5f['U_cpt'][key].attrs['feature_names'])
+		x_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
+		u_mask = np.logical_and(t_X >= np.min(t_U), t_X <= np.max(t_U))
+		t_mask = np.logical_and(x_mask, u_mask)
+		X = X[t_mask, ...]
+		X_dot = X_dot[t_mask, ...]
+
 		x_mask = np.logical_and(t_U >= np.min(t_X), t_U <= np.max(t_X))
 		u_mask = np.logical_and(t_U >= tmin, t_U <= tmax)
 		t_mask = np.logical_and(x_mask, u_mask)
-		U = h5f['U_cpt'][key][t_mask, ...][..., keep, :][()]
+		U = h5f['U_cpt'][key][t_mask, ...]
 
 		feature_names = feature_names + control_names
 		X = np.concatenate([X, U], axis=-1)
@@ -284,6 +282,7 @@ def fit_sindy_model(h5f, key, tmin, tmax, keep,
 					alpha=1e-1, 
 					n_models=5,
 					n_candidates_to_drop=5,
+					n_subset=None,
 					scale_units=False, 
 					material_derivative=False):
 	'''
@@ -293,25 +292,31 @@ def fit_sindy_model(h5f, key, tmin, tmax, keep,
 	X, X_dot = [], []
 	eIds = list(h5f.keys())
 	for eId in eIds:
-		x, x_dot, feature_names = collect_decomposed_data(
-			h5f[eId], 
-			key, 
-			tmin,
-			tmax,
-			keep,
-			material_derivative)
+		x, x_dot, feature_names = collect_decomposed_data(h5f[eId], key, tmin, tmax, material_derivative)
 		X.append(x)
 		X_dot.append(x_dot)
+
+	#if len(X) > 1:
+	#	X, _, X_dot, _ = train_test_split(X, X_dot, test_size=0.33)
+
+	X = np.concatenate(X, axis=0)[:, keep]
+	X_dot = np.concatenate(X_dot, axis=0)[:, keep]
 
 	optimizer = ps.STLSQ(threshold=threshold, alpha=alpha, normalize_columns=scale_units)
 	if n_models > 1:
 		bagging = True
+		if n_candidates_to_drop == 0:
+			n_candidates_to_drop = None
+		if n_subset is None:
+			n_subset = X.shape[0]
+
 		n_candidates_to_drop = None if n_candidates_to_drop == 0 else n_candidates_to_drop
 		optimizer = ps.EnsembleOptimizer(
 			opt=optimizer,
 			bagging=True,
 			library_ensemble=n_candidates_to_drop is not None,
 			n_models=n_models,
+			n_subset=n_subset,
 			n_candidates_to_drop=n_candidates_to_drop)
 
 	sindy = ps.SINDy(
@@ -320,26 +325,170 @@ def fit_sindy_model(h5f, key, tmin, tmax, keep,
 		feature_names=feature_names,
 	)
 
-	if len(X) > 1:
-		X_train, X_test, X_dot_train, X_dot_test = train_test_split(X, X_dot, test_size=0.33)
-	else:
-		X_train = X
-		X_dot_train = X_dot
+	sindy.fit(x=X, x_dot=X_dot)
+	sindy.material_derivative_ = material_derivative
+	sindy.print(lhs=['D_t %s ' % key])
+	return sindy
 
-	X_train = np.concatenate(X_train, axis=0)
-	X_dot_train = np.concatenate(X_dot_train, axis=0)
+def fit_new_sindy_model(h5f, key, tmin, tmax,
+					    component_weight=None,
+					    threshold=1e-1, 
+					    alpha=1e-1, 
+					    n_models=5,
+					    n_candidates_to_drop=5,
+					    n_subset=None,
+					    material_derivative=False, 
+						**kwargs):
+	'''
+	Fit a SINDy model on data filled by a given key in an h5py file
+	Fit range goes from tmin to tmax, and is applied on a set keep of PCA components
+	'''
+	X, X_dot = [], []
+	eIds = list(h5f.keys())
+	for eId in eIds:
+		x, x_dot, feature_names = collect_decomposed_data(h5f[eId], key, tmin, tmax, material_derivative)
+		X.append(x)
+		X_dot.append(x_dot)
+
+	#if len(X) > 1:
+	#	X, _, X_dot, _ = train_test_split(X, X_dot, test_size=0.33)
+
+	X = np.concatenate(X, axis=0)
+	X_dot = np.concatenate(X_dot, axis=0)
+
+	optimizer = ps.STLSQ(threshold=threshold, alpha=alpha, normalize_columns=True)
+	if n_models > 1:
+		bagging = True
+		if n_candidates_to_drop == 0:
+			n_candidates_to_drop = None
+		if n_subset is None:
+			n_subset = X.shape[0]
+
+		n_candidates_to_drop = None if n_candidates_to_drop == 0 else n_candidates_to_drop
+		optimizer = ps.EnsembleOptimizer(
+			opt=optimizer,
+			bagging=True,
+			library_ensemble=n_candidates_to_drop is not None,
+			n_models=n_models,
+			n_subset=n_subset,
+			n_candidates_to_drop=n_candidates_to_drop)
+	sindy = FlySINDy(
+		optimizer=optimizer,
+		feature_names=feature_names,
+	)
+	
+	#HARDCODED overweighting of component 0
+	'''
+	N = 5
+	X = np.concatenate([
+		np.repeat(X[:, 0:1], N, axis=1),
+		X[:, 1:]], axis=1)
+	X_dot = np.concatenate([
+		np.repeat(X_dot[:, 0:1], N, axis=1),
+		X_dot[:, 1:]], axis=1)
+	component_weight = np.concatenate([
+		np.repeat(component_weight[0:1], N),
+		component_weight[1:]])
+	print(X.shape, component_weight.shape)
+	'''
+
+	sindy.fit(x=X, x_dot=X_dot, component_weight=component_weight)
+	sindy.material_derivative_ = material_derivative
+	sindy.print(lhs=['D_t %s ' % key])
+	return sindy
+
+def fit_overleaf_model(h5f, key, tmin, tmax, keep, threshold=0, alpha=1e-1, n_models=5, n_subset=30, **kwargs):
+	X, X_dot = [], []
+	eIds = list(h5f.keys())
+	if key == 'c':
+		feature_names = [
+			'Dorsal_Source', 
+			'c', 
+			'c Tr(E)',
+			#'c Tr(m_ij)',
+			#'c^2', 
+			#'c^2 Tr(m_ij)',
+			'v dot grad c', 
+		]
+	if key == 'm_ij':
+		feature_names = [
+			'v dot grad m_ij',
+			'[O, m_ij]', 
+			'm_ij',
+			'{m_ij, E_passive}',
+			'c {m_ij, E_passive}',
+			#'Static_DV',
+			'c Static_DV',
+			'Static_DV Tr(m_ij)',
+			'c m_ij',
+			'c m_ij Tr(m_ij)',
+		]
+
+
+	for eId in eIds:
+		data = h5f[eId]
+		t_X = data['t'][()].astype(int)
+		t_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
+
+		x_eId = data['X_cpt'][key]
+		base_names = list(x_eId.attrs['feature_names'])
+		x = []
+
+		for i, fn in enumerate(feature_names):
+			loc = base_names.index(fn)
+			x.append(x_eId[..., loc][()])
+		x = np.stack(x, axis=-1)
 		
-	sindy.fit(x=X_train, x_dot=X_dot_train)
+		X.append(x[t_mask, ...])
+		X_dot.append(data['X_dot_cpt'][key][t_mask, ...])
+	
+	if len(X) > 1:
+		X, _, X_dot, _ = train_test_split(X, X_dot, test_size=0.33)
 
-	if material_derivative:
-		sindy.print(lhs=['D_t %s ' % key])
-		sindy.material_derivative_ = True
-	else:
-		sindy.print(lhs=['d_t %s' % key])
-		sindy.material_derivative_ = False
+	X = np.concatenate(X, axis=0)[:, keep]
+	X_dot = np.concatenate(X_dot, axis=0)[:, keep]
+
+	#HARDCODED overweighting of component 0
+	N = 2
+	X = np.concatenate([
+		np.repeat(X[:, 0:1], N, axis=1),
+		X[:, 1:]], axis=1)
+	X_dot = np.concatenate([
+		np.repeat(X_dot[:, 0:1], N, axis=1),
+		X_dot[:, 1:]], axis=1)
+
+	#Material derivative terms
+	for feat in ['v dot grad %s' % key, '[O, %s]' % key]:
+		if feat in feature_names:
+			loc = feature_names.index(feat)
+			X_dot += X[..., loc:loc+1]
+			X = np.delete(X, loc, axis=-1)
+			feature_names.remove(feat)
+	
+	optimizer = ps.STLSQ(threshold=threshold, alpha=alpha, normalize_columns=True)
+	if n_models > 1:
+		optimizer = ps.EnsembleOptimizer(
+			opt=optimizer,
+			bagging=True,
+			library_ensemble=False,
+			n_models=n_models,
+			n_subset=n_subset,
+			n_candidates_to_drop=None)
+	
+	sindy = ps.SINDy(
+		feature_library=ps.IdentityLibrary(),
+		optimizer=optimizer,
+		feature_names=feature_names,
+	)
+
+
+	sindy.fit(x=X, x_dot=X_dot)
+	sindy.material_derivative_ = True
+	sindy.print(lhs=['D_t %s ' % key])
 	return sindy
 	
-def evolve_rk4_grid(x0, xdot, model, keep, t, tmin=0, tmax=10, step_size=0.2):
+	
+def evolve_rk4_grid(x0, x_dot, model, keep, tmin=0, tmax=10, step_size=0.2):
 	'''
 	RK4 evolution of a spatial field given its derivatives
 	x0 - initial condition
@@ -357,19 +506,17 @@ def evolve_rk4_grid(x0, xdot, model, keep, t, tmin=0, tmax=10, step_size=0.2):
 	x = np.zeros([len(tt), *x0.shape])
 	x[0] = x0
 			
-	interp = interp1d(t, xdot, axis=0)
-	#for ii in tqdm(range(len(tt)-1)):
 	for ii in range(len(tt)-1):
-		k1 = interp(tt[ii])
-		k2 = interp(tt[ii] + 0.5 * step_size)
-		k3 = interp(tt[ii] + 0.5 * step_size)
-		k4 = interp(tt[ii] + step_size)
+		k1 = x_dot(tt[ii])
+		k2 = x_dot(tt[ii] + 0.5 * step_size)
+		k3 = x_dot(tt[ii] + 0.5 * step_size)
+		k4 = x_dot(tt[ii] + step_size)
 				
 		xtt = x[ii] + (k1 + 2 * k2 + 2 * k3 + k4) * step_size / 6
 		
 		#Project onto PCA components
 		xtt = xtt.reshape([1, -1])
-		xtt = model.inverse_transform(model.transform(xtt)[:, keep], keep)
+		xtt = model.inverse_transform(model.transform(xtt), keep)
 		x[ii+1] = xtt.reshape(x[ii+1].shape)
 
 	return x, tt
@@ -419,8 +566,9 @@ def sindy_predict(data, key, sindy, model, keep, tmin=None, tmax=None):
 			t_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
 			x_dot_pred -= data['X_raw'][cor][t_mask, ...]
 	
-	x_pred, times = evolve_rk4_grid(ic, x_dot_pred, model, keep,
-									t=time, tmin=tmin, tmax=tmax, step_size=0.2)
+	x_dot_int = interp1d(time, x_dot_pred, axis=0)
+	x_pred, times = evolve_rk4_grid(ic, x_dot_int, model, keep,
+									tmin=tmin, tmax=tmax, step_size=0.2)
 
 	return x_pred, x_int, times
 
@@ -447,8 +595,9 @@ def sindy_predictions_plot(x_pred, x_int, x_model, times, keep, data, plot_fn=pl
 	vmin = x_norm.min()
 	vmax = x_norm.max()
 
-	res = residual(x_pred, x_true)
+	res = mean_norm_residual(x_pred, x_true)
 	error = res.mean(axis=(-2, -1))
+	error = res[..., mask].mean(axis=-1)
 
 	x_true[..., ~mask] = np.nan
 	x_pred[..., ~mask] = np.nan
@@ -476,7 +625,7 @@ def sindy_predictions_plot(x_pred, x_int, x_model, times, keep, data, plot_fn=pl
 		ii = i*step + offset
 		plot_fn(ax[0, i], x_pred[ii], vmin=vmin, vmax=vmax)
 		plot_fn(ax[1, i], x_true[ii], vmin=vmin, vmax=vmax)
-		color_2D(ax[2, i], res[ii], vmin=0, vmax=0.05, cmap='jet')
+		color_2D(ax[2, i], res[ii], vmin=0, vmax=1, cmap='jet')
 
 		axis.axvline(times[ii], zorder=-1, color='black', linestyle='--')
 
