@@ -136,7 +136,7 @@ class SVDPipeline(Pipeline):
 				self.steps[i][1].fit(y0)
 			else:
 				self.steps[i][1].fit(X, y0)
-
+			
 			X = self.steps[i][1].transform(X)
 			y0 = self.steps[i][1].transform(y0)
 			
@@ -157,6 +157,11 @@ class SVDPipeline(Pipeline):
 		return Xt
 
 	def inverse_transform(self, Xt, keep=None):
+		if self.whiten:
+			factor = np.sqrt(self['svd'].explained_variance_)
+		else:
+			factor = np.ones_like(self['svd'].explained_variance_)
+
 		if keep is not None:
 			X = np.zeros([Xt.shape[0], self['svd'].n_components])
 			if Xt.shape[-1] == keep.shape[0]:
@@ -164,13 +169,8 @@ class SVDPipeline(Pipeline):
 			else:
 				X[:, keep] = Xt
 			Xt = X
-		
-		if self.whiten:
-			factor = np.sqrt(self['svd'].explained_variance_)
-			return super(SVDPipeline, self).inverse_transform(Xt * factor)
-		else:
-			return super(SVDPipeline, self).inverse_transform(Xt)
-			
+
+		return super(SVDPipeline, self).inverse_transform(Xt * factor)
 
 	def score(self, X, metric=residual, multioutput='raw_values'):
 		y = self.inverse_transform(self.transform(X))
@@ -190,7 +190,7 @@ class SVDPipeline(Pipeline):
 			return score
 		
 from torchvision.transforms import Compose
-def build_decomposition_model(dataset, model_type=SVDPipeline, tmin=0, tmax=60, **model_kwargs):
+def build_decomposition_model(dataset, model_type=SVDPipeline, tmin=-15, tmax=45, **model_kwargs):
 	'''
 	Learn a decomposition model on an AtlasDataset object
 	'''
@@ -227,7 +227,7 @@ def build_decomposition_model(dataset, model_type=SVDPipeline, tmin=0, tmax=60, 
 	if dataset.filename == 'velocity2D':
 		scaler_train = np.zeros([1, *train.shape[-3:]])
 	else:
-		scaler_train = y0[df[(train_mask) & (np.abs(df.time - 5) < 10)].index]
+		scaler_train = y0[df[(train_mask) & (df.time < 0)].index]
 	
 	model.fit(train, scaler_train)
 
@@ -251,6 +251,8 @@ def get_decomposition_results(dataset,
 	base = dataset.filename[:-2]
 	if model_name is None:
 		model_name = model_type.__name__
+	if not os.path.exists(os.path.join(dataset.path, 'decomposition_models')):
+		os.mkdir(os.path.join(dataset.path, 'decomposition_models'))
 	path = os.path.join(dataset.path, 'decomposition_models', '%s_%s' % (base, model_name))
 	if not overwrite and os.path.exists(path+'.pkl'):
 		print('Found SVDPipeline for this dataset!')

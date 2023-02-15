@@ -37,27 +37,31 @@ def project_embryo_data(folder, embryoID, base, threshold=0.95, model_type=SVDPi
 
 	return model.inverse_transform(params, keep)
 
-def get_derivative_tensors(x, order=2):
+def get_derivative_tensors(x, YY, XX, order=2):
 	'''
 	Return derivative tensors up to specified order
 	Return shape is [..., Y, X, I, J, K, ...]
 		Assumes the last two axes of x are spatial (Y, X)
 		Places the derivative index axes at the end
-	Here we use the coordinates from vitelli_sharing/pixel_coordinates.mat
-	Thus, we compute spatial derivatives in units of PIV scale pixels NOT microns
-	The PIV image size is 0.4 x [original dimensions], so each PIV pixel is 
-		equivalent to 2.5 x original pixel size 
-	The original units are 1pix=0.2619 um, so 1 PIV pix = 0.65479 um
+
+	We now pass coordinates from the folder which are in units of microns
+
+	Deprecated note:
+		Here we use the coordinates from vitelli_sharing/pixel_coordinates.mat
+		Thus, we compute spatial derivatives in units of PIV scale pixels NOT microns
+		The PIV image size is 0.4 x [original dimensions], so each PIV pixel is 
+			equivalent to 2.5 x original pixel size 
+		The original units are 1pix=0.2619 um, so 1 PIV pix = 0.65479 um
 	'''
-	geometry = loadmat('/project/vitelli/jonathan/REDO_fruitfly/flydrive.synology.me/minimalData/vitelli_sharing/pixel_coordinates.mat')
-	XX, YY = geometry['XX'][0, :], geometry['YY'][:, 0]
+	#geometry = loadmat('/project/vitelli/jonathan/REDO_fruitfly/flydrive.synology.me/minimalData/vitelli_sharing/pixel_coordinates.mat')
+	#XX, YY = geometry['XX'][0, :], geometry['YY'][:, 0]
 
 	# Change units of coordinates to microns instead of pixels
-	original_pixel_size = 0.2619 #microns
-	piv_rescale_factor = 0.4
-	piv_pixel_size = original_pixel_size / piv_rescale_factor
-	XX *= piv_pixel_size
-	YY *= piv_pixel_size
+	#original_pixel_size = 0.2619 #microns
+	#piv_rescale_factor = 0.4
+	#piv_pixel_size = original_pixel_size / piv_rescale_factor
+	#XX *= piv_pixel_size
+	#YY *= piv_pixel_size
 
 	diffY = ps.SmoothedFiniteDifference(d=1, axis=-2)
 	diffX = ps.SmoothedFiniteDifference(d=1, axis=-1)
@@ -71,14 +75,14 @@ def get_derivative_tensors(x, order=2):
 		diffY.smoother_kws['axis'] = -(2+i)
 		diffX.smoother_kws['axis'] = -(1+i)
 		xi = np.stack([
-			diffY._differentiate(xi, YY),
-			diffX._differentiate(xi, XX),
+			diffY._differentiate(xi, YY[:, 0]),
+			diffX._differentiate(xi, XX[0, :]),
 		], axis=-1)
 		d.append(xi.copy())
 
 	return d
 
-def validate_key_and_derivatives(x, group, key, order=2):
+def validate_key_and_derivatives(x, group, YY, XX, key, order=2):
 	'''
 	Ensure that key and its derivatives up to specified order are present in the dataset
 	Compute the derivatives if they are not
@@ -97,12 +101,20 @@ def validate_key_and_derivatives(x, group, key, order=2):
 	
 	if flag:
 		print('Computing derivatives!')
-		dx = get_derivative_tensors(x, order=order)
+		dx = get_derivative_tensors(x, YY, XX, order=order)
 		for i in range(order):
 			name = 'D%d %s' % (i+1, key)
 			if name in group:
 				del group[name]
 			group.create_dataset(name, data=dx[i])
+
+		if 'AP_coordinates' in group:
+			del group['AP_coordinates']
+		group.create_dataset('AP_coordinates', data=XX)
+		
+		if 'DV_coordinates' in group:
+			del group['DV_coordinates']
+		group.create_dataset('DV_coordinates', data=YY)
 			
 	return dx
 

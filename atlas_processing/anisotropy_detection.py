@@ -9,7 +9,10 @@ from scipy.io import loadmat
 
 from scipy import ndimage
 from skimage import transform
-import atlas_processing.windowed_radon as wr
+try:
+	import atlas_processing.windowed_radon as wr
+except:
+	import windowed_radon as wr
 
 
 from skimage.morphology import erosion, dilation, disk

@@ -22,8 +22,8 @@ from scipy.ndimage import gaussian_filter
 Generate terms from scalar fields
 '''
 
-def s2s_terms(x, group, key='Rnt'):
-	d1_x, d2_x = validate_key_and_derivatives(x, group, key, order=2)
+def s2s_terms(x, group, YY, XX, key='Rnt'):
+	d1_x, d2_x = validate_key_and_derivatives(x, group, YY, XX, key, order=2)
 	lib = {}
 	attrs = {}
 
@@ -50,11 +50,11 @@ def s2s_terms(x, group, key='Rnt'):
 	write_library_to_dataset(lib, group.require_group('scalar_library'), attrs)
 
 
-def s2t_terms(x, group, key='Rnt'):
+def s2t_terms(x, group, YY, XX, key='Rnt'):
 	'''
 	Compute terms mapping scalars to symmetric tensors
 	'''
-	d1_x, d2_x = validate_key_and_derivatives(x, group, key, order=2)
+	d1_x, d2_x = validate_key_and_derivatives(x, group, YY, XX, key, order=2)
 	lib = {}
 	attrs = {}
 	
@@ -78,6 +78,7 @@ def build_scalar_library(folder, embryoID, group, key='c', base='cyt',
 	try:
 		S = project_embryo_data(folder, embryoID, base, threshold)
 	except Exception as e:
+		embryoID = str(embryoID)
 		print('Could not load projected components for', embryoID, e)
 		print('Loading %s2D.npy' % base)
 		S = np.load(os.path.join(folder, embryoID, base+'2D.npy'), mmap_mode='r')
@@ -87,5 +88,8 @@ def build_scalar_library(folder, embryoID, group, key='c', base='cyt',
 		S = np.stack([gaussian_filter(S[i], sigma=sigma) for i in range(S.shape[0])])
 
 	S = S.reshape([S.shape[0], *S.shape[-2:]])
-	s2s_terms(S, group, key=key)
+	embryoID = str(embryoID)
+	dv_coordinates = np.load(os.path.join(folder, embryoID, 'DV_coordinates.npy'), mmap_mode='r')
+	ap_coordinates = np.load(os.path.join(folder, embryoID, 'AP_coordinates.npy'), mmap_mode='r')
+	s2s_terms(S, group, dv_coordinates, ap_coordinates, key=key)
 	#s2t_terms(S, group, key=key)

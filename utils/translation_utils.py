@@ -223,139 +223,125 @@ def decompose_library(data,
 		ds[:] = dot_cpt
 		ds.attrs.update(X_dot[key].attrs)
 
-def collect_decomposed_data(h5f, key, tmin, tmax, material_derivative=True):
+def collect_overleaf_data(h5f, key, tmin, tmax):
 	'''
-	Collect the PCA data from a	given h5f library and return X, U, X_dot, and the relevant variable names
+	Collect only those terms which correspond to the proposed Overleaf equations
 	'''
+	if key == 'c':
+		feature_names = [
+			'Dorsal_Source', 
+			'c', 
+			'c Tr(E)',
+			#'c Tr(m_ij)',
+			#'c^2', 
+			#'c^2 Tr(m_ij)',
+			'v dot grad c', 
+		]
+	elif key == 'm_ij':
+		feature_names = [
+			'v dot grad m_ij',
+			'[O, m_ij]', 
+			'm_ij',
+			'{m_ij, E_passive}',
+			'c {m_ij, E_passive}',
+			#'Static_DV',
+			'c Static_DV',
+			'Static_DV Tr(m_ij)',
+			'c m_ij',
+			'c m_ij Tr(m_ij)',
+		]
+	else:
+		raise RuntimeError('Overleaf model not proposed for %s' % key)
+
+	return collect_decomposed_data(h5f, key, tmin, tmax, feature_names)
+
+def collect_decomposed_data(h5f, key, tmin, tmax, feature_names=None):
+	'''
+	Collect the PCA data from a given h5f library and return X, X_dot, and the feature names
+	'''
+	if feature_names is None:
+		feature_names = list(h5f['X_cpt'][key].attrs['feature_names'])
+	
 	t_X = h5f['t'][()].astype(int)
 	t_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
-	times = t_X[t_mask]
 
-	feature_names = list(h5f['X_cpt'][key].attrs['feature_names'])
-	X = h5f['X_cpt'][key][t_mask, ...]
+	data = h5f['X_cpt'][key]
+
+	base_names = list(data.attrs['feature_names'])
+	X = []
+	for feature in feature_names:
+		loc = base_names.index(feature)
+		X.append(data[..., loc])
+
+	X = np.stack(X, axis=-1)[t_mask, ...]
 	X_dot = h5f['X_dot_cpt'][key][t_mask, ...]
 
-	if material_derivative:
-		adv = 'v dot grad %s' % key
-		if adv in feature_names:
-			loc = feature_names.index(adv)
-			X_dot += X[..., loc:loc+1]
-			X = np.delete(X, loc, axis=-1)
-			feature_names.remove(adv)
-
-		cor = '[O, %s]' % key
-		if cor in feature_names:
-			loc = feature_names.index(cor)
-			X_dot += X[..., loc:loc+1]
-			X = np.delete(X, loc, axis=-1)
-			feature_names.remove(cor)
-
-	#Eliminate other advection terms because they involve gradients of proteins
-	adv = [feature for feature in feature_names if 'v dot grad' in feature]# or 'E_active' in feature]
-	for a in adv:
-		loc = feature_names.index(a)
-		X = np.delete(X, loc, axis=-1)
-		feature_names.remove(a)
-
-	#If we have control fields, add them in
-	if 'U_cpt' in h5f:
-		t_U = h5f['U_cpt'].attrs['t']
-		control_names = list(h5f['U_cpt'][key].attrs['feature_names'])
-		x_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
-		u_mask = np.logical_and(t_X >= np.min(t_U), t_X <= np.max(t_U))
-		t_mask = np.logical_and(x_mask, u_mask)
-		X = X[t_mask, ...]
-		X_dot = X_dot[t_mask, ...]
-
-		x_mask = np.logical_and(t_U >= np.min(t_X), t_U <= np.max(t_X))
-		u_mask = np.logical_and(t_U >= tmin, t_U <= tmax)
-		t_mask = np.logical_and(x_mask, u_mask)
-		U = h5f['U_cpt'][key][t_mask, ...]
-
-		feature_names = feature_names + control_names
-		X = np.concatenate([X, U], axis=-1)
-	
 	return X, X_dot, feature_names
 
-def fit_sindy_model(h5f, key, tmin, tmax, keep, 
+def repeat_components(x, N):
+	'''
+	Repeat PCA components during fitting procedure to over-weight them
+	'''
+	N[N == 0] = 1 #Avoid eliminating components
+	X = []
+	for i in range(x.shape[1]):
+		X.append(np.repeat(x[:, i:i+1], N[i], axis=1))
+	return np.concatenate(X, axis=1)
+
+def fit_sindy_model(h5f, key, tmin, tmax,
+					component_weight=None,
 					threshold=1e-1, 
 					alpha=1e-1, 
 					n_models=5,
 					n_candidates_to_drop=5,
 					n_subset=None,
-					scale_units=False, 
-					material_derivative=False):
+					material_derivative=False, 
+					component_repeat=None,
+					overleaf_only=False,
+					**kwargs):
 	'''
 	Fit a SINDy model on data filled by a given key in an h5py file
 	Fit range goes from tmin to tmax, and is applied on a set keep of PCA components
 	'''
+	if overleaf_only:
+		print('Using only overleaf-allowed terms')
+		collect_function = collect_overleaf_data
+	else:
+		collect_function = collect_decomposed_data
+
+	#Collect data
+	print('Collecting data')
 	X, X_dot = [], []
-	eIds = list(h5f.keys())
-	for eId in eIds:
-		x, x_dot, feature_names = collect_decomposed_data(h5f[eId], key, tmin, tmax, material_derivative)
+	for eId in list(h5f.keys()):
+		x, x_dot, feature_names = collect_function(h5f[eId], key, tmin, tmax)
 		X.append(x)
 		X_dot.append(x_dot)
-
-	#if len(X) > 1:
-	#	X, _, X_dot, _ = train_test_split(X, X_dot, test_size=0.33)
-
-	X = np.concatenate(X, axis=0)[:, keep]
-	X_dot = np.concatenate(X_dot, axis=0)[:, keep]
-
-	optimizer = ps.STLSQ(threshold=threshold, alpha=alpha, normalize_columns=scale_units)
-	if n_models > 1:
-		bagging = True
-		if n_candidates_to_drop == 0:
-			n_candidates_to_drop = None
-		if n_subset is None:
-			n_subset = X.shape[0]
-
-		n_candidates_to_drop = None if n_candidates_to_drop == 0 else n_candidates_to_drop
-		optimizer = ps.EnsembleOptimizer(
-			opt=optimizer,
-			bagging=True,
-			library_ensemble=n_candidates_to_drop is not None,
-			n_models=n_models,
-			n_subset=n_subset,
-			n_candidates_to_drop=n_candidates_to_drop)
-
-	sindy = ps.SINDy(
-		feature_library=ps.IdentityLibrary(),
-		optimizer=optimizer,
-		feature_names=feature_names,
-	)
-
-	sindy.fit(x=X, x_dot=X_dot)
-	sindy.material_derivative_ = material_derivative
-	sindy.print(lhs=['D_t %s ' % key])
-	return sindy
-
-def fit_new_sindy_model(h5f, key, tmin, tmax,
-					    component_weight=None,
-					    threshold=1e-1, 
-					    alpha=1e-1, 
-					    n_models=5,
-					    n_candidates_to_drop=5,
-					    n_subset=None,
-					    material_derivative=False, 
-						**kwargs):
-	'''
-	Fit a SINDy model on data filled by a given key in an h5py file
-	Fit range goes from tmin to tmax, and is applied on a set keep of PCA components
-	'''
-	X, X_dot = [], []
-	eIds = list(h5f.keys())
-	for eId in eIds:
-		x, x_dot, feature_names = collect_decomposed_data(h5f[eId], key, tmin, tmax, material_derivative)
-		X.append(x)
-		X_dot.append(x_dot)
-
-	#if len(X) > 1:
-	#	X, _, X_dot, _ = train_test_split(X, X_dot, test_size=0.33)
-
 	X = np.concatenate(X, axis=0)
 	X_dot = np.concatenate(X_dot, axis=0)
 
+	#Shift material derivative terms to LHS
+	if material_derivative:
+		print('Adding Material Derivative terms to LHS')
+		for feat in ['v dot grad %s' % key, '[O, %s]' % key]:
+			if feat in feature_names:
+				loc = feature_names.index(feat)
+				X_dot += X[..., loc:loc+1]
+				X = np.delete(X, loc, axis=-1)
+				feature_names.remove(feat)
+	
+	#HARDCODED overweighting of component 0
+	if component_repeat is not None:
+		print('Repeating components by this factor %s' % str(component_repeat))
+		assert component_repeat.shape[0] == X.shape[1]
+		X = repeat_components(X, component_repeat)
+		X_dot = repeat_components(X_dot, component_repeat)
+		component_weight = repeat_components(component_weight[None], component_repeat)[0]
+
+	if len(X) > 1:
+		print('Applying train/test split')
+		X, _, X_dot, _ = train_test_split(X, X_dot, test_size=0.33)
+
+	#Build optimizer (with ensembling)
 	optimizer = ps.STLSQ(threshold=threshold, alpha=alpha, normalize_columns=True)
 	if n_models > 1:
 		bagging = True
@@ -377,116 +363,12 @@ def fit_new_sindy_model(h5f, key, tmin, tmax,
 		feature_names=feature_names,
 	)
 	
-	#HARDCODED overweighting of component 0
-	'''
-	N = 5
-	X = np.concatenate([
-		np.repeat(X[:, 0:1], N, axis=1),
-		X[:, 1:]], axis=1)
-	X_dot = np.concatenate([
-		np.repeat(X_dot[:, 0:1], N, axis=1),
-		X_dot[:, 1:]], axis=1)
-	component_weight = np.concatenate([
-		np.repeat(component_weight[0:1], N),
-		component_weight[1:]])
-	print(X.shape, component_weight.shape)
-	'''
-
+	#Fit and print
 	sindy.fit(x=X, x_dot=X_dot, component_weight=component_weight)
 	sindy.material_derivative_ = material_derivative
 	sindy.print(lhs=['D_t %s ' % key])
 	return sindy
 
-def fit_overleaf_model(h5f, key, tmin, tmax, keep, threshold=0, alpha=1e-1, n_models=5, n_subset=30, **kwargs):
-	X, X_dot = [], []
-	eIds = list(h5f.keys())
-	if key == 'c':
-		feature_names = [
-			'Dorsal_Source', 
-			'c', 
-			'c Tr(E)',
-			#'c Tr(m_ij)',
-			#'c^2', 
-			#'c^2 Tr(m_ij)',
-			'v dot grad c', 
-		]
-	if key == 'm_ij':
-		feature_names = [
-			'v dot grad m_ij',
-			'[O, m_ij]', 
-			'm_ij',
-			'{m_ij, E_passive}',
-			'c {m_ij, E_passive}',
-			#'Static_DV',
-			'c Static_DV',
-			'Static_DV Tr(m_ij)',
-			'c m_ij',
-			'c m_ij Tr(m_ij)',
-		]
-
-
-	for eId in eIds:
-		data = h5f[eId]
-		t_X = data['t'][()].astype(int)
-		t_mask = np.logical_and(t_X >= tmin, t_X <= tmax)
-
-		x_eId = data['X_cpt'][key]
-		base_names = list(x_eId.attrs['feature_names'])
-		x = []
-
-		for i, fn in enumerate(feature_names):
-			loc = base_names.index(fn)
-			x.append(x_eId[..., loc][()])
-		x = np.stack(x, axis=-1)
-		
-		X.append(x[t_mask, ...])
-		X_dot.append(data['X_dot_cpt'][key][t_mask, ...])
-	
-	if len(X) > 1:
-		X, _, X_dot, _ = train_test_split(X, X_dot, test_size=0.33)
-
-	X = np.concatenate(X, axis=0)[:, keep]
-	X_dot = np.concatenate(X_dot, axis=0)[:, keep]
-
-	#HARDCODED overweighting of component 0
-	N = 2
-	X = np.concatenate([
-		np.repeat(X[:, 0:1], N, axis=1),
-		X[:, 1:]], axis=1)
-	X_dot = np.concatenate([
-		np.repeat(X_dot[:, 0:1], N, axis=1),
-		X_dot[:, 1:]], axis=1)
-
-	#Material derivative terms
-	for feat in ['v dot grad %s' % key, '[O, %s]' % key]:
-		if feat in feature_names:
-			loc = feature_names.index(feat)
-			X_dot += X[..., loc:loc+1]
-			X = np.delete(X, loc, axis=-1)
-			feature_names.remove(feat)
-	
-	optimizer = ps.STLSQ(threshold=threshold, alpha=alpha, normalize_columns=True)
-	if n_models > 1:
-		optimizer = ps.EnsembleOptimizer(
-			opt=optimizer,
-			bagging=True,
-			library_ensemble=False,
-			n_models=n_models,
-			n_subset=n_subset,
-			n_candidates_to_drop=None)
-	
-	sindy = ps.SINDy(
-		feature_library=ps.IdentityLibrary(),
-		optimizer=optimizer,
-		feature_names=feature_names,
-	)
-
-
-	sindy.fit(x=X, x_dot=X_dot)
-	sindy.material_derivative_ = True
-	sindy.print(lhs=['D_t %s ' % key])
-	return sindy
-	
 	
 def evolve_rk4_grid(x0, x_dot, model, keep, tmin=0, tmax=10, step_size=0.2):
 	'''
@@ -655,17 +537,16 @@ def decomposed_predictions_plot(x_pred, x_int, x_model, times, keep):
 	nrows = ceil(cpt_pred.shape[1] / ncols)
 	fig, ax = plt.subplots(nrows, ncols, 
 						   figsize=(ncols, nrows),
-						   sharey=True, sharex=True, dpi=200)
+						   sharey=False, sharex=True, dpi=200)
 	ax = ax.flatten()
 
 	for i in range(cpt_pred.shape[1]):
 		ax[i].plot(times, cpt_pred[:, i], color='red')
 		ax[i].plot(times, cpt_true[:, i], color='black')
-		ax[i].text(0.98, 0.02, 'Component %d' % i, 
-				   fontsize=6, color='blue',
-				   transform=ax[i].transAxes, va='bottom', ha='right')
-		ax[i].text(0.98, 0.98, 'R2=%g' % r2_score(cpt_true[:, i], cpt_pred[:, i]),
-				   fontsize=6, color='blue',
-				   transform=ax[i].transAxes, va='top', ha='right')
-		ax[i].tick_params(which='both', labelsize=6)
+		ax[i].set_ylabel('Component %d' % i, fontsize=6)
+		ax[i].text(0.02, 0.98, 'R2=%.3g' % r2_score(cpt_true[:, i], cpt_pred[:, i]),
+				   fontsize=5, color='blue',
+				   transform=ax[i].transAxes, va='top', ha='left')
+		ax[i].tick_params(which='both', labelsize=4)
+		ax[i].set_yticks([])
 	plt.tight_layout()

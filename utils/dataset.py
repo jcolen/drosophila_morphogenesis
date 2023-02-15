@@ -28,7 +28,7 @@ class ToTensor(object):
 		sample['value'] = torch.tensor(sample['value'].copy(), dtype=torch.float32)
 		return sample
 
-atlas_dir = '/project/vitelli/jonathan/REDO_fruitfly/src/data'
+atlas_dir = '/project/vitelli/jonathan/REDO_fruitfly/src/Public'
 
 class AtlasDataset(torch.utils.data.Dataset):
 	def __init__(self,
@@ -41,10 +41,18 @@ class AtlasDataset(torch.utils.data.Dataset):
 		self.path = os.path.join(atlas_dir, genotype, label)
 		self.filename = filename
 		self.df = pd.read_csv(os.path.join(atlas_dir, genotype, label, 'dynamic_index.csv'))
+
 		if drop_no_time:
 			self.df = self.df.dropna(axis=0)
 		else:
-			self.df.loc[np.isnan(self.df.time), 'time'] = self.df.loc[np.isnan(self.df.time), 'eIdx']
+			#self.df.loc[np.isnan(self.df.time), 'time'] = self.df.loc[np.isnan(self.df.time), 'eIdx']
+			self.df.time = self.df.eIdx
+
+		if os.path.exists(os.path.join(atlas_dir, genotype, label, 'morphodynamic_offsets.csv')):
+			morpho = pd.read_csv(os.path.join(atlas_dir, genotype, label, 'morphodynamic_offsets.csv'), index_col='embryoID')
+			for eId in self.df.embryoID.unique():
+				self.df.loc[self.df.embryoID == eId, 'time'] -= morpho.loc[eId, 'offset']
+
 
 		self.values = {}
 

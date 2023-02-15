@@ -11,12 +11,12 @@ from utils.derivative_library_utils import *
 '''
 Generate different library terms from vector fields
 '''
-def v2t_terms(u, group, key='v'):
+def v2t_terms(u, group, YY, XX, key='v'):
 	'''
 	The velocity derivative terms we care about are VORTICITY and STRAIN RATE
 	We will decompose them further and couple them with tensors later in the pipeline
 	'''
-	d1_u = validate_key_and_derivatives(u, group, 'v', 1)[0]
+	d1_u = validate_key_and_derivatives(u, group, YY, XX, key, 1)[0]
 
 	lib = {}
 	attrs = {}
@@ -56,6 +56,10 @@ def build_vector_library(folder, embryoID, group, key='v', base='velocity',
 			print('Skipping ', embryoID, e)
 			return
 	else:
+		embryoID = str(embryoID)
 		V = np.load(os.path.join(folder, embryoID, base+'2D.npy'), mmap_mode='r')
-
-	v2t_terms(V, group)
+	
+	embryoID = str(embryoID)
+	dv_coordinates = np.load(os.path.join(folder, embryoID, 'DV_coordinates.npy'), mmap_mode='r')
+	ap_coordinates = np.load(os.path.join(folder, embryoID, 'AP_coordinates.npy'), mmap_mode='r')
+	v2t_terms(V, group, dv_coordinates, ap_coordinates)

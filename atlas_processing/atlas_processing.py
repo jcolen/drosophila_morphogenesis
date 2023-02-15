@@ -13,7 +13,8 @@ from skimage.transform import resize
 from tqdm import tqdm
 from scipy.io import loadmat
 
-basedir = '/project/vitelli/jonathan/REDO_fruitfly/src/data'
+from anisotropy_detection import collect_anisotropy_tensor
+
 
 def convert_matstruct_to_csv(savedir, prefix='dynamic'):
 	data = loadmat(os.path.join(savedir, '%s_queried_sample.mat' % prefix))
@@ -43,46 +44,85 @@ Pulling and reformatting data from Atlas
 '''
 
 from scipy.interpolate import RectBivariateSpline
+from plyfile import PlyData
 
-piv_geometry = loadmat('/project/vitelli/jonathan/REDO_fruitfly/flydrive.synology.me/minimalData/Atlas_Data/embryo_geometry/embryo_rectPIVscale_fundamentalForms.mat')
-pix_geometry = loadmat('/project/vitelli/jonathan/REDO_fruitfly/flydrive.synology.me/minimalData/vitelli_sharing/pixel_coordinates.mat')
-Xpiv, Ypiv = piv_geometry['X0'][0], piv_geometry['Y0'][:, 0]
-Xpix, Ypix = pix_geometry['XX'][0], pix_geometry['YY'][:, 0]
+atlas_dir = '/project/vitelli/jonathan/REDO_fruitfly/flydrive.synology.me/Public/dynamic_atlas'
+basedir = os.path.join(atlas_dir, 'Atlas_Data')
+geometry_dir = os.path.join(atlas_dir, 'embryo_geometry')
 
-def collect_velocity_fields(savedir):
+def collect_velocity_fields(savedir, subdir='PIV_filtered', prefix='VeloT_medfilt'):
 	'''
 	We are LOCKING IN to IJ ordering
 	Spatial ordering is [ROWS, COLUMNS] or [Y, X]
 	Channel ordering is [VY, VX] corresponding to the spatial ordering
+
+	Note that PIV_Filtered folders ALREADY do this! The VX, VY are mislabeled
+		They correspond to axes 1, 2, which are the Y, X axes
 	
 	Remember this when visualizing and lifting to 3D space
+
+	Adjust coordinate systems! The PIV_filtered folder is in units 
+		of PIV pixels / min
+	The PIV image size is 0.4 x [original dimensions], so each PIV pixel is
+		equivalent to 2.5 x original pixel size
+	The original units are 1pix=0.2619 um, so 1 PIV pix = 0.65479 um
+
+	The extent in PIV coordinates is [820, 696] 
 	'''
 	if not os.path.exists(os.path.join(savedir, 'dynamic_index.csv')):
 		warnings.warn('Index does not exist, processing matstruct')
 		convert_matstruct_to_csv(savedir)
 		
 	warnings.warn('Collecting flow fields')
+
+	#PIV_filtered units conversion
+	original_pixel_size = 0.2619
+	piv_rescale_factor = 0.4
+	piv_pixel_size = original_pixel_size / piv_rescale_factor
+
+	#Original PIV_filtered coordinates
+	piv_scale = loadmat(os.path.join(geometry_dir, 'embryo_rectPIVscale_fundamentalForms.mat'))
+	Xpiv, Ypiv = piv_scale['X0'][0], piv_scale['Y0'][:, 0]
+
+	#Establish target coordinate system in PIV coordinates
+	rect_scale = PlyData.read(os.path.join(geometry_dir, 'rect_PIVImageScale.ply'))['vertex']
+	xmin, xmax = np.min(rect_scale['x']), np.max(rect_scale['x'])
+	ymin, ymax = np.min(rect_scale['y']), np.max(rect_scale['y'])
+	nAP, nDV = 200, 236
+	ap_space = np.linspace(xmin+xmax/nAP*0.5, xmax-xmin/nAP*0.5, nAP)
+	dv_space = np.linspace(ymin+ymax/nDV*0.5, ymax-ymin/nDV*0.5, nDV)
+	Ypix, Xpix = np.meshgrid(dv_space, ap_space, indexing='ij')
 	
 	df =  pd.read_csv(os.path.join(savedir, 'dynamic_index.csv'))
 	for folder in df.folder.unique():
 		ss = df[df.folder == folder]
 		eID = ss.embryoID.iloc[0]
-		vel_dir = os.path.join(folder, 'PIV_filtered')
-		vels = []
-		for eIdx in tqdm(sorted(ss.eIdx)):
-			fn = os.path.join(vel_dir, 'VeloT_medfilt_%06d.mat' % (eIdx+1))
-			vel = loadmat(fn)
-			vx = RectBivariateSpline(Xpiv, Ypiv, vel['VX'])(Xpix, Ypix).T
-			vy = RectBivariateSpline(Xpiv, Ypiv, vel['VY'])(Xpix, Ypix).T
-			vels.append(np.stack([vx, vy]))
-		vels = np.stack(vels)
-		np.save(os.path.join(folder, 'velocity2D'), vels)
 
+		#PIV_filtered folder
+		vel_dir = os.path.join(folder, 'PIV_filtered')
+
+		vels = []
+		if os.path.exists(vel_dir):
+			for eIdx in tqdm(sorted(ss.eIdx)):
+				fn = os.path.join(vel_dir, 'VeloT_medfilt_%06d.mat' % (eIdx+1))
+				vel = loadmat(fn)
+				vx = RectBivariateSpline(Xpiv, Ypiv, vel['VX'])(ap_space, dv_space).T
+				vy = RectBivariateSpline(Xpiv, Ypiv, vel['VY'])(ap_space, dv_space).T
+				vels.append(np.stack([vx, vy]))
+			vels = np.stack(vels)
+			#vels = vels * piv_pixel_size
+			np.save(os.path.join(folder, 'velocity2D'), vels)
+		elif os.path.exists(os.path.join(folder, '%s_velocity.mat' % eID)):
+			pass
+
+		#Save coordinate system in MICRONS
+		np.save(os.path.join(folder, 'DV_coordinates'), Ypix * piv_pixel_size)
+		np.save(os.path.join(folder, 'AP_coordinates'), Xpix * piv_pixel_size)
 
 '''
 Build static ensembled timeline
 '''
-def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3):
+def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3, drop_times=False):
 	warnings.warn('Computing ensemble-averaged quantities for %s' % savedir)
 
 	df = pd.DataFrame()
@@ -92,6 +132,16 @@ def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3):
 	if os.path.exists(os.path.join(savedir, 'dynamic_index.csv')):
 		df = pd.concat([df, pd.read_csv(os.path.join(savedir, 'dynamic_index.csv'))]).drop_duplicates()
 		print('Found dynamic index')
+	
+	if drop_times:
+		df.time = df.eIdx
+
+	if os.path.exists(os.path.join(savedir, 'morphodynamic_offsets.csv')):
+			morpho = pd.read_csv(os.path.join(savedir, 'morphodynamic_offsets.csv'), index_col='embryoID')
+			for eId in df.embryoID.unique():
+				df.loc[df.embryoID == eId, 'time'] -= morpho.loc[eId, 'offset']
+
+
 	print('Building ensemble movies from %d to %d' % (t_min, t_max))
 
 	outdir = os.path.join(savedir, 'ensemble')
@@ -99,6 +149,8 @@ def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3):
 		os.mkdir(outdir)
 	
 	movies = {'t': []}
+	ap_coordinates=None
+	dv_coordinates=None
 
 	for t in tqdm(range(t_min, t_max)):
 		max_unc, flag = init_unc, True
@@ -115,7 +167,7 @@ def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3):
 		for i, row in matches.iterrows():
 			eframe = {}
 			#Iterate over pre-computed movies 
-			for npy in glob.glob(os.path.join(row.folder, '*2D.npy')):
+			for npy in glob.glob(os.path.join(glob.escape(row.folder), '*2D.npy')):
 				name = os.path.basename(npy)[:-4]
 				mov = np.load(npy, mmap_mode='r')
 				if row.eIdx < mov.shape[0]:
@@ -143,6 +195,9 @@ def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3):
 					frame[key] = frame[key] + weight*eframe[key]
 				else:
 					frame[key] = weight*eframe[key]
+
+			ap_coordinates = np.load(os.path.join(row.folder, 'AP_coordinates.npy'), mmap_mode='r')
+			dv_coordinates = np.load(os.path.join(row.folder, 'DV_coordinates.npy'), mmap_mode='r')
 	
 		for key in frame:
 			frame[key] = frame[key] / total_weight
@@ -154,17 +209,19 @@ def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3):
 
 	for key in movies:
 		np.save(os.path.join(outdir, key), np.stack(movies[key]))
+	np.save(os.path.join(outdir, 'AP_coordinates'), ap_coordinates)
+	np.save(os.path.join(outdir, 'DV_coordinates'), dv_coordinates)
 
 if __name__=='__main__':
-
 	savedirs = [
-		#'WT/ECad-GFP',
+		'WT/ECad-GFP',
+		'Halo_Hetero_Twist[ey53]_Hetero/Sqh-GFP',
 		#'WT/sqh-mCherry',
 		#'WT/moesin-GFP',
 		#'WT/utr-mCherry',
 		#'WT/Sqh_RokK116A-GFP',
 		#'WT/histone-RFP',
-		'WT/Tartan/',
+		#'WT/Tartan/',
 		#'WT/Bazooka-GFP',
 		#'WT/Runt',
 		#'WT/Even_Skipped',
@@ -176,13 +233,25 @@ if __name__=='__main__':
 		#'TollRM9/Spaghetti_Squash-GFP',
 		#'optoRhoGEF2_sqhCherry/headIllumination',
 		#'optoRhoGEF2_sqhCherry/singlePlaneIllumination'
+		#'WT/sqh-GFP_twistPlus',
 	]
 
 	for savedir in savedirs:
 		fulldir = os.path.join(basedir, savedir)
-		df = convert_matstruct_to_csv(fulldir, prefix='static')
-		#print(fulldir, len(df))
-		build_ensemble_timeline(fulldir, init_unc=1)
+		print(savedir)
+		'''
+		Static datasets
+		'''
+		#df = convert_matstruct_to_csv(fulldir, prefix='static')
+		#build_ensemble_timeline(fulldir, init_unc=1)
+
+		'''
+		Dynamic datasets
+		'''
+		df = convert_matstruct_to_csv(fulldir, prefix='dynamic')
+		print(fulldir)# len(df))
 		#collect_velocity_fields(fulldir)
 		#collect_anisotropy_tensor(fulldir)
-		#push_to_embryo_surface(fulldir)
+		build_ensemble_timeline(fulldir, init_unc=1, 
+			t_min=-10, t_max=40,
+			drop_times='Sqh' in savedir)

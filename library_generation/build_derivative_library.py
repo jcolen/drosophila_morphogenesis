@@ -32,14 +32,23 @@ def build_dynamic_derivative_library(
 		directory,
 		filename,
 		write_library,
+		drop_times=False,
 		**afl_kwargs):
 	'''
 	Build a library from dynamic information (live-imaged embryos)
 	'''
 	index = pd.read_csv(os.path.join(directory, 'dynamic_index.csv'))
+	if drop_times:
+		index.time = index.eIdx
+		print('Dropping times for eIdx')
+	if os.path.exists(os.path.join(directory, 'morphodynamic_offsets.csv')):
+		print('Adding morphodynamic offsets')
+		morpho = pd.read_csv(os.path.join(directory, 'morphodynamic_offsets.csv'), index_col='embryoID')
+		for eId in index.embryoID.unique():
+				index.loc[index.embryoID == eId, 'time'] -= morpho.loc[eId, 'offset']
+	
 	with h5py.File(os.path.join(directory, filename), 'a') as h5f:
 		for embryoID in tqdm(index.embryoID.unique()):
-			print(embryoID)
 			#Write embryo info to h5f
 			group = h5f.require_group(str(embryoID))
 			if not 'time' in group:
@@ -49,13 +58,13 @@ def build_dynamic_derivative_library(
 
 
 if __name__=='__main__':
-	datadir = '/project/vitelli/jonathan/REDO_fruitfly/src/data'
+	datadir = '/project/vitelli/jonathan/REDO_fruitfly/src/Public'
 
 	sets = [
-		('c_ij', ['WT', 'ECad-GFP'], 'tensor'),
 		('c', ['WT', 'ECad-GFP'], 'cyt'),
-	#	('m_ij', ['WT', 'sqh-mCherry'], 'tensor'),
 		('v', ['WT', 'ECad-GFP'], 'velocity'),
+		('v', ['Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP'], 'velocity'),
+		('m_ij', ['Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP'], 'tensor'),
 	]
 
 	for key, path, base in sets:
@@ -70,6 +79,7 @@ if __name__=='__main__':
 			os.path.join(datadir, *path),
 			'derivative_library.h5',
 			libfunc,
+			drop_times='Sqh-GFP' in path,
 			key=key,
 			base=base)
 
