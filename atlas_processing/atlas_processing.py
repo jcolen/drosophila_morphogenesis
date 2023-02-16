@@ -110,7 +110,7 @@ def collect_velocity_fields(savedir, subdir='PIV_filtered', prefix='VeloT_medfil
 				vy = RectBivariateSpline(Xpiv, Ypiv, vel['VY'])(ap_space, dv_space).T
 				vels.append(np.stack([vx, vy]))
 			vels = np.stack(vels)
-			#vels = vels * piv_pixel_size
+			#vels = vels * piv_pixel_size #Dynamic Atlas code already corrects for flow units
 			np.save(os.path.join(folder, 'velocity2D'), vels)
 		elif os.path.exists(os.path.join(folder, '%s_velocity.mat' % eID)):
 			pass
