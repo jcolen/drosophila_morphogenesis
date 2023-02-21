@@ -8,8 +8,11 @@ from tqdm import tqdm
 
 class Reshape2DField(object):
 	def __call__(self, sample):
-		sample['value'] = sample['value'].reshape([-1, *sample['value'].shape[-2:]])
-		return sample
+		if isinstance(sample, dict):
+			sample['value'] = sample['value'].reshape([-1, *sample['value'].shape[-2:]])
+			return sample
+		else:
+			return sample.reshape([-1, *sample.shape[-2:]])
 
 class Smooth2D(object):
 	def __init__(self, sigma=3):
@@ -19,9 +22,13 @@ class Smooth2D(object):
 		'''
 		sample['value'] is a [C, Y, X] field
 		'''
-		sample['value'] = np.stack([gaussian_filter(sample['value'][c], sigma=self.sigma) \
-			for c in range(sample['value'].shape[0])], axis=0)
-		return sample
+		if isinstance(sample, dict):
+			sample['value'] = np.stack([gaussian_filter(sample['value'][c], sigma=self.sigma) \
+				for c in range(sample['value'].shape[0])], axis=0)
+			return sample
+		else:
+			return np.stack([gaussian_filter(sample[c], sigma=self.sigma) \
+				for c in range(sample.shape[0])], axis=0)
 
 class ToTensor(object):
 	def __call__(self, sample):
@@ -67,6 +74,11 @@ class AtlasDataset(torch.utils.data.Dataset):
 	
 	def __len__(self):
 		return len(self.df)
+	
+	def __add__(self, dataset):
+		self.values = {**self.values, **dataset.values}
+		self.df = self.df.append(dataset.df, ignore_index=True)
+		return self
 
 	def __getitem__(self, idx):
 		embryoID = self.df.embryoID[idx]

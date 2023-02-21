@@ -5,3 +5,4 @@ Figures
 *.swp
 *.h5
 *.npy
+*.ckpt

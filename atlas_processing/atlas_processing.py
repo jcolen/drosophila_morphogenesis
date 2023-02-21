@@ -13,7 +13,7 @@ from skimage.transform import resize
 from tqdm import tqdm
 from scipy.io import loadmat
 
-from anisotropy_detection import collect_anisotropy_tensor
+from anisotropy_detection import collect_anisotropy_tensor, collect_thresholded_cytosolic_normalization
 
 
 def convert_matstruct_to_csv(savedir, prefix='dynamic'):
@@ -215,7 +215,7 @@ def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3, dro
 if __name__=='__main__':
 	savedirs = [
 		'WT/ECad-GFP',
-		'Halo_Hetero_Twist[ey53]_Hetero/Sqh-GFP',
+		#'Halo_Hetero_Twist[ey53]_Hetero/Sqh-GFP',
 		#'WT/sqh-mCherry',
 		#'WT/moesin-GFP',
 		#'WT/utr-mCherry',
@@ -250,8 +250,9 @@ if __name__=='__main__':
 		'''
 		df = convert_matstruct_to_csv(fulldir, prefix='dynamic')
 		print(fulldir)# len(df))
-		#collect_velocity_fields(fulldir)
+		collect_velocity_fields(fulldir)
 		#collect_anisotropy_tensor(fulldir)
+		collect_thresholded_cytosolic_normalization(fulldir)
 		build_ensemble_timeline(fulldir, init_unc=1, 
 			t_min=-10, t_max=40,
 			drop_times='Sqh' in savedir)

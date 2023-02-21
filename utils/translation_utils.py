@@ -411,10 +411,10 @@ def sindy_predictions_plot(x_pred, x_int, x_model, times, keep, data, plot_fn=pl
 	ax.set(ylim=[0, 1], 
 		   ylabel='Error Rate',
 		   xlabel='Time')
-	ax2 = ax.twinx()
-	ax2.plot(v.attrs['t'], v2, color='red')
-	ax2.set_yticks([])
-	ax2.set_ylabel('$v^2$', color='red')
+	#ax2 = ax.twinx()
+	#ax2.plot(v.attrs['t'], v2, color='red')
+	#ax2.set_yticks([])
+	#ax2.set_ylabel('$v^2$', color='red')
 	ax.set_xlim([times.min(), times.max()])
 
 	axis = ax
@@ -429,6 +429,7 @@ def sindy_predictions_plot(x_pred, x_int, x_model, times, keep, data, plot_fn=pl
 		color_2D(ax[2, i], res[ii], vmin=0, vmax=1, cmap='jet')
 
 		axis.axvline(times[ii], zorder=-1, color='black', linestyle='--')
+		ax[0, i].set_title('t=%d' % times[ii])
 
 	for a in ax.flatten():
 		a.set_aspect('auto')

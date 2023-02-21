@@ -1,0 +1,2947 @@
+Data shapes
+Sqh:  (50, 236, 200, 2, 2)
+Cad:  (50, 236, 200)
+Vel:  (50, 236, 200, 2)
+Coordinates shapes
+XX:  (50, 236, 200) Range [3.22966, 455.701] um
+YY:  (50, 236, 200) Range [3.22657, 536.891] um
+TT:  (50, 236, 200) Range [-10, 39] min
+(2360000, 1) (2360000, 1) (2360000, 1)
+(2360000, 2, 2) (2360000, 1) (2360000, 2)
+(100000, 1) (100000, 1) (100000, 1)
+(100000, 2, 2) (100000, 1) (100000, 2)
+Iteration 0		1.000 grad^2 v - grad p = -div(m)
+	D_t c = -1.000 c + 1.000 c div(v) + 1.000 Gamma^{D}
+	D_t m = -1.000 m + (1.000 - 1.000 c){m, E_p} + Tr(m) (1.000 Gamma^{DV} + 1.000 m)
+Finished L-BFGS optimization
+Iteration 0	Loss: 1.476067e+05, MSE: 1.450763e+05, Phys: 2.530379e+03
+	1.000 grad^2 v - grad p = -div(m)
+	D_t c = -1.000 c + 1.000 c div(v) + 1.000 Gamma^{D}
+	D_t m = -1.000 m + (1.000 - 1.000 c){m, E_p} + Tr(m) (1.000 Gamma^{DV} + 1.000 m)
+Data shapes
+Sqh:  (50, 236, 200, 2, 2)
+Cad:  (50, 236, 200)
+Vel:  (50, 236, 200, 2)
+Coordinates shapes
+XX:  (50, 236, 200) Range [3.22966, 455.701] um
+YY:  (50, 236, 200) Range [3.22657, 536.891] um
+TT:  (50, 236, 200) Range [-10, 39] min
+(2360000, 1) (2360000, 1) (2360000, 1)
+(2360000, 2, 2) (2360000, 1) (2360000, 2)
+(100000, 1) (100000, 1) (100000, 1)
+(100000, 2, 2) (100000, 1) (100000, 2)
+Iteration 0		1.000 grad^2 v - grad p = -div(m)
+	D_t c = -1.000 c + 1.000 c div(v) + 1.000 Gamma^{D}
+	D_t m = -1.000 m + (1.000 - 1.000 c){m, E_p} + Tr(m) (1.000 Gamma^{DV} + 1.000 m)
+Finished L-BFGS optimization
+Iteration 0	Loss: 1.455240e+05, MSE: 1.418662e+05, Phys: 3.657804e+03
+	1.000 grad^2 v - grad p = -div(m)
+	D_t c = -1.000 c + 1.000 c div(v) + 1.000 Gamma^{D}
+	D_t m = -1.000 m + (1.000 - 1.000 c){m, E_p} + Tr(m) (1.000 Gamma^{DV} + 1.000 m)
+Iteration 1000	Loss: 1.088540e+04, MSE: 4.724944e+03, Phys: 6.160454e+03
+	2.424 grad^2 v - grad p = -div(m)
+	D_t c = -0.416 c + 3.424 c div(v) + 1.323 Gamma^{D}
+	D_t m = -2.226 m + (1.269 - 0.455 c){m, E_p} + Tr(m) (0.499 Gamma^{DV} + 0.451 m)
+Iteration 2000	Loss: 6.327176e+03, MSE: 3.093962e+03, Phys: 3.233214e+03
+	2.182 grad^2 v - grad p = -div(m)
+	D_t c = -0.246 c + 2.533 c div(v) + 1.323 Gamma^{D}
+	D_t m = -2.011 m + (0.775 - 0.257 c){m, E_p} + Tr(m) (0.426 Gamma^{DV} + 0.408 m)
+Iteration 3000	Loss: 4.383437e+03, MSE: 2.253884e+03, Phys: 2.129553e+03
+	2.053 grad^2 v - grad p = -div(m)
+	D_t c = -0.167 c + 1.490 c div(v) + 1.323 Gamma^{D}
+	D_t m = -1.672 m + (0.539 - 0.173 c){m, E_p} + Tr(m) (0.356 Gamma^{DV} + 0.332 m)
+Iteration 4000	Loss: 3.254169e+03, MSE: 1.604042e+03, Phys: 1.650128e+03
+	1.903 grad^2 v - grad p = -div(m)
+	D_t c = -0.122 c + 0.989 c div(v) + 1.323 Gamma^{D}
+	D_t m = -1.222 m + (0.392 - 0.124 c){m, E_p} + Tr(m) (0.310 Gamma^{DV} + 0.220 m)
+Iteration 5000	Loss: 1.947186e+03, MSE: 7.013440e+02, Phys: 1.245842e+03
+	1.813 grad^2 v - grad p = -div(m)
+	D_t c = -0.092 c + 0.698 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.807 m + (0.293 - 0.092 c){m, E_p} + Tr(m) (0.269 Gamma^{DV} + 0.120 m)
+Iteration 6000	Loss: 1.123687e+03, MSE: 3.366225e+02, Phys: 7.870648e+02
+	1.725 grad^2 v - grad p = -div(m)
+	D_t c = -0.071 c + 0.510 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.534 m + (0.223 - 0.070 c){m, E_p} + Tr(m) (0.210 Gamma^{DV} + 0.068 m)
+Iteration 7000	Loss: 7.022067e+02, MSE: 2.021521e+02, Phys: 5.000545e+02
+	1.650 grad^2 v - grad p = -div(m)
+	D_t c = -0.056 c + 0.378 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.368 m + (0.171 - 0.054 c){m, E_p} + Tr(m) (0.157 Gamma^{DV} + 0.043 m)
+Iteration 8000	Loss: 4.939201e+02, MSE: 1.678938e+02, Phys: 3.260262e+02
+	1.626 grad^2 v - grad p = -div(m)
+	D_t c = -0.044 c + 0.282 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.264 m + (0.132 - 0.042 c){m, E_p} + Tr(m) (0.118 Gamma^{DV} + 0.029 m)
+Iteration 9000	Loss: 3.773977e+02, MSE: 1.400205e+02, Phys: 2.373772e+02
+	1.563 grad^2 v - grad p = -div(m)
+	D_t c = -0.035 c + 0.209 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.195 m + (0.103 - 0.032 c){m, E_p} + Tr(m) (0.091 Gamma^{DV} + 0.021 m)
+Iteration 10000	Loss: 3.198475e+02, MSE: 1.386962e+02, Phys: 1.811513e+02
+	1.552 grad^2 v - grad p = -div(m)
+	D_t c = -0.028 c + 0.155 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.146 m + (0.081 - 0.025 c){m, E_p} + Tr(m) (0.071 Gamma^{DV} + 0.016 m)
+Iteration 11000	Loss: 2.648538e+02, MSE: 1.140607e+02, Phys: 1.507930e+02
+	1.514 grad^2 v - grad p = -div(m)
+	D_t c = -0.023 c + 0.114 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.111 m + (0.064 - 0.020 c){m, E_p} + Tr(m) (0.056 Gamma^{DV} + 0.012 m)
+Iteration 12000	Loss: 2.423642e+02, MSE: 1.116212e+02, Phys: 1.307431e+02
+	1.515 grad^2 v - grad p = -div(m)
+	D_t c = -0.019 c + 0.083 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.085 m + (0.050 - 0.016 c){m, E_p} + Tr(m) (0.046 Gamma^{DV} + 0.009 m)
+Iteration 13000	Loss: 2.385102e+02, MSE: 1.212424e+02, Phys: 1.172678e+02
+	1.463 grad^2 v - grad p = -div(m)
+	D_t c = -0.015 c + 0.059 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.065 m + (0.040 - 0.012 c){m, E_p} + Tr(m) (0.037 Gamma^{DV} + 0.007 m)
+Iteration 14000	Loss: 2.223525e+02, MSE: 1.070671e+02, Phys: 1.152854e+02
+	1.449 grad^2 v - grad p = -div(m)
+	D_t c = -0.013 c + 0.042 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.050 m + (0.031 - 0.010 c){m, E_p} + Tr(m) (0.031 Gamma^{DV} + 0.005 m)
+Iteration 15000	Loss: 2.135167e+02, MSE: 1.023972e+02, Phys: 1.111195e+02
+	1.429 grad^2 v - grad p = -div(m)
+	D_t c = -0.011 c + 0.029 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.038 m + (0.025 - 0.008 c){m, E_p} + Tr(m) (0.026 Gamma^{DV} + 0.004 m)
+Iteration 16000	Loss: 2.284108e+02, MSE: 1.201499e+02, Phys: 1.082610e+02
+	1.430 grad^2 v - grad p = -div(m)
+	D_t c = -0.010 c + 0.020 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.029 m + (0.020 - 0.006 c){m, E_p} + Tr(m) (0.022 Gamma^{DV} + 0.003 m)
+Iteration 17000	Loss: 2.025202e+02, MSE: 9.767897e+01, Phys: 1.048412e+02
+	1.369 grad^2 v - grad p = -div(m)
+	D_t c = -0.009 c + 0.013 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.022 m + (0.015 - 0.005 c){m, E_p} + Tr(m) (0.019 Gamma^{DV} + 0.002 m)
+Iteration 18000	Loss: 2.046322e+02, MSE: 9.887177e+01, Phys: 1.057604e+02
+	1.349 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.009 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.017 m + (0.012 - 0.004 c){m, E_p} + Tr(m) (0.017 Gamma^{DV} + 0.002 m)
+Iteration 19000	Loss: 1.980815e+02, MSE: 9.585406e+01, Phys: 1.022274e+02
+	1.341 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.006 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.012 m + (0.010 - 0.003 c){m, E_p} + Tr(m) (0.015 Gamma^{DV} + 0.001 m)
+Iteration 20000	Loss: 2.071545e+02, MSE: 1.018466e+02, Phys: 1.053078e+02
+	1.327 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.004 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.009 m + (0.008 - 0.002 c){m, E_p} + Tr(m) (0.014 Gamma^{DV} + 0.001 m)
+Iteration 21000	Loss: 2.007227e+02, MSE: 9.829350e+01, Phys: 1.024292e+02
+	1.297 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.003 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.007 m + (0.006 - 0.002 c){m, E_p} + Tr(m) (0.013 Gamma^{DV} + 0.001 m)
+Iteration 22000	Loss: 1.987002e+02, MSE: 9.349490e+01, Phys: 1.052053e+02
+	1.260 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.002 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.005 m + (0.005 - 0.001 c){m, E_p} + Tr(m) (0.012 Gamma^{DV} + 0.000 m)
+Iteration 23000	Loss: 1.939020e+02, MSE: 9.160626e+01, Phys: 1.022957e+02
+	1.261 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.001 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.004 m + (0.004 - 0.001 c){m, E_p} + Tr(m) (0.012 Gamma^{DV} + 0.000 m)
+Iteration 24000	Loss: 2.058521e+02, MSE: 9.727071e+01, Phys: 1.085813e+02
+	1.258 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.001 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.003 m + (0.003 - 0.001 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 25000	Loss: 1.947098e+02, MSE: 8.947047e+01, Phys: 1.052394e+02
+	1.254 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.001 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.002 m + (0.002 - 0.001 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 26000	Loss: 1.898070e+02, MSE: 8.551138e+01, Phys: 1.042956e+02
+	1.234 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.002 m + (0.002 - 0.001 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 27000	Loss: 1.947057e+02, MSE: 9.462762e+01, Phys: 1.000781e+02
+	1.210 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.001 m + (0.002 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 28000	Loss: 1.947388e+02, MSE: 8.776042e+01, Phys: 1.069784e+02
+	1.215 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.001 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 29000	Loss: 1.930578e+02, MSE: 8.782183e+01, Phys: 1.052360e+02
+	1.201 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.001 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 30000	Loss: 1.951907e+02, MSE: 8.921204e+01, Phys: 1.059787e+02
+	1.213 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 31000	Loss: 1.913344e+02, MSE: 8.907413e+01, Phys: 1.022603e+02
+	1.200 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 32000	Loss: 1.819063e+02, MSE: 7.985434e+01, Phys: 1.020520e+02
+	1.195 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 33000	Loss: 1.833599e+02, MSE: 8.148184e+01, Phys: 1.018781e+02
+	1.208 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 34000	Loss: 1.819362e+02, MSE: 8.054745e+01, Phys: 1.013887e+02
+	1.189 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 35000	Loss: 1.850044e+02, MSE: 8.015671e+01, Phys: 1.048476e+02
+	1.172 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 36000	Loss: 1.794235e+02, MSE: 7.630672e+01, Phys: 1.031168e+02
+	1.188 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 37000	Loss: 1.900212e+02, MSE: 9.012501e+01, Phys: 9.989623e+01
+	1.183 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 38000	Loss: 1.836483e+02, MSE: 7.823164e+01, Phys: 1.054167e+02
+	1.172 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 39000	Loss: 1.815436e+02, MSE: 7.586888e+01, Phys: 1.056747e+02
+	1.167 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 40000	Loss: 1.879650e+02, MSE: 8.436456e+01, Phys: 1.036004e+02
+	1.182 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 41000	Loss: 1.762502e+02, MSE: 7.504943e+01, Phys: 1.012008e+02
+	1.170 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 42000	Loss: 1.740091e+02, MSE: 7.428899e+01, Phys: 9.972015e+01
+	1.161 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 43000	Loss: 1.957398e+02, MSE: 9.304445e+01, Phys: 1.026954e+02
+	1.151 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 44000	Loss: 1.770936e+02, MSE: 7.692957e+01, Phys: 1.001640e+02
+	1.138 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 45000	Loss: 1.809264e+02, MSE: 7.774396e+01, Phys: 1.031825e+02
+	1.150 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 46000	Loss: 1.717724e+02, MSE: 7.115225e+01, Phys: 1.006201e+02
+	1.149 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 47000	Loss: 1.794536e+02, MSE: 7.529330e+01, Phys: 1.041603e+02
+	1.159 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 48000	Loss: 1.739769e+02, MSE: 7.173705e+01, Phys: 1.022399e+02
+	1.133 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 49000	Loss: 1.802165e+02, MSE: 7.456273e+01, Phys: 1.056538e+02
+	1.147 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 50000	Loss: 1.740826e+02, MSE: 7.246567e+01, Phys: 1.016170e+02
+	1.148 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 51000	Loss: 1.806533e+02, MSE: 7.541026e+01, Phys: 1.052430e+02
+	1.145 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 52000	Loss: 1.846494e+02, MSE: 7.779578e+01, Phys: 1.068536e+02
+	1.134 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 53000	Loss: 1.711436e+02, MSE: 6.952577e+01, Phys: 1.016179e+02
+	1.150 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 54000	Loss: 1.768458e+02, MSE: 7.034922e+01, Phys: 1.064966e+02
+	1.137 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 55000	Loss: 1.743450e+02, MSE: 7.259084e+01, Phys: 1.017541e+02
+	1.126 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 56000	Loss: 1.775612e+02, MSE: 7.447516e+01, Phys: 1.030861e+02
+	1.123 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 57000	Loss: 1.756975e+02, MSE: 7.169910e+01, Phys: 1.039984e+02
+	1.128 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 58000	Loss: 1.807822e+02, MSE: 7.495280e+01, Phys: 1.058294e+02
+	1.126 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 59000	Loss: 1.747222e+02, MSE: 7.114307e+01, Phys: 1.035791e+02
+	1.129 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 60000	Loss: 1.782792e+02, MSE: 7.516975e+01, Phys: 1.031095e+02
+	1.121 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 61000	Loss: 1.767842e+02, MSE: 7.107678e+01, Phys: 1.057074e+02
+	1.110 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 62000	Loss: 1.724339e+02, MSE: 6.970345e+01, Phys: 1.027305e+02
+	1.120 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 63000	Loss: 1.809542e+02, MSE: 7.672872e+01, Phys: 1.042255e+02
+	1.131 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 64000	Loss: 1.756836e+02, MSE: 7.227162e+01, Phys: 1.034120e+02
+	1.109 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 65000	Loss: 1.706513e+02, MSE: 6.798715e+01, Phys: 1.026642e+02
+	1.112 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 66000	Loss: 1.727942e+02, MSE: 6.695972e+01, Phys: 1.058345e+02
+	1.116 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 67000	Loss: 1.695441e+02, MSE: 6.814176e+01, Phys: 1.014023e+02
+	1.106 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 68000	Loss: 1.671117e+02, MSE: 6.539087e+01, Phys: 1.017208e+02
+	1.103 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 69000	Loss: 1.736475e+02, MSE: 6.886264e+01, Phys: 1.047849e+02
+	1.107 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 70000	Loss: 1.699348e+02, MSE: 6.823277e+01, Phys: 1.017020e+02
+	1.097 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 71000	Loss: 1.700335e+02, MSE: 6.545129e+01, Phys: 1.045822e+02
+	1.100 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 72000	Loss: 1.676490e+02, MSE: 6.676668e+01, Phys: 1.008823e+02
+	1.090 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 73000	Loss: 1.746498e+02, MSE: 7.146657e+01, Phys: 1.031832e+02
+	1.096 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 74000	Loss: 1.713275e+02, MSE: 6.659332e+01, Phys: 1.047341e+02
+	1.107 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 75000	Loss: 1.707240e+02, MSE: 6.518581e+01, Phys: 1.055382e+02
+	1.101 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 76000	Loss: 1.738492e+02, MSE: 7.162245e+01, Phys: 1.022267e+02
+	1.095 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 77000	Loss: 1.734900e+02, MSE: 6.676662e+01, Phys: 1.067234e+02
+	1.086 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 78000	Loss: 1.753458e+02, MSE: 7.133627e+01, Phys: 1.040095e+02
+	1.083 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 79000	Loss: 1.683763e+02, MSE: 6.455014e+01, Phys: 1.038262e+02
+	1.096 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 80000	Loss: 1.749453e+02, MSE: 7.107823e+01, Phys: 1.038670e+02
+	1.090 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 81000	Loss: 1.735276e+02, MSE: 6.844382e+01, Phys: 1.050838e+02
+	1.094 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 82000	Loss: 1.709252e+02, MSE: 7.013931e+01, Phys: 1.007859e+02
+	1.085 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 83000	Loss: 1.643799e+02, MSE: 6.042422e+01, Phys: 1.039557e+02
+	1.084 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 84000	Loss: 1.672932e+02, MSE: 6.552457e+01, Phys: 1.017686e+02
+	1.095 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 85000	Loss: 1.696979e+02, MSE: 6.559204e+01, Phys: 1.041058e+02
+	1.074 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 86000	Loss: 1.700355e+02, MSE: 6.413646e+01, Phys: 1.058990e+02
+	1.081 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 87000	Loss: 1.693226e+02, MSE: 6.367219e+01, Phys: 1.056504e+02
+	1.076 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 88000	Loss: 1.656513e+02, MSE: 6.450690e+01, Phys: 1.011444e+02
+	1.084 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 89000	Loss: 1.681238e+02, MSE: 6.128455e+01, Phys: 1.068392e+02
+	1.080 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 90000	Loss: 1.648836e+02, MSE: 6.395235e+01, Phys: 1.009313e+02
+	1.063 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 91000	Loss: 1.642097e+02, MSE: 6.238742e+01, Phys: 1.018223e+02
+	1.066 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 92000	Loss: 1.658755e+02, MSE: 6.110299e+01, Phys: 1.047725e+02
+	1.076 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 93000	Loss: 1.652149e+02, MSE: 6.343564e+01, Phys: 1.017792e+02
+	1.075 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 94000	Loss: 1.640360e+02, MSE: 6.234463e+01, Phys: 1.016914e+02
+	1.070 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 95000	Loss: 1.668054e+02, MSE: 6.602631e+01, Phys: 1.007791e+02
+	1.085 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 96000	Loss: 1.630725e+02, MSE: 6.177220e+01, Phys: 1.013003e+02
+	1.081 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 97000	Loss: 1.628698e+02, MSE: 5.970457e+01, Phys: 1.031652e+02
+	1.073 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 98000	Loss: 1.654690e+02, MSE: 6.259317e+01, Phys: 1.028758e+02
+	1.084 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 99000	Loss: 1.619972e+02, MSE: 6.075424e+01, Phys: 1.012429e+02
+	1.063 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 100000	Loss: 1.673571e+02, MSE: 6.393859e+01, Phys: 1.034185e+02
+	1.075 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Incrementing beta to 1.000000e+01
+Iteration 101000	Loss: 8.383755e+02, MSE: 2.744556e+02, Phys: 5.639200e+01
+	1.324 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.000 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 102000	Loss: 8.246498e+02, MSE: 2.676213e+02, Phys: 5.570285e+01
+	1.340 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 103000	Loss: 8.228937e+02, MSE: 2.752772e+02, Phys: 5.476165e+01
+	1.334 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 104000	Loss: 8.252172e+02, MSE: 2.565200e+02, Phys: 5.686973e+01
+	1.313 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 105000	Loss: 8.372435e+02, MSE: 2.721490e+02, Phys: 5.650945e+01
+	1.351 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 106000	Loss: 8.404781e+02, MSE: 2.814711e+02, Phys: 5.590071e+01
+	1.324 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 107000	Loss: 8.088119e+02, MSE: 2.625490e+02, Phys: 5.462629e+01
+	1.323 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 108000	Loss: 8.379644e+02, MSE: 2.843803e+02, Phys: 5.535841e+01
+	1.332 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 109000	Loss: 8.399135e+02, MSE: 2.645258e+02, Phys: 5.753877e+01
+	1.311 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 110000	Loss: 8.254846e+02, MSE: 2.612583e+02, Phys: 5.642263e+01
+	1.313 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 111000	Loss: 8.454943e+02, MSE: 2.706308e+02, Phys: 5.748635e+01
+	1.328 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 112000	Loss: 8.185889e+02, MSE: 2.699544e+02, Phys: 5.486345e+01
+	1.292 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 113000	Loss: 8.436445e+02, MSE: 2.833527e+02, Phys: 5.602918e+01
+	1.307 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 114000	Loss: 8.238391e+02, MSE: 2.774859e+02, Phys: 5.463533e+01
+	1.309 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 115000	Loss: 8.308538e+02, MSE: 2.666871e+02, Phys: 5.641667e+01
+	1.298 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 116000	Loss: 8.195819e+02, MSE: 2.722294e+02, Phys: 5.473525e+01
+	1.294 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 117000	Loss: 8.116929e+02, MSE: 2.716624e+02, Phys: 5.400305e+01
+	1.301 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 118000	Loss: 8.126704e+02, MSE: 2.703719e+02, Phys: 5.422984e+01
+	1.295 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 119000	Loss: 8.225361e+02, MSE: 2.654131e+02, Phys: 5.571231e+01
+	1.296 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 120000	Loss: 8.262874e+02, MSE: 2.717534e+02, Phys: 5.545341e+01
+	1.288 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 121000	Loss: 8.006591e+02, MSE: 2.578889e+02, Phys: 5.427703e+01
+	1.305 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 122000	Loss: 8.201917e+02, MSE: 2.794335e+02, Phys: 5.407582e+01
+	1.282 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 123000	Loss: 8.241978e+02, MSE: 2.708977e+02, Phys: 5.533001e+01
+	1.288 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 124000	Loss: 8.001801e+02, MSE: 2.609416e+02, Phys: 5.392385e+01
+	1.286 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 125000	Loss: 8.111558e+02, MSE: 2.663387e+02, Phys: 5.448171e+01
+	1.294 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 126000	Loss: 8.122726e+02, MSE: 2.711743e+02, Phys: 5.410983e+01
+	1.287 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 127000	Loss: 8.155187e+02, MSE: 2.809644e+02, Phys: 5.345543e+01
+	1.287 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 128000	Loss: 8.297676e+02, MSE: 2.724204e+02, Phys: 5.573472e+01
+	1.296 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 129000	Loss: 8.251137e+02, MSE: 2.715384e+02, Phys: 5.535753e+01
+	1.289 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 130000	Loss: 8.084211e+02, MSE: 2.641840e+02, Phys: 5.442372e+01
+	1.265 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 131000	Loss: 8.078384e+02, MSE: 2.625018e+02, Phys: 5.453366e+01
+	1.286 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 132000	Loss: 8.205090e+02, MSE: 2.740668e+02, Phys: 5.464421e+01
+	1.273 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 133000	Loss: 8.103120e+02, MSE: 2.715308e+02, Phys: 5.387812e+01
+	1.275 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 134000	Loss: 8.299285e+02, MSE: 2.744071e+02, Phys: 5.555214e+01
+	1.268 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 135000	Loss: 8.197881e+02, MSE: 2.692650e+02, Phys: 5.505231e+01
+	1.272 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 136000	Loss: 8.262463e+02, MSE: 2.747812e+02, Phys: 5.514652e+01
+	1.250 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 137000	Loss: 7.964232e+02, MSE: 2.556449e+02, Phys: 5.407783e+01
+	1.248 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 138000	Loss: 8.454486e+02, MSE: 2.838112e+02, Phys: 5.616373e+01
+	1.269 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 139000	Loss: 8.299700e+02, MSE: 2.691731e+02, Phys: 5.607969e+01
+	1.276 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 140000	Loss: 8.122720e+02, MSE: 2.630105e+02, Phys: 5.492616e+01
+	1.240 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 141000	Loss: 7.996072e+02, MSE: 2.646602e+02, Phys: 5.349470e+01
+	1.250 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 142000	Loss: 8.254381e+02, MSE: 2.673170e+02, Phys: 5.581211e+01
+	1.259 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 143000	Loss: 8.242219e+02, MSE: 2.616923e+02, Phys: 5.625296e+01
+	1.260 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 144000	Loss: 8.076409e+02, MSE: 2.582823e+02, Phys: 5.493586e+01
+	1.266 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 145000	Loss: 7.996913e+02, MSE: 2.642666e+02, Phys: 5.354247e+01
+	1.271 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 146000	Loss: 8.130422e+02, MSE: 2.655129e+02, Phys: 5.475293e+01
+	1.235 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 147000	Loss: 8.182670e+02, MSE: 2.748617e+02, Phys: 5.434053e+01
+	1.243 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 148000	Loss: 8.118064e+02, MSE: 2.630866e+02, Phys: 5.487197e+01
+	1.236 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 149000	Loss: 7.972780e+02, MSE: 2.575352e+02, Phys: 5.397427e+01
+	1.239 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 150000	Loss: 8.052729e+02, MSE: 2.629261e+02, Phys: 5.423468e+01
+	1.252 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 151000	Loss: 8.222238e+02, MSE: 2.577841e+02, Phys: 5.644396e+01
+	1.243 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 152000	Loss: 8.161374e+02, MSE: 2.734509e+02, Phys: 5.426865e+01
+	1.224 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 153000	Loss: 8.130364e+02, MSE: 2.719100e+02, Phys: 5.411263e+01
+	1.221 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 154000	Loss: 8.127343e+02, MSE: 2.633652e+02, Phys: 5.493690e+01
+	1.239 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 155000	Loss: 8.337473e+02, MSE: 2.721017e+02, Phys: 5.616456e+01
+	1.215 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 156000	Loss: 8.038900e+02, MSE: 2.550450e+02, Phys: 5.488450e+01
+	1.222 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 157000	Loss: 8.369126e+02, MSE: 2.789371e+02, Phys: 5.579755e+01
+	1.220 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 158000	Loss: 7.948807e+02, MSE: 2.597557e+02, Phys: 5.351251e+01
+	1.221 grad^2 v - grad p = -div(m)
+	D_t c = -0.008 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 159000	Loss: 7.956550e+02, MSE: 2.583016e+02, Phys: 5.373534e+01
+	1.226 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 160000	Loss: 8.082834e+02, MSE: 2.565789e+02, Phys: 5.517045e+01
+	1.220 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 161000	Loss: 7.923942e+02, MSE: 2.637594e+02, Phys: 5.286348e+01
+	1.230 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 162000	Loss: 7.973911e+02, MSE: 2.657043e+02, Phys: 5.316867e+01
+	1.232 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 163000	Loss: 7.954936e+02, MSE: 2.694301e+02, Phys: 5.260635e+01
+	1.228 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 164000	Loss: 7.974724e+02, MSE: 2.635625e+02, Phys: 5.339098e+01
+	1.225 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 165000	Loss: 7.956751e+02, MSE: 2.666497e+02, Phys: 5.290254e+01
+	1.215 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 166000	Loss: 7.751538e+02, MSE: 2.499695e+02, Phys: 5.251842e+01
+	1.221 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 167000	Loss: 7.788570e+02, MSE: 2.615380e+02, Phys: 5.173190e+01
+	1.202 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 168000	Loss: 7.606429e+02, MSE: 2.556836e+02, Phys: 5.049593e+01
+	1.216 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 169000	Loss: 7.779294e+02, MSE: 2.592502e+02, Phys: 5.186792e+01
+	1.220 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 170000	Loss: 7.755530e+02, MSE: 2.645455e+02, Phys: 5.110075e+01
+	1.205 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 171000	Loss: 7.773392e+02, MSE: 2.675606e+02, Phys: 5.097786e+01
+	1.220 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 172000	Loss: 7.702826e+02, MSE: 2.561662e+02, Phys: 5.141164e+01
+	1.221 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 173000	Loss: 7.753568e+02, MSE: 2.644960e+02, Phys: 5.108609e+01
+	1.213 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 174000	Loss: 7.770676e+02, MSE: 2.639901e+02, Phys: 5.130775e+01
+	1.222 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 175000	Loss: 7.913259e+02, MSE: 2.715635e+02, Phys: 5.197624e+01
+	1.228 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 176000	Loss: 7.757581e+02, MSE: 2.651697e+02, Phys: 5.105885e+01
+	1.226 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 177000	Loss: 7.669098e+02, MSE: 2.675018e+02, Phys: 4.994080e+01
+	1.227 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 178000	Loss: 7.745540e+02, MSE: 2.611633e+02, Phys: 5.133907e+01
+	1.243 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 179000	Loss: 7.733337e+02, MSE: 2.560359e+02, Phys: 5.172978e+01
+	1.234 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 180000	Loss: 7.662953e+02, MSE: 2.514087e+02, Phys: 5.148866e+01
+	1.245 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 181000	Loss: 7.687038e+02, MSE: 2.585695e+02, Phys: 5.101344e+01
+	1.247 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 182000	Loss: 7.772365e+02, MSE: 2.570814e+02, Phys: 5.201551e+01
+	1.237 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 183000	Loss: 7.919919e+02, MSE: 2.690884e+02, Phys: 5.229035e+01
+	1.254 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 184000	Loss: 7.679952e+02, MSE: 2.568442e+02, Phys: 5.111510e+01
+	1.245 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 185000	Loss: 7.806884e+02, MSE: 2.570634e+02, Phys: 5.236250e+01
+	1.233 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 186000	Loss: 7.829199e+02, MSE: 2.642511e+02, Phys: 5.186688e+01
+	1.208 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 187000	Loss: 7.722731e+02, MSE: 2.552725e+02, Phys: 5.170005e+01
+	1.242 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 188000	Loss: 7.750482e+02, MSE: 2.632403e+02, Phys: 5.118079e+01
+	1.241 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 189000	Loss: 7.536396e+02, MSE: 2.552013e+02, Phys: 4.984383e+01
+	1.224 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 190000	Loss: 7.649404e+02, MSE: 2.576959e+02, Phys: 5.072445e+01
+	1.224 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 191000	Loss: 7.638314e+02, MSE: 2.557131e+02, Phys: 5.081183e+01
+	1.247 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 192000	Loss: 7.653621e+02, MSE: 2.641316e+02, Phys: 5.012305e+01
+	1.233 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 193000	Loss: 7.611935e+02, MSE: 2.604743e+02, Phys: 5.007192e+01
+	1.244 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 194000	Loss: 7.537457e+02, MSE: 2.606573e+02, Phys: 4.930884e+01
+	1.214 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 195000	Loss: 7.467544e+02, MSE: 2.478864e+02, Phys: 4.988680e+01
+	1.214 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.008 Gamma^{DV} + 0.000 m)
+Iteration 196000	Loss: 7.412306e+02, MSE: 2.538652e+02, Phys: 4.873653e+01
+	1.209 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.008 Gamma^{DV} + 0.000 m)
+Iteration 197000	Loss: 7.481467e+02, MSE: 2.511607e+02, Phys: 4.969860e+01
+	1.221 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.008 Gamma^{DV} + 0.000 m)
+Iteration 198000	Loss: 7.428081e+02, MSE: 2.556986e+02, Phys: 4.871095e+01
+	1.204 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.008 Gamma^{DV} + 0.000 m)
+Iteration 199000	Loss: 7.638161e+02, MSE: 2.528110e+02, Phys: 5.110051e+01
+	1.189 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.008 Gamma^{DV} + 0.000 m)
+Iteration 200000	Loss: 7.463414e+02, MSE: 2.585791e+02, Phys: 4.877623e+01
+	1.203 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.001 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Incrementing beta to 1.000000e+02
+Iteration 201000	Loss: 2.844486e+03, MSE: 1.669328e+03, Phys: 1.175158e+01
+	1.359 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.005 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 202000	Loss: 2.750879e+03, MSE: 1.596412e+03, Phys: 1.154467e+01
+	1.399 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.005 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 203000	Loss: 2.778823e+03, MSE: 1.739958e+03, Phys: 1.038865e+01
+	1.385 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.005 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 204000	Loss: 2.617204e+03, MSE: 1.588166e+03, Phys: 1.029038e+01
+	1.403 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.006 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 205000	Loss: 2.631283e+03, MSE: 1.575634e+03, Phys: 1.055649e+01
+	1.385 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.006 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 206000	Loss: 2.682743e+03, MSE: 1.591885e+03, Phys: 1.090858e+01
+	1.400 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.006 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 207000	Loss: 2.810679e+03, MSE: 1.683158e+03, Phys: 1.127521e+01
+	1.365 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.006 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 208000	Loss: 2.625306e+03, MSE: 1.586935e+03, Phys: 1.038370e+01
+	1.413 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 209000	Loss: 2.696656e+03, MSE: 1.611541e+03, Phys: 1.085114e+01
+	1.398 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 210000	Loss: 2.665392e+03, MSE: 1.582349e+03, Phys: 1.083043e+01
+	1.416 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 211000	Loss: 2.632799e+03, MSE: 1.583908e+03, Phys: 1.048890e+01
+	1.398 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 212000	Loss: 2.566932e+03, MSE: 1.589691e+03, Phys: 9.772409e+00
+	1.395 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 213000	Loss: 2.673104e+03, MSE: 1.631284e+03, Phys: 1.041819e+01
+	1.398 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 214000	Loss: 2.630076e+03, MSE: 1.587961e+03, Phys: 1.042115e+01
+	1.444 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 215000	Loss: 2.546625e+03, MSE: 1.545576e+03, Phys: 1.001049e+01
+	1.411 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.006 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 216000	Loss: 2.520756e+03, MSE: 1.520569e+03, Phys: 1.000187e+01
+	1.429 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.006 - 0.000 c){m, E_p} + Tr(m) (0.008 Gamma^{DV} + 0.000 m)
+Iteration 217000	Loss: 2.543761e+03, MSE: 1.530462e+03, Phys: 1.013299e+01
+	1.435 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.006 - 0.000 c){m, E_p} + Tr(m) (0.008 Gamma^{DV} + 0.000 m)
+Iteration 218000	Loss: 2.619802e+03, MSE: 1.550166e+03, Phys: 1.069635e+01
+	1.390 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.006 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 219000	Loss: 2.793682e+03, MSE: 1.737198e+03, Phys: 1.056484e+01
+	1.389 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.006 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 220000	Loss: 2.478945e+03, MSE: 1.535018e+03, Phys: 9.439270e+00
+	1.442 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.008 Gamma^{DV} + 0.000 m)
+Iteration 221000	Loss: 2.622927e+03, MSE: 1.650776e+03, Phys: 9.721503e+00
+	1.417 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 222000	Loss: 2.598278e+03, MSE: 1.603276e+03, Phys: 9.950016e+00
+	1.438 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 223000	Loss: 2.666377e+03, MSE: 1.644587e+03, Phys: 1.021790e+01
+	1.442 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 224000	Loss: 2.530356e+03, MSE: 1.556132e+03, Phys: 9.742232e+00
+	1.481 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.008 Gamma^{DV} + 0.000 m)
+Iteration 225000	Loss: 2.809768e+03, MSE: 1.736447e+03, Phys: 1.073321e+01
+	1.440 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 226000	Loss: 2.468412e+03, MSE: 1.543826e+03, Phys: 9.245859e+00
+	1.463 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.008 Gamma^{DV} + 0.000 m)
+Iteration 227000	Loss: 2.390980e+03, MSE: 1.510023e+03, Phys: 8.809566e+00
+	1.508 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.006 - 0.000 c){m, E_p} + Tr(m) (0.007 Gamma^{DV} + 0.000 m)
+Iteration 228000	Loss: 2.709508e+03, MSE: 1.677758e+03, Phys: 1.031750e+01
+	1.447 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 229000	Loss: 2.929396e+03, MSE: 1.853637e+03, Phys: 1.075759e+01
+	1.451 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 230000	Loss: 2.819616e+03, MSE: 1.779346e+03, Phys: 1.040269e+01
+	1.451 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 231000	Loss: 2.725792e+03, MSE: 1.722968e+03, Phys: 1.002823e+01
+	1.437 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 232000	Loss: 2.785356e+03, MSE: 1.770463e+03, Phys: 1.014893e+01
+	1.457 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 233000	Loss: 2.684580e+03, MSE: 1.691235e+03, Phys: 9.933453e+00
+	1.507 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 234000	Loss: 2.629004e+03, MSE: 1.683797e+03, Phys: 9.452076e+00
+	1.496 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 235000	Loss: 2.907639e+03, MSE: 1.838069e+03, Phys: 1.069570e+01
+	1.443 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 236000	Loss: 2.825107e+03, MSE: 1.758490e+03, Phys: 1.066617e+01
+	1.415 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 237000	Loss: 3.456989e+03, MSE: 2.170653e+03, Phys: 1.286336e+01
+	1.434 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 238000	Loss: 2.868137e+03, MSE: 1.786050e+03, Phys: 1.082087e+01
+	1.421 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 239000	Loss: 2.781833e+03, MSE: 1.753391e+03, Phys: 1.028443e+01
+	1.387 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 240000	Loss: 2.759162e+03, MSE: 1.744358e+03, Phys: 1.014803e+01
+	1.388 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.007 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 241000	Loss: 2.817722e+03, MSE: 1.807057e+03, Phys: 1.010666e+01
+	1.370 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 242000	Loss: 2.783882e+03, MSE: 1.771873e+03, Phys: 1.012009e+01
+	1.335 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 243000	Loss: 2.818771e+03, MSE: 1.758694e+03, Phys: 1.060077e+01
+	1.333 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 244000	Loss: 2.780987e+03, MSE: 1.731414e+03, Phys: 1.049573e+01
+	1.332 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 245000	Loss: 2.763805e+03, MSE: 1.752506e+03, Phys: 1.011298e+01
+	1.311 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 246000	Loss: 2.789164e+03, MSE: 1.766844e+03, Phys: 1.022319e+01
+	1.330 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 247000	Loss: 2.785087e+03, MSE: 1.754477e+03, Phys: 1.030610e+01
+	1.287 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 248000	Loss: 2.711229e+03, MSE: 1.701025e+03, Phys: 1.010204e+01
+	1.296 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 249000	Loss: 2.758495e+03, MSE: 1.723344e+03, Phys: 1.035150e+01
+	1.279 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 250000	Loss: 2.776081e+03, MSE: 1.713256e+03, Phys: 1.062824e+01
+	1.273 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 251000	Loss: 2.701332e+03, MSE: 1.664077e+03, Phys: 1.037255e+01
+	1.268 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 252000	Loss: 2.795930e+03, MSE: 1.760047e+03, Phys: 1.035883e+01
+	1.259 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 253000	Loss: 2.768159e+03, MSE: 1.738152e+03, Phys: 1.030007e+01
+	1.255 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 254000	Loss: 2.746693e+03, MSE: 1.688220e+03, Phys: 1.058473e+01
+	1.230 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 255000	Loss: 2.710720e+03, MSE: 1.673587e+03, Phys: 1.037133e+01
+	1.228 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 256000	Loss: 2.689913e+03, MSE: 1.689548e+03, Phys: 1.000365e+01
+	1.217 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 257000	Loss: 2.808375e+03, MSE: 1.748094e+03, Phys: 1.060281e+01
+	1.206 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 258000	Loss: 2.807042e+03, MSE: 1.712891e+03, Phys: 1.094150e+01
+	1.208 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 259000	Loss: 2.640299e+03, MSE: 1.647978e+03, Phys: 9.923206e+00
+	1.198 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 260000	Loss: 2.717853e+03, MSE: 1.675660e+03, Phys: 1.042192e+01
+	1.205 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 261000	Loss: 2.722828e+03, MSE: 1.648684e+03, Phys: 1.074143e+01
+	1.192 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 262000	Loss: 2.723114e+03, MSE: 1.655534e+03, Phys: 1.067580e+01
+	1.183 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 263000	Loss: 2.688814e+03, MSE: 1.672499e+03, Phys: 1.016315e+01
+	1.181 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 264000	Loss: 2.736440e+03, MSE: 1.663825e+03, Phys: 1.072615e+01
+	1.178 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 265000	Loss: 2.717775e+03, MSE: 1.663449e+03, Phys: 1.054326e+01
+	1.178 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 266000	Loss: 2.661807e+03, MSE: 1.620354e+03, Phys: 1.041453e+01
+	1.169 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 267000	Loss: 2.680279e+03, MSE: 1.668712e+03, Phys: 1.011567e+01
+	1.150 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 268000	Loss: 2.688263e+03, MSE: 1.662360e+03, Phys: 1.025903e+01
+	1.147 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 269000	Loss: 2.660647e+03, MSE: 1.641939e+03, Phys: 1.018708e+01
+	1.147 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 270000	Loss: 2.699350e+03, MSE: 1.645029e+03, Phys: 1.054321e+01
+	1.144 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 271000	Loss: 2.675176e+03, MSE: 1.657717e+03, Phys: 1.017460e+01
+	1.137 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 272000	Loss: 2.666577e+03, MSE: 1.636598e+03, Phys: 1.029979e+01
+	1.153 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 273000	Loss: 2.707529e+03, MSE: 1.662474e+03, Phys: 1.045054e+01
+	1.161 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 274000	Loss: 2.672711e+03, MSE: 1.621998e+03, Phys: 1.050713e+01
+	1.133 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 275000	Loss: 2.632442e+03, MSE: 1.624137e+03, Phys: 1.008304e+01
+	1.132 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 276000	Loss: 2.676786e+03, MSE: 1.664395e+03, Phys: 1.012391e+01
+	1.130 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 277000	Loss: 2.692130e+03, MSE: 1.647655e+03, Phys: 1.044475e+01
+	1.130 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 278000	Loss: 2.695318e+03, MSE: 1.633623e+03, Phys: 1.061695e+01
+	1.112 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 279000	Loss: 2.637529e+03, MSE: 1.611721e+03, Phys: 1.025808e+01
+	1.130 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 280000	Loss: 2.614540e+03, MSE: 1.591089e+03, Phys: 1.023450e+01
+	1.116 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 281000	Loss: 2.621710e+03, MSE: 1.594556e+03, Phys: 1.027154e+01
+	1.127 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 282000	Loss: 2.623347e+03, MSE: 1.610177e+03, Phys: 1.013170e+01
+	1.132 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 283000	Loss: 2.574923e+03, MSE: 1.556113e+03, Phys: 1.018810e+01
+	1.129 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 284000	Loss: 2.715297e+03, MSE: 1.620290e+03, Phys: 1.095006e+01
+	1.113 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 285000	Loss: 2.626989e+03, MSE: 1.593618e+03, Phys: 1.033370e+01
+	1.094 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 286000	Loss: 2.636719e+03, MSE: 1.610544e+03, Phys: 1.026175e+01
+	1.105 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 287000	Loss: 2.691194e+03, MSE: 1.615503e+03, Phys: 1.075690e+01
+	1.109 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 288000	Loss: 2.612305e+03, MSE: 1.599461e+03, Phys: 1.012843e+01
+	1.107 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 289000	Loss: 2.571574e+03, MSE: 1.565384e+03, Phys: 1.006190e+01
+	1.123 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.009 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 290000	Loss: 2.682167e+03, MSE: 1.615516e+03, Phys: 1.066651e+01
+	1.096 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 291000	Loss: 2.616525e+03, MSE: 1.589988e+03, Phys: 1.026537e+01
+	1.095 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 292000	Loss: 2.607073e+03, MSE: 1.603685e+03, Phys: 1.003388e+01
+	1.105 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 293000	Loss: 2.602615e+03, MSE: 1.565223e+03, Phys: 1.037391e+01
+	1.097 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 294000	Loss: 2.646349e+03, MSE: 1.595355e+03, Phys: 1.050995e+01
+	1.099 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 295000	Loss: 2.626214e+03, MSE: 1.587073e+03, Phys: 1.039141e+01
+	1.116 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 296000	Loss: 2.609969e+03, MSE: 1.591196e+03, Phys: 1.018773e+01
+	1.102 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 297000	Loss: 2.598277e+03, MSE: 1.575989e+03, Phys: 1.022288e+01
+	1.105 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 298000	Loss: 2.618792e+03, MSE: 1.574222e+03, Phys: 1.044570e+01
+	1.109 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 299000	Loss: 2.658699e+03, MSE: 1.590251e+03, Phys: 1.068448e+01
+	1.100 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 300000	Loss: 2.600853e+03, MSE: 1.575958e+03, Phys: 1.024894e+01
+	1.094 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.008 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Incrementing beta to 1.000000e+03
+Iteration 301000	Loss: 4.829755e+03, MSE: 4.091840e+03, Phys: 7.379149e-01
+	0.557 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.044 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 302000	Loss: 4.783531e+03, MSE: 4.111576e+03, Phys: 6.719550e-01
+	0.526 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.051 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 303000	Loss: 4.867063e+03, MSE: 4.172191e+03, Phys: 6.948715e-01
+	0.512 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.058 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 304000	Loss: 4.768969e+03, MSE: 4.093215e+03, Phys: 6.757548e-01
+	0.494 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.062 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 305000	Loss: 4.701978e+03, MSE: 4.060274e+03, Phys: 6.417040e-01
+	0.467 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.065 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 306000	Loss: 4.605544e+03, MSE: 3.974406e+03, Phys: 6.311379e-01
+	0.459 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.067 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 307000	Loss: 4.627513e+03, MSE: 3.998054e+03, Phys: 6.294590e-01
+	0.451 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.068 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 308000	Loss: 4.651518e+03, MSE: 4.024443e+03, Phys: 6.270745e-01
+	0.434 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.069 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 309000	Loss: 4.496292e+03, MSE: 3.881954e+03, Phys: 6.143375e-01
+	0.438 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.070 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 310000	Loss: 4.611375e+03, MSE: 3.971613e+03, Phys: 6.397618e-01
+	0.435 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.071 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 311000	Loss: 4.576944e+03, MSE: 3.944240e+03, Phys: 6.327049e-01
+	0.425 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.072 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 312000	Loss: 4.721112e+03, MSE: 4.090512e+03, Phys: 6.305994e-01
+	0.425 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.072 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 313000	Loss: 4.673954e+03, MSE: 4.045528e+03, Phys: 6.284263e-01
+	0.418 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.073 - 0.000 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 314000	Loss: 4.608059e+03, MSE: 4.015959e+03, Phys: 5.921005e-01
+	0.405 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.074 - 0.001 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 315000	Loss: 4.553735e+03, MSE: 3.925456e+03, Phys: 6.282788e-01
+	0.409 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.075 - 0.001 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 316000	Loss: 4.473723e+03, MSE: 3.868496e+03, Phys: 6.052277e-01
+	0.393 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.075 - 0.001 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 317000	Loss: 4.725497e+03, MSE: 4.076182e+03, Phys: 6.493148e-01
+	0.402 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.077 - 0.001 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 318000	Loss: 4.498812e+03, MSE: 3.881767e+03, Phys: 6.170456e-01
+	0.386 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.078 - 0.002 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 319000	Loss: 4.751780e+03, MSE: 4.115193e+03, Phys: 6.365863e-01
+	0.388 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.080 - 0.002 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 320000	Loss: 4.482540e+03, MSE: 3.832934e+03, Phys: 6.496061e-01
+	0.388 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.081 - 0.002 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 321000	Loss: 4.573305e+03, MSE: 3.922218e+03, Phys: 6.510872e-01
+	0.388 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.082 - 0.003 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 322000	Loss: 4.552503e+03, MSE: 3.922404e+03, Phys: 6.300988e-01
+	0.385 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.084 - 0.003 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 323000	Loss: 4.440088e+03, MSE: 3.803555e+03, Phys: 6.365334e-01
+	0.381 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.085 - 0.003 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 324000	Loss: 4.793607e+03, MSE: 4.136723e+03, Phys: 6.568842e-01
+	0.380 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.086 - 0.004 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 325000	Loss: 4.540019e+03, MSE: 3.888730e+03, Phys: 6.512892e-01
+	0.379 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.087 - 0.004 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 326000	Loss: 4.412491e+03, MSE: 3.792030e+03, Phys: 6.204615e-01
+	0.374 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.087 - 0.004 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 327000	Loss: 4.401528e+03, MSE: 3.804731e+03, Phys: 5.967965e-01
+	0.377 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.088 - 0.004 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 328000	Loss: 4.630724e+03, MSE: 3.996823e+03, Phys: 6.339012e-01
+	0.363 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.089 - 0.005 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 329000	Loss: 4.525122e+03, MSE: 3.873429e+03, Phys: 6.516925e-01
+	0.365 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.089 - 0.005 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 330000	Loss: 4.599403e+03, MSE: 3.975766e+03, Phys: 6.236368e-01
+	0.373 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.089 - 0.005 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 331000	Loss: 4.647362e+03, MSE: 3.972112e+03, Phys: 6.752502e-01
+	0.366 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.090 - 0.005 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 332000	Loss: 4.470379e+03, MSE: 3.834205e+03, Phys: 6.361734e-01
+	0.361 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.090 - 0.005 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 333000	Loss: 4.615672e+03, MSE: 3.976986e+03, Phys: 6.386859e-01
+	0.360 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.091 - 0.005 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 334000	Loss: 4.466341e+03, MSE: 3.828529e+03, Phys: 6.378125e-01
+	0.363 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.091 - 0.005 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 335000	Loss: 4.626398e+03, MSE: 3.995155e+03, Phys: 6.312438e-01
+	0.351 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.091 - 0.005 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 336000	Loss: 4.564842e+03, MSE: 3.912291e+03, Phys: 6.525511e-01
+	0.352 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.091 - 0.005 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 337000	Loss: 4.623870e+03, MSE: 3.952083e+03, Phys: 6.717867e-01
+	0.353 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.091 - 0.005 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 338000	Loss: 4.546470e+03, MSE: 3.908847e+03, Phys: 6.376227e-01
+	0.347 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.092 - 0.005 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 339000	Loss: 4.619999e+03, MSE: 3.973675e+03, Phys: 6.463237e-01
+	0.346 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.093 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 340000	Loss: 4.538200e+03, MSE: 3.871100e+03, Phys: 6.670998e-01
+	0.352 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.093 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 341000	Loss: 4.490146e+03, MSE: 3.880809e+03, Phys: 6.093367e-01
+	0.347 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.093 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 342000	Loss: 4.399339e+03, MSE: 3.792617e+03, Phys: 6.067224e-01
+	0.341 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.093 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 343000	Loss: 4.535863e+03, MSE: 3.918116e+03, Phys: 6.177472e-01
+	0.343 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.093 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 344000	Loss: 4.520781e+03, MSE: 3.897502e+03, Phys: 6.232795e-01
+	0.333 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.092 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 345000	Loss: 4.535683e+03, MSE: 3.913374e+03, Phys: 6.223093e-01
+	0.339 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.094 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 346000	Loss: 4.554048e+03, MSE: 3.929837e+03, Phys: 6.242112e-01
+	0.339 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.093 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 347000	Loss: 4.584408e+03, MSE: 3.961832e+03, Phys: 6.225761e-01
+	0.340 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.093 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 348000	Loss: 4.607466e+03, MSE: 3.989290e+03, Phys: 6.181766e-01
+	0.338 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.094 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 349000	Loss: 4.437840e+03, MSE: 3.812935e+03, Phys: 6.249048e-01
+	0.329 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.094 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 350000	Loss: 4.525803e+03, MSE: 3.907072e+03, Phys: 6.187312e-01
+	0.328 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.094 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 351000	Loss: 4.486747e+03, MSE: 3.869229e+03, Phys: 6.175184e-01
+	0.330 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.093 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 352000	Loss: 4.495856e+03, MSE: 3.850136e+03, Phys: 6.457204e-01
+	0.334 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.094 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 353000	Loss: 4.576727e+03, MSE: 3.944667e+03, Phys: 6.320598e-01
+	0.325 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.094 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 354000	Loss: 4.607338e+03, MSE: 3.960056e+03, Phys: 6.472821e-01
+	0.331 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.094 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 355000	Loss: 4.552252e+03, MSE: 3.897811e+03, Phys: 6.544413e-01
+	0.325 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.094 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 356000	Loss: 4.532077e+03, MSE: 3.887731e+03, Phys: 6.443465e-01
+	0.337 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.094 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 357000	Loss: 4.621942e+03, MSE: 3.980901e+03, Phys: 6.410415e-01
+	0.324 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.094 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 358000	Loss: 4.540949e+03, MSE: 3.894104e+03, Phys: 6.468455e-01
+	0.325 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.095 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 359000	Loss: 4.429115e+03, MSE: 3.769228e+03, Phys: 6.598876e-01
+	0.327 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.095 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 360000	Loss: 4.512663e+03, MSE: 3.885309e+03, Phys: 6.273536e-01
+	0.322 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.094 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 361000	Loss: 4.388658e+03, MSE: 3.793648e+03, Phys: 5.950098e-01
+	0.321 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.095 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 362000	Loss: 4.496558e+03, MSE: 3.862438e+03, Phys: 6.341197e-01
+	0.318 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.095 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 363000	Loss: 4.409614e+03, MSE: 3.764592e+03, Phys: 6.450217e-01
+	0.324 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.095 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 364000	Loss: 4.369557e+03, MSE: 3.762726e+03, Phys: 6.068308e-01
+	0.319 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.095 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 365000	Loss: 4.640884e+03, MSE: 3.988790e+03, Phys: 6.520941e-01
+	0.323 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.096 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 366000	Loss: 4.606484e+03, MSE: 3.945929e+03, Phys: 6.605548e-01
+	0.322 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.096 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 367000	Loss: 4.484584e+03, MSE: 3.870292e+03, Phys: 6.142926e-01
+	0.311 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.095 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 368000	Loss: 4.444708e+03, MSE: 3.781964e+03, Phys: 6.627445e-01
+	0.322 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.096 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 369000	Loss: 4.564852e+03, MSE: 3.920789e+03, Phys: 6.440620e-01
+	0.315 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.097 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 370000	Loss: 4.958350e+03, MSE: 4.035373e+03, Phys: 9.229775e-01
+	0.314 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.097 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 371000	Loss: 4.547854e+03, MSE: 3.917504e+03, Phys: 6.303506e-01
+	0.318 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.096 - 0.006 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 372000	Loss: 4.745486e+03, MSE: 4.076116e+03, Phys: 6.693696e-01
+	0.314 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.097 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 373000	Loss: 4.513384e+03, MSE: 3.875282e+03, Phys: 6.381022e-01
+	0.316 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.097 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 374000	Loss: 4.495699e+03, MSE: 3.843634e+03, Phys: 6.520654e-01
+	0.313 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.097 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 375000	Loss: 4.406338e+03, MSE: 3.765822e+03, Phys: 6.405166e-01
+	0.312 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.097 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 376000	Loss: 4.569035e+03, MSE: 3.934482e+03, Phys: 6.345527e-01
+	0.316 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.097 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 377000	Loss: 4.551635e+03, MSE: 3.889540e+03, Phys: 6.620955e-01
+	0.317 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.098 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 378000	Loss: 4.416044e+03, MSE: 3.778552e+03, Phys: 6.374919e-01
+	0.310 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.098 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 379000	Loss: 4.470770e+03, MSE: 3.837817e+03, Phys: 6.329530e-01
+	0.310 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.098 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 380000	Loss: 4.535895e+03, MSE: 3.861090e+03, Phys: 6.748041e-01
+	0.317 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.098 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 381000	Loss: 4.511101e+03, MSE: 3.864031e+03, Phys: 6.470701e-01
+	0.313 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.099 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 382000	Loss: 4.555193e+03, MSE: 3.886762e+03, Phys: 6.684306e-01
+	0.316 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.099 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 383000	Loss: 4.504341e+03, MSE: 3.859184e+03, Phys: 6.451578e-01
+	0.315 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.098 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 384000	Loss: 4.556016e+03, MSE: 3.906650e+03, Phys: 6.493656e-01
+	0.314 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.098 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 385000	Loss: 4.590806e+03, MSE: 3.936011e+03, Phys: 6.547953e-01
+	0.313 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.099 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 386000	Loss: 4.412164e+03, MSE: 3.780653e+03, Phys: 6.315109e-01
+	0.319 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.099 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 387000	Loss: 4.404466e+03, MSE: 3.769979e+03, Phys: 6.344868e-01
+	0.316 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.099 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 388000	Loss: 4.510498e+03, MSE: 3.843123e+03, Phys: 6.673755e-01
+	0.317 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.100 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 389000	Loss: 4.557098e+03, MSE: 3.898292e+03, Phys: 6.588055e-01
+	0.317 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.100 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 390000	Loss: 4.512662e+03, MSE: 3.856281e+03, Phys: 6.563809e-01
+	0.314 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.100 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 391000	Loss: 4.507242e+03, MSE: 3.850767e+03, Phys: 6.564755e-01
+	0.318 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.100 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 392000	Loss: 4.548824e+03, MSE: 3.900743e+03, Phys: 6.480811e-01
+	0.317 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.100 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 393000	Loss: 4.461222e+03, MSE: 3.817230e+03, Phys: 6.439919e-01
+	0.315 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.100 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 394000	Loss: 4.525793e+03, MSE: 3.858106e+03, Phys: 6.676871e-01
+	0.313 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.100 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 395000	Loss: 4.424656e+03, MSE: 3.779370e+03, Phys: 6.452863e-01
+	0.314 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.100 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 396000	Loss: 4.482201e+03, MSE: 3.858963e+03, Phys: 6.232383e-01
+	0.311 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.100 - 0.007 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 397000	Loss: 4.454168e+03, MSE: 3.795773e+03, Phys: 6.583952e-01
+	0.312 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.101 - 0.008 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 398000	Loss: 4.631365e+03, MSE: 3.946207e+03, Phys: 6.851577e-01
+	0.310 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.100 - 0.008 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 399000	Loss: 4.472135e+03, MSE: 3.829414e+03, Phys: 6.427206e-01
+	0.307 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.101 - 0.008 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Iteration 400000	Loss: 4.466587e+03, MSE: 3.825157e+03, Phys: 6.414294e-01
+	0.312 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.100 - 0.008 c){m, E_p} + Tr(m) (0.011 Gamma^{DV} + 0.000 m)
+Incrementing beta to 1.000000e+04
+Iteration 401000	Loss: 5.810016e+03, MSE: 5.142548e+03, Phys: 6.674685e-02
+	0.074 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.149 - 0.004 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 402000	Loss: 5.764923e+03, MSE: 5.178767e+03, Phys: 5.861563e-02
+	0.042 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.153 - 0.003 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 403000	Loss: 5.642799e+03, MSE: 5.018961e+03, Phys: 6.238378e-02
+	0.026 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.152 - 0.003 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 404000	Loss: 5.601338e+03, MSE: 5.066975e+03, Phys: 5.343628e-02
+	0.017 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.153 - 0.002 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 405000	Loss: 5.694185e+03, MSE: 5.131203e+03, Phys: 5.629820e-02
+	0.011 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.152 - 0.002 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 406000	Loss: 5.896750e+03, MSE: 5.327854e+03, Phys: 5.688958e-02
+	0.008 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.152 - 0.001 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 407000	Loss: 5.564199e+03, MSE: 5.071420e+03, Phys: 4.927786e-02
+	0.005 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.151 - 0.001 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 408000	Loss: 5.760014e+03, MSE: 5.243467e+03, Phys: 5.165467e-02
+	0.003 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.151 - 0.001 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 409000	Loss: 5.591237e+03, MSE: 5.082244e+03, Phys: 5.089932e-02
+	0.002 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.001 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 410000	Loss: 5.666782e+03, MSE: 5.136073e+03, Phys: 5.307084e-02
+	0.001 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.001 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 411000	Loss: 5.681985e+03, MSE: 5.173428e+03, Phys: 5.085576e-02
+	0.001 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 412000	Loss: 5.632313e+03, MSE: 5.115964e+03, Phys: 5.163491e-02
+	0.001 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 413000	Loss: 5.548002e+03, MSE: 5.058434e+03, Phys: 4.895689e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.151 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 414000	Loss: 5.723683e+03, MSE: 5.212896e+03, Phys: 5.107877e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 415000	Loss: 5.649881e+03, MSE: 5.178893e+03, Phys: 4.709885e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 416000	Loss: 5.645493e+03, MSE: 5.155175e+03, Phys: 4.903177e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 417000	Loss: 5.723009e+03, MSE: 5.216178e+03, Phys: 5.068312e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.151 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 418000	Loss: 5.556901e+03, MSE: 5.075570e+03, Phys: 4.813307e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 419000	Loss: 5.713097e+03, MSE: 5.177812e+03, Phys: 5.352857e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.151 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 420000	Loss: 5.572942e+03, MSE: 5.103377e+03, Phys: 4.695647e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 421000	Loss: 5.635327e+03, MSE: 5.151187e+03, Phys: 4.841401e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 422000	Loss: 5.560019e+03, MSE: 5.074865e+03, Phys: 4.851543e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 423000	Loss: 5.629097e+03, MSE: 5.153947e+03, Phys: 4.751501e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 424000	Loss: 5.595881e+03, MSE: 5.097868e+03, Phys: 4.980136e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.151 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 425000	Loss: 5.563806e+03, MSE: 5.058169e+03, Phys: 5.056371e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.151 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 426000	Loss: 5.732873e+03, MSE: 5.263790e+03, Phys: 4.690824e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.151 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 427000	Loss: 5.648555e+03, MSE: 5.162305e+03, Phys: 4.862506e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 428000	Loss: 5.650164e+03, MSE: 5.180181e+03, Phys: 4.699826e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 429000	Loss: 5.611820e+03, MSE: 5.124640e+03, Phys: 4.871807e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.151 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 430000	Loss: 5.557443e+03, MSE: 5.073117e+03, Phys: 4.843258e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.000 c){m, E_p} + Tr(m) (0.010 Gamma^{DV} + 0.000 m)
+Iteration 431000	Loss: 5.619900e+03, MSE: 5.139648e+03, Phys: 4.802518e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.150 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 432000	Loss: 5.504852e+03, MSE: 5.005966e+03, Phys: 4.988863e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.149 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 433000	Loss: 5.535885e+03, MSE: 5.109302e+03, Phys: 4.265831e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.149 - 0.000 c){m, E_p} + Tr(m) (0.009 Gamma^{DV} + 0.000 m)
+Iteration 434000	Loss: 5.665370e+03, MSE: 5.182643e+03, Phys: 4.827273e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.148 - 0.000 c){m, E_p} + Tr(m) (0.008 Gamma^{DV} + 0.001 m)
+Iteration 435000	Loss: 5.512408e+03, MSE: 5.075446e+03, Phys: 4.369618e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.148 - 0.000 c){m, E_p} + Tr(m) (0.008 Gamma^{DV} + 0.001 m)
+Iteration 436000	Loss: 5.443287e+03, MSE: 5.030155e+03, Phys: 4.131315e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.147 - 0.000 c){m, E_p} + Tr(m) (0.007 Gamma^{DV} + 0.001 m)
+Iteration 437000	Loss: 5.485024e+03, MSE: 5.051464e+03, Phys: 4.335607e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.147 - 0.000 c){m, E_p} + Tr(m) (0.007 Gamma^{DV} + 0.001 m)
+Iteration 438000	Loss: 5.618573e+03, MSE: 5.188536e+03, Phys: 4.300369e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.146 - 0.000 c){m, E_p} + Tr(m) (0.006 Gamma^{DV} + 0.001 m)
+Iteration 439000	Loss: 5.493783e+03, MSE: 5.035382e+03, Phys: 4.584010e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.145 - 0.000 c){m, E_p} + Tr(m) (0.006 Gamma^{DV} + 0.001 m)
+Iteration 440000	Loss: 5.581825e+03, MSE: 5.112503e+03, Phys: 4.693225e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.144 - 0.000 c){m, E_p} + Tr(m) (0.006 Gamma^{DV} + 0.001 m)
+Iteration 441000	Loss: 5.387398e+03, MSE: 4.940429e+03, Phys: 4.469690e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.144 - 0.000 c){m, E_p} + Tr(m) (0.006 Gamma^{DV} + 0.001 m)
+Iteration 442000	Loss: 5.507521e+03, MSE: 5.073516e+03, Phys: 4.340048e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.144 - 0.000 c){m, E_p} + Tr(m) (0.006 Gamma^{DV} + 0.001 m)
+Iteration 443000	Loss: 5.562542e+03, MSE: 5.114238e+03, Phys: 4.483037e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.144 - 0.000 c){m, E_p} + Tr(m) (0.005 Gamma^{DV} + 0.001 m)
+Iteration 444000	Loss: 5.517473e+03, MSE: 5.008506e+03, Phys: 5.089661e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.143 - 0.000 c){m, E_p} + Tr(m) (0.005 Gamma^{DV} + 0.001 m)
+Iteration 445000	Loss: 5.572182e+03, MSE: 5.146823e+03, Phys: 4.253590e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.143 - 0.000 c){m, E_p} + Tr(m) (0.005 Gamma^{DV} + 0.001 m)
+Iteration 446000	Loss: 5.361438e+03, MSE: 4.937517e+03, Phys: 4.239215e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.143 - 0.000 c){m, E_p} + Tr(m) (0.005 Gamma^{DV} + 0.001 m)
+Iteration 447000	Loss: 5.536806e+03, MSE: 5.101542e+03, Phys: 4.352648e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.005 Gamma^{DV} + 0.001 m)
+Iteration 448000	Loss: 5.533323e+03, MSE: 5.093234e+03, Phys: 4.400888e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.005 Gamma^{DV} + 0.001 m)
+Iteration 449000	Loss: 5.329102e+03, MSE: 4.914164e+03, Phys: 4.149373e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.005 Gamma^{DV} + 0.001 m)
+Iteration 450000	Loss: 5.504454e+03, MSE: 5.069430e+03, Phys: 4.350235e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.005 Gamma^{DV} + 0.001 m)
+Iteration 451000	Loss: 5.477293e+03, MSE: 5.008786e+03, Phys: 4.685076e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.005 Gamma^{DV} + 0.001 m)
+Iteration 452000	Loss: 5.562493e+03, MSE: 5.103610e+03, Phys: 4.588823e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.005 Gamma^{DV} + 0.001 m)
+Iteration 453000	Loss: 5.489594e+03, MSE: 5.073143e+03, Phys: 4.164513e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.005 Gamma^{DV} + 0.001 m)
+Iteration 454000	Loss: 5.492092e+03, MSE: 5.043078e+03, Phys: 4.490136e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.005 Gamma^{DV} + 0.001 m)
+Iteration 455000	Loss: 5.593761e+03, MSE: 5.154670e+03, Phys: 4.390902e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.005 Gamma^{DV} + 0.001 m)
+Iteration 456000	Loss: 5.551391e+03, MSE: 5.102388e+03, Phys: 4.490025e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.005 Gamma^{DV} + 0.001 m)
+Iteration 457000	Loss: 5.496721e+03, MSE: 5.054233e+03, Phys: 4.424883e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 458000	Loss: 5.544422e+03, MSE: 5.074604e+03, Phys: 4.698172e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 459000	Loss: 5.516044e+03, MSE: 5.088023e+03, Phys: 4.280217e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 460000	Loss: 5.606432e+03, MSE: 5.166751e+03, Phys: 4.396801e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 461000	Loss: 5.505016e+03, MSE: 5.088535e+03, Phys: 4.164808e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 462000	Loss: 5.594505e+03, MSE: 5.148856e+03, Phys: 4.456484e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 463000	Loss: 5.505330e+03, MSE: 5.031222e+03, Phys: 4.741077e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 464000	Loss: 5.668334e+03, MSE: 5.231397e+03, Phys: 4.369377e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 465000	Loss: 5.555074e+03, MSE: 5.106799e+03, Phys: 4.482749e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 466000	Loss: 5.544396e+03, MSE: 5.108534e+03, Phys: 4.358625e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 467000	Loss: 5.524837e+03, MSE: 5.088478e+03, Phys: 4.363590e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 468000	Loss: 5.428365e+03, MSE: 5.006556e+03, Phys: 4.218091e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 469000	Loss: 5.636984e+03, MSE: 5.170592e+03, Phys: 4.663919e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 470000	Loss: 5.501275e+03, MSE: 5.057063e+03, Phys: 4.442124e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 471000	Loss: 5.402617e+03, MSE: 4.961186e+03, Phys: 4.414306e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 472000	Loss: 5.300165e+03, MSE: 4.907387e+03, Phys: 3.927779e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 473000	Loss: 5.459639e+03, MSE: 5.014425e+03, Phys: 4.452144e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 474000	Loss: 5.469403e+03, MSE: 5.034062e+03, Phys: 4.353409e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 475000	Loss: 5.554762e+03, MSE: 5.103346e+03, Phys: 4.514161e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 476000	Loss: 5.605693e+03, MSE: 5.213631e+03, Phys: 3.920622e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.142 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 477000	Loss: 5.486804e+03, MSE: 5.079417e+03, Phys: 4.073863e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 478000	Loss: 5.531424e+03, MSE: 5.083612e+03, Phys: 4.478117e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.140 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 479000	Loss: 5.523020e+03, MSE: 5.121076e+03, Phys: 4.019440e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.140 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 480000	Loss: 5.462261e+03, MSE: 5.035190e+03, Phys: 4.270709e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 481000	Loss: 5.550854e+03, MSE: 5.067959e+03, Phys: 4.828950e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 482000	Loss: 5.590515e+03, MSE: 5.168740e+03, Phys: 4.217749e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 483000	Loss: 5.382797e+03, MSE: 4.984350e+03, Phys: 3.984469e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 484000	Loss: 5.476379e+03, MSE: 5.024322e+03, Phys: 4.520571e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 485000	Loss: 5.565419e+03, MSE: 5.128211e+03, Phys: 4.372080e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.140 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 486000	Loss: 5.586122e+03, MSE: 5.173638e+03, Phys: 4.124844e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 487000	Loss: 5.597050e+03, MSE: 5.157864e+03, Phys: 4.391860e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.140 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 488000	Loss: 5.554246e+03, MSE: 5.125826e+03, Phys: 4.284195e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 489000	Loss: 5.623365e+03, MSE: 5.130674e+03, Phys: 4.926909e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.140 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 490000	Loss: 5.507946e+03, MSE: 5.087482e+03, Phys: 4.204638e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.140 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 491000	Loss: 5.671206e+03, MSE: 5.233491e+03, Phys: 4.377142e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 492000	Loss: 5.487399e+03, MSE: 5.060972e+03, Phys: 4.264272e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 493000	Loss: 5.346643e+03, MSE: 4.938001e+03, Phys: 4.086411e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 494000	Loss: 5.465992e+03, MSE: 5.031450e+03, Phys: 4.345424e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 495000	Loss: 5.492175e+03, MSE: 4.996547e+03, Phys: 4.956286e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.140 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 496000	Loss: 5.577442e+03, MSE: 5.156789e+03, Phys: 4.206531e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 497000	Loss: 5.407370e+03, MSE: 4.978262e+03, Phys: 4.291081e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.140 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 498000	Loss: 5.522164e+03, MSE: 5.095042e+03, Phys: 4.271216e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 499000	Loss: 5.559086e+03, MSE: 5.154810e+03, Phys: 4.042761e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.140 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 500000	Loss: 5.579175e+03, MSE: 5.085827e+03, Phys: 4.933488e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.141 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Incrementing beta to 1.000000e+05
+Iteration 501000	Loss: 7.622723e+03, MSE: 6.659831e+03, Phys: 9.628919e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.001 m)
+Iteration 502000	Loss: 6.888087e+03, MSE: 5.994808e+03, Phys: 8.932794e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.001 m)
+Iteration 503000	Loss: 6.921038e+03, MSE: 6.072241e+03, Phys: 8.487967e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 504000	Loss: 6.835932e+03, MSE: 5.875408e+03, Phys: 9.605240e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.004 Gamma^{DV} + 0.002 m)
+Iteration 505000	Loss: 6.858444e+03, MSE: 6.039317e+03, Phys: 8.191269e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 506000	Loss: 6.989034e+03, MSE: 5.924260e+03, Phys: 1.064774e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 507000	Loss: 6.959180e+03, MSE: 6.073262e+03, Phys: 8.859182e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 508000	Loss: 6.683751e+03, MSE: 5.849964e+03, Phys: 8.337864e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 509000	Loss: 6.654694e+03, MSE: 5.792825e+03, Phys: 8.618694e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 510000	Loss: 6.657819e+03, MSE: 5.925153e+03, Phys: 7.326662e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 511000	Loss: 6.698262e+03, MSE: 5.895107e+03, Phys: 8.031546e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.137 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 512000	Loss: 6.645746e+03, MSE: 5.840294e+03, Phys: 8.054516e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 513000	Loss: 6.784739e+03, MSE: 6.034498e+03, Phys: 7.502408e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 514000	Loss: 7.089666e+03, MSE: 5.992555e+03, Phys: 1.097111e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 515000	Loss: 6.578890e+03, MSE: 5.735453e+03, Phys: 8.434377e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 516000	Loss: 6.647976e+03, MSE: 5.815514e+03, Phys: 8.324623e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 517000	Loss: 6.760946e+03, MSE: 5.862352e+03, Phys: 8.985940e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 518000	Loss: 6.825038e+03, MSE: 5.940470e+03, Phys: 8.845679e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 519000	Loss: 6.690567e+03, MSE: 5.946025e+03, Phys: 7.445427e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 520000	Loss: 6.544275e+03, MSE: 5.801896e+03, Phys: 7.423794e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.135 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 521000	Loss: 6.646340e+03, MSE: 5.924953e+03, Phys: 7.213873e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.136 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 522000	Loss: 6.650798e+03, MSE: 5.917507e+03, Phys: 7.332912e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.135 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 523000	Loss: 6.833296e+03, MSE: 5.662338e+03, Phys: 1.170958e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.135 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 524000	Loss: 6.560514e+03, MSE: 5.871243e+03, Phys: 6.892710e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.135 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 525000	Loss: 6.415143e+03, MSE: 5.737953e+03, Phys: 6.771898e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.135 - 0.000 c){m, E_p} + Tr(m) (0.003 Gamma^{DV} + 0.002 m)
+Iteration 526000	Loss: 6.836385e+03, MSE: 6.010391e+03, Phys: 8.259946e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.135 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 527000	Loss: 6.508738e+03, MSE: 5.608605e+03, Phys: 9.001324e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.135 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 528000	Loss: 6.625265e+03, MSE: 5.907190e+03, Phys: 7.180747e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.135 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 529000	Loss: 7.218374e+03, MSE: 5.871859e+03, Phys: 1.346515e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.135 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 530000	Loss: 6.708202e+03, MSE: 5.971146e+03, Phys: 7.370563e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.135 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 531000	Loss: 6.561389e+03, MSE: 5.801404e+03, Phys: 7.599845e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.135 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 532000	Loss: 7.598771e+03, MSE: 5.903796e+03, Phys: 1.694974e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.135 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 533000	Loss: 6.698997e+03, MSE: 5.961120e+03, Phys: 7.378768e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.135 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 534000	Loss: 6.693447e+03, MSE: 5.936179e+03, Phys: 7.572684e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 535000	Loss: 6.544238e+03, MSE: 5.892907e+03, Phys: 6.513316e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.135 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 536000	Loss: 6.687833e+03, MSE: 5.914078e+03, Phys: 7.737549e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 537000	Loss: 6.544037e+03, MSE: 5.897408e+03, Phys: 6.466282e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 538000	Loss: 6.797785e+03, MSE: 5.741865e+03, Phys: 1.055920e-02
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 539000	Loss: 6.593517e+03, MSE: 5.759009e+03, Phys: 8.345074e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 540000	Loss: 6.434656e+03, MSE: 5.753074e+03, Phys: 6.815820e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 541000	Loss: 6.387291e+03, MSE: 5.729932e+03, Phys: 6.573588e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 542000	Loss: 6.738799e+03, MSE: 5.874657e+03, Phys: 8.641420e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 543000	Loss: 6.615742e+03, MSE: 5.829188e+03, Phys: 7.865538e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 544000	Loss: 6.430342e+03, MSE: 5.801124e+03, Phys: 6.292180e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 545000	Loss: 6.460440e+03, MSE: 5.817317e+03, Phys: 6.431228e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 546000	Loss: 6.466306e+03, MSE: 5.846122e+03, Phys: 6.201841e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 547000	Loss: 6.640616e+03, MSE: 5.804165e+03, Phys: 8.364519e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 548000	Loss: 6.460837e+03, MSE: 5.760015e+03, Phys: 7.008218e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 549000	Loss: 6.691461e+03, MSE: 5.886028e+03, Phys: 8.054335e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 550000	Loss: 6.638931e+03, MSE: 5.953887e+03, Phys: 6.850433e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 551000	Loss: 6.529719e+03, MSE: 5.860167e+03, Phys: 6.695524e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 552000	Loss: 6.675496e+03, MSE: 5.921756e+03, Phys: 7.537391e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 553000	Loss: 6.409842e+03, MSE: 5.797654e+03, Phys: 6.121880e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.132 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 554000	Loss: 6.532090e+03, MSE: 5.787526e+03, Phys: 7.445638e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 555000	Loss: 6.586201e+03, MSE: 5.787372e+03, Phys: 7.988285e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 556000	Loss: 6.737275e+03, MSE: 5.912493e+03, Phys: 8.247817e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 557000	Loss: 6.689822e+03, MSE: 5.838351e+03, Phys: 8.514713e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 558000	Loss: 6.578890e+03, MSE: 5.874824e+03, Phys: 7.040665e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 559000	Loss: 6.748899e+03, MSE: 5.886050e+03, Phys: 8.628488e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 560000	Loss: 6.559382e+03, MSE: 5.810851e+03, Phys: 7.485309e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 561000	Loss: 6.586722e+03, MSE: 5.835979e+03, Phys: 7.507420e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 562000	Loss: 6.717692e+03, MSE: 6.031128e+03, Phys: 6.865634e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 563000	Loss: 6.637502e+03, MSE: 5.984128e+03, Phys: 6.533739e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.134 - 0.000 c){m, E_p} + Tr(m) (0.002 Gamma^{DV} + 0.002 m)
+Iteration 564000	Loss: 6.773408e+03, MSE: 5.815205e+03, Phys: 9.582028e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 565000	Loss: 6.400692e+03, MSE: 5.776059e+03, Phys: 6.246331e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 566000	Loss: 6.675683e+03, MSE: 5.953423e+03, Phys: 7.222603e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 567000	Loss: 6.737703e+03, MSE: 5.891067e+03, Phys: 8.466355e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 568000	Loss: 6.559074e+03, MSE: 5.857690e+03, Phys: 7.013835e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 569000	Loss: 6.283079e+03, MSE: 5.717694e+03, Phys: 5.653853e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.132 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 570000	Loss: 6.469904e+03, MSE: 5.878110e+03, Phys: 5.917933e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 571000	Loss: 6.526223e+03, MSE: 5.895523e+03, Phys: 6.307003e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 572000	Loss: 6.616271e+03, MSE: 5.860496e+03, Phys: 7.557757e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 573000	Loss: 6.750630e+03, MSE: 5.961854e+03, Phys: 7.887754e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 574000	Loss: 6.410724e+03, MSE: 5.720420e+03, Phys: 6.903037e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 575000	Loss: 6.511378e+03, MSE: 5.811928e+03, Phys: 6.994505e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 576000	Loss: 6.491237e+03, MSE: 5.841089e+03, Phys: 6.501480e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 577000	Loss: 6.684756e+03, MSE: 5.951723e+03, Phys: 7.330338e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 578000	Loss: 6.571025e+03, MSE: 5.868886e+03, Phys: 7.021394e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 579000	Loss: 6.762759e+03, MSE: 5.964896e+03, Phys: 7.978626e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 580000	Loss: 6.616145e+03, MSE: 5.920794e+03, Phys: 6.953504e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 581000	Loss: 6.649367e+03, MSE: 5.947011e+03, Phys: 7.023553e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 582000	Loss: 6.495608e+03, MSE: 5.846134e+03, Phys: 6.494740e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 583000	Loss: 6.622276e+03, MSE: 5.941146e+03, Phys: 6.811293e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 584000	Loss: 6.605925e+03, MSE: 5.980358e+03, Phys: 6.255672e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 585000	Loss: 6.512194e+03, MSE: 5.843523e+03, Phys: 6.686711e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 586000	Loss: 6.357042e+03, MSE: 5.681732e+03, Phys: 6.753103e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.132 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 587000	Loss: 6.484255e+03, MSE: 5.739391e+03, Phys: 7.448637e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 588000	Loss: 6.764243e+03, MSE: 5.771395e+03, Phys: 9.928484e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.132 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 589000	Loss: 6.698513e+03, MSE: 6.063280e+03, Phys: 6.352331e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.132 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 590000	Loss: 6.639315e+03, MSE: 5.957493e+03, Phys: 6.818225e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 591000	Loss: 6.546339e+03, MSE: 5.818005e+03, Phys: 7.283338e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 592000	Loss: 6.623215e+03, MSE: 5.893589e+03, Phys: 7.296256e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 593000	Loss: 6.505753e+03, MSE: 5.695959e+03, Phys: 8.097937e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 594000	Loss: 6.422322e+03, MSE: 5.688309e+03, Phys: 7.340133e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 595000	Loss: 6.435346e+03, MSE: 5.779066e+03, Phys: 6.562799e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.132 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 596000	Loss: 6.448470e+03, MSE: 5.825805e+03, Phys: 6.226646e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.132 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 597000	Loss: 6.446517e+03, MSE: 5.827470e+03, Phys: 6.190468e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.132 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 598000	Loss: 6.836439e+03, MSE: 6.035775e+03, Phys: 8.006643e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.132 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 599000	Loss: 6.372387e+03, MSE: 5.752911e+03, Phys: 6.194761e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.132 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 600000	Loss: 6.657867e+03, MSE: 5.710987e+03, Phys: 9.468804e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.007 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.133 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Incrementing beta to 1.000000e+06
+Iteration 601000	Loss: 1.904907e+04, MSE: 1.745295e+04, Phys: 1.596123e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.113 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 602000	Loss: 1.484453e+04, MSE: 1.338754e+04, Phys: 1.456998e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.101 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 603000	Loss: 1.343294e+04, MSE: 1.186138e+04, Phys: 1.571564e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.092 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 604000	Loss: 1.320367e+04, MSE: 1.136227e+04, Phys: 1.841394e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.086 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 605000	Loss: 1.187044e+04, MSE: 1.042496e+04, Phys: 1.445483e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.081 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 606000	Loss: 1.176652e+04, MSE: 1.045332e+04, Phys: 1.313196e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.078 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 607000	Loss: 1.140283e+04, MSE: 9.893305e+03, Phys: 1.509524e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.076 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 608000	Loss: 1.249950e+04, MSE: 9.705980e+03, Phys: 2.793518e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.074 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 609000	Loss: 1.204035e+04, MSE: 1.004928e+04, Phys: 1.991070e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.073 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 610000	Loss: 1.142809e+04, MSE: 9.694145e+03, Phys: 1.733944e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.072 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 611000	Loss: 1.194292e+04, MSE: 9.564481e+03, Phys: 2.378438e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.072 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 612000	Loss: 1.077349e+04, MSE: 9.535076e+03, Phys: 1.238410e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.072 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 613000	Loss: 1.054746e+04, MSE: 9.350456e+03, Phys: 1.197004e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.071 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 614000	Loss: 1.152548e+04, MSE: 9.669994e+03, Phys: 1.855488e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.072 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 615000	Loss: 1.209972e+04, MSE: 9.234372e+03, Phys: 2.865350e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.072 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 616000	Loss: 1.041130e+04, MSE: 9.109260e+03, Phys: 1.302037e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.072 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 617000	Loss: 1.134130e+04, MSE: 9.467543e+03, Phys: 1.873760e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.072 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 618000	Loss: 1.045244e+04, MSE: 9.259789e+03, Phys: 1.192648e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.072 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 619000	Loss: 1.028191e+04, MSE: 9.104890e+03, Phys: 1.177019e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.072 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 620000	Loss: 1.057700e+04, MSE: 9.145799e+03, Phys: 1.431197e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.073 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 621000	Loss: 1.022933e+04, MSE: 8.906455e+03, Phys: 1.322877e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.073 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 622000	Loss: 1.058663e+04, MSE: 8.856979e+03, Phys: 1.729655e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.074 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 623000	Loss: 1.007808e+04, MSE: 9.017871e+03, Phys: 1.060210e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.074 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 624000	Loss: 1.046729e+04, MSE: 9.124231e+03, Phys: 1.343063e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.074 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 625000	Loss: 1.066547e+04, MSE: 8.646647e+03, Phys: 2.018821e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.075 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 626000	Loss: 1.038931e+04, MSE: 8.733943e+03, Phys: 1.655365e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.075 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 627000	Loss: 1.085958e+04, MSE: 8.773814e+03, Phys: 2.085764e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.075 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 628000	Loss: 9.688385e+03, MSE: 8.672000e+03, Phys: 1.016384e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.075 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 629000	Loss: 1.177726e+04, MSE: 8.902030e+03, Phys: 2.875232e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.076 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 630000	Loss: 1.049993e+04, MSE: 8.654520e+03, Phys: 1.845411e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.076 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 631000	Loss: 1.144038e+04, MSE: 8.744558e+03, Phys: 2.695825e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.077 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 632000	Loss: 1.027114e+04, MSE: 8.592162e+03, Phys: 1.678981e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.077 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 633000	Loss: 1.027482e+04, MSE: 8.745251e+03, Phys: 1.529566e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.077 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 634000	Loss: 9.946108e+03, MSE: 8.469899e+03, Phys: 1.476209e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.077 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 635000	Loss: 9.719850e+03, MSE: 8.492917e+03, Phys: 1.226933e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.077 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 636000	Loss: 9.892716e+03, MSE: 8.487805e+03, Phys: 1.404911e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.078 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 637000	Loss: 1.025463e+04, MSE: 8.694185e+03, Phys: 1.560441e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.078 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 638000	Loss: 1.040626e+04, MSE: 8.689677e+03, Phys: 1.716583e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.078 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 639000	Loss: 9.872637e+03, MSE: 8.601867e+03, Phys: 1.270770e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.078 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 640000	Loss: 1.093562e+04, MSE: 8.765793e+03, Phys: 2.169823e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.078 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 641000	Loss: 1.356243e+04, MSE: 8.539562e+03, Phys: 5.022871e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.078 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 642000	Loss: 1.150637e+04, MSE: 8.489851e+03, Phys: 3.016514e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.079 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 643000	Loss: 1.010233e+04, MSE: 8.659740e+03, Phys: 1.442591e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.078 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 644000	Loss: 9.971980e+03, MSE: 8.442408e+03, Phys: 1.529572e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.079 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 645000	Loss: 9.620251e+03, MSE: 8.372941e+03, Phys: 1.247309e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.079 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 646000	Loss: 1.033391e+04, MSE: 8.380146e+03, Phys: 1.953767e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.079 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 647000	Loss: 1.192147e+04, MSE: 8.461286e+03, Phys: 3.460187e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.079 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 648000	Loss: 1.032957e+04, MSE: 8.597930e+03, Phys: 1.731644e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.079 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 649000	Loss: 1.003374e+04, MSE: 8.967348e+03, Phys: 1.066389e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.078 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 650000	Loss: 1.135172e+04, MSE: 8.229809e+03, Phys: 3.121913e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.079 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 651000	Loss: 9.634692e+03, MSE: 8.286531e+03, Phys: 1.348161e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.080 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 652000	Loss: 9.900943e+03, MSE: 8.368169e+03, Phys: 1.532774e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.080 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 653000	Loss: 1.159201e+04, MSE: 8.124658e+03, Phys: 3.467350e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.080 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 654000	Loss: 9.903250e+03, MSE: 8.503396e+03, Phys: 1.399854e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.080 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 655000	Loss: 1.014629e+04, MSE: 8.367963e+03, Phys: 1.778331e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.080 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 656000	Loss: 9.350218e+03, MSE: 8.082463e+03, Phys: 1.267755e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.080 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 657000	Loss: 9.357355e+03, MSE: 8.345573e+03, Phys: 1.011782e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.080 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 658000	Loss: 9.191031e+03, MSE: 8.077238e+03, Phys: 1.113793e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.080 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 659000	Loss: 1.043167e+04, MSE: 8.304018e+03, Phys: 2.127655e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.081 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 660000	Loss: 1.012069e+04, MSE: 8.180310e+03, Phys: 1.940384e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.081 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 661000	Loss: 9.270588e+03, MSE: 8.283768e+03, Phys: 9.868206e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.081 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 662000	Loss: 9.310362e+03, MSE: 8.108737e+03, Phys: 1.201625e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.081 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 663000	Loss: 9.491667e+03, MSE: 8.133262e+03, Phys: 1.358406e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.081 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 664000	Loss: 9.814805e+03, MSE: 8.168453e+03, Phys: 1.646351e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.081 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 665000	Loss: 1.027728e+04, MSE: 8.201363e+03, Phys: 2.075917e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.081 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 666000	Loss: 1.044989e+04, MSE: 8.283146e+03, Phys: 2.166748e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.082 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 667000	Loss: 9.071920e+03, MSE: 8.037291e+03, Phys: 1.034629e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.082 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 668000	Loss: 1.050426e+04, MSE: 8.135678e+03, Phys: 2.368579e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.082 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 669000	Loss: 9.438425e+03, MSE: 8.106301e+03, Phys: 1.332124e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.082 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 670000	Loss: 9.137639e+03, MSE: 8.188619e+03, Phys: 9.490202e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.082 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 671000	Loss: 1.081879e+04, MSE: 8.191259e+03, Phys: 2.627534e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.082 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 672000	Loss: 9.587758e+03, MSE: 8.389255e+03, Phys: 1.198502e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.082 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 673000	Loss: 9.792341e+03, MSE: 8.138270e+03, Phys: 1.654071e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.082 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 674000	Loss: 9.072546e+03, MSE: 8.068731e+03, Phys: 1.003815e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.081 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 675000	Loss: 9.464486e+03, MSE: 8.197993e+03, Phys: 1.266493e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.082 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 676000	Loss: 9.035511e+03, MSE: 7.890837e+03, Phys: 1.144674e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.082 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 677000	Loss: 9.141158e+03, MSE: 7.908729e+03, Phys: 1.232429e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.082 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 678000	Loss: 9.233451e+03, MSE: 7.997480e+03, Phys: 1.235971e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.083 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 679000	Loss: 9.815152e+03, MSE: 8.157298e+03, Phys: 1.657854e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.083 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 680000	Loss: 9.914533e+03, MSE: 8.091564e+03, Phys: 1.822969e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.083 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 681000	Loss: 1.043948e+04, MSE: 8.217288e+03, Phys: 2.222192e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.083 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 682000	Loss: 9.042785e+03, MSE: 8.007257e+03, Phys: 1.035528e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.083 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 683000	Loss: 9.185825e+03, MSE: 8.009218e+03, Phys: 1.176608e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.083 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 684000	Loss: 9.244983e+03, MSE: 8.041732e+03, Phys: 1.203252e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.083 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 685000	Loss: 8.943284e+03, MSE: 7.974829e+03, Phys: 9.684548e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.083 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 686000	Loss: 9.773892e+03, MSE: 7.822484e+03, Phys: 1.951407e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.084 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 687000	Loss: 9.437279e+03, MSE: 8.210037e+03, Phys: 1.227242e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.084 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 688000	Loss: 1.000704e+04, MSE: 9.041512e+03, Phys: 9.655230e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.082 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 689000	Loss: 9.963696e+03, MSE: 8.278221e+03, Phys: 1.685476e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.083 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 690000	Loss: 9.115921e+03, MSE: 7.894344e+03, Phys: 1.221577e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.083 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 691000	Loss: 1.031690e+04, MSE: 8.179399e+03, Phys: 2.137503e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.084 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 692000	Loss: 9.194480e+03, MSE: 7.961059e+03, Phys: 1.233422e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.084 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 693000	Loss: 9.103343e+03, MSE: 8.051285e+03, Phys: 1.052058e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.084 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 694000	Loss: 9.123557e+03, MSE: 7.907207e+03, Phys: 1.216350e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.084 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 695000	Loss: 9.572987e+03, MSE: 8.098584e+03, Phys: 1.474403e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.084 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 696000	Loss: 1.678440e+04, MSE: 1.069823e+04, Phys: 6.086167e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.083 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 697000	Loss: 9.393418e+03, MSE: 7.968408e+03, Phys: 1.425009e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.084 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 698000	Loss: 9.445062e+03, MSE: 7.918285e+03, Phys: 1.526777e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.084 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 699000	Loss: 9.230731e+03, MSE: 7.991223e+03, Phys: 1.239508e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.084 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 700000	Loss: 9.265863e+03, MSE: 8.014569e+03, Phys: 1.251294e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.084 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Incrementing beta to 1.000000e+07
+Iteration 701000	Loss: 8.015447e+04, MSE: 4.108908e+04, Phys: 3.906539e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.081 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 702000	Loss: 3.786911e+04, MSE: 3.666242e+04, Phys: 1.206689e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.081 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 703000	Loss: 3.236034e+04, MSE: 3.090585e+04, Phys: 1.454490e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.081 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 704000	Loss: 3.593999e+04, MSE: 2.776167e+04, Phys: 8.178320e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.079 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 705000	Loss: 2.877825e+04, MSE: 2.523515e+04, Phys: 3.543106e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.076 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 706000	Loss: 2.849579e+04, MSE: 2.253128e+04, Phys: 5.964508e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.070 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 707000	Loss: 2.360178e+04, MSE: 2.221856e+04, Phys: 1.383210e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.066 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 708000	Loss: 2.247680e+04, MSE: 2.103120e+04, Phys: 1.445604e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.061 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 709000	Loss: 2.110781e+04, MSE: 1.953598e+04, Phys: 1.571831e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.058 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 710000	Loss: 2.290497e+04, MSE: 2.001183e+04, Phys: 2.893140e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.055 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 711000	Loss: 2.205565e+04, MSE: 1.922545e+04, Phys: 2.830203e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.052 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 712000	Loss: 1.945501e+04, MSE: 1.835996e+04, Phys: 1.095049e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.006 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.050 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 713000	Loss: 2.021238e+04, MSE: 1.806645e+04, Phys: 2.145926e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.005 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.047 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 714000	Loss: 1.976920e+04, MSE: 1.818881e+04, Phys: 1.580388e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.005 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.045 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 715000	Loss: 1.887827e+04, MSE: 1.779973e+04, Phys: 1.078537e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.005 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.043 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 716000	Loss: 1.901217e+04, MSE: 1.735929e+04, Phys: 1.652882e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.005 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.042 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 717000	Loss: 1.973615e+04, MSE: 1.741732e+04, Phys: 2.318829e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.005 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.040 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 718000	Loss: 2.278181e+04, MSE: 1.800044e+04, Phys: 4.781375e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.005 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.039 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 719000	Loss: 1.905377e+04, MSE: 1.746961e+04, Phys: 1.584155e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.005 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.037 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 720000	Loss: 4.023562e+04, MSE: 1.667485e+04, Phys: 2.356076e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.005 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.036 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 721000	Loss: 2.141804e+04, MSE: 1.677953e+04, Phys: 4.638504e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.005 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.035 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 722000	Loss: 1.937723e+04, MSE: 1.683198e+04, Phys: 2.545253e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.005 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.034 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 723000	Loss: 1.774740e+04, MSE: 1.637541e+04, Phys: 1.371989e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.005 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.033 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 724000	Loss: 2.850141e+04, MSE: 1.748165e+04, Phys: 1.101976e-03
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.005 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.032 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)
+Iteration 725000	Loss: 1.946932e+04, MSE: 1.671515e+04, Phys: 2.754176e-04
+	0.000 grad^2 v - grad p = -div(m)
+	D_t c = -0.005 c + 0.000 c div(v) + 1.323 Gamma^{D}
+	D_t m = -0.000 m + (0.031 - 0.000 c){m, E_p} + Tr(m) (0.001 Gamma^{DV} + 0.002 m)

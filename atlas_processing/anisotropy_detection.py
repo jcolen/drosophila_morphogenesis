@@ -22,11 +22,6 @@ from skimage.transform import resize
 cell_size = 8
 structure = disk(cell_size)
 
-piv_geometry = loadmat('/project/vitelli/jonathan/REDO_fruitfly/flydrive.synology.me/minimalData/Atlas_Data/embryo_geometry/embryo_rectPIVscale_fundamentalForms.mat')
-pix_geometry = loadmat('/project/vitelli/jonathan/REDO_fruitfly/flydrive.synology.me/minimalData/vitelli_sharing/pixel_coordinates.mat')
-Xpiv, Ypiv = piv_geometry['X0'][0], piv_geometry['Y0'][:, 0]
-Xpix, Ypix = pix_geometry['XX'][0], pix_geometry['YY'][:, 0]
-
 def cytosolic_normalize(frame):
 	background = dilation(erosion(frame, structure), structure)
 	normalized = (frame - background) / background
@@ -42,7 +37,7 @@ radon_matrix = wr.get_radon_tf_matrix(size, theta=theta)
 def anisotropy_tensor(frame, 
 					  sigma_space=7,
 					  threshold=1.75,
-					  target_shape=(len(Ypix), len(Xpix))):
+					  target_shape=(236, 200)):
 	m_tensor = wr.windowed_radon(frame, radon_matrix, theta=theta*np.pi/180, threshold_mean=threshold,
 								 method='global_maximum', return_lines=False)
 	m_smooth = wr.filter_field(m_tensor, ndimage.gaussian_filter, kwargs={'sigma': sigma_space})
@@ -111,3 +106,45 @@ def collect_anisotropy_tensor(savedir, **wr_kwargs):
 		np.save(os.path.join(folder, 'raw2D'), raws)
 		np.save(os.path.join(folder, 'cyt2D'), cyts)
 		np.save(os.path.join(folder, 'tensor2D'), tensors)
+
+def collect_thresholded_cytosolic_normalization(savedir, threshold_sigma=10):
+	if not os.path.exists(os.path.join(savedir, 'dynamic_index.csv')):
+		warnings.warn('Index does not exist, processing matstruct')
+		convert_matstruct_to_csv(savedir)
+		
+	warnings.warn('Collecting anisotropy tensors')
+	
+	df =  pd.read_csv(os.path.join(savedir, 'dynamic_index.csv'))
+	for folder in df.folder.unique():
+		ss = df[df.folder == folder]
+		eID = ss.embryoID.iloc[0]
+		tiff_fn = os.path.join(folder, ss.tiff.iloc[0])
+		movie = Image.open(tiff_fn)
+		frames = np.sort(ss.eIdx.values)
+		print('Embryo: ', eID, movie.n_frames, len(frames))
+		raws = []
+		cyts = []
+		for fId in tqdm(frames):
+			movie.seek(fId)
+			raw = np.array(movie)
+	
+			#Clip fiduciary bead intensity
+			threshold = raw.mean() + threshold_sigma * raw.std()
+			raw[raw > threshold] = threshold
+
+			cyt = cytosolic_normalize(raw)
+			
+			raws.append(raw)
+			cyts.append(cyt)
+		
+		raws = np.stack(raws).astype(float)
+		cyts = np.stack(cyts)
+		
+		raws /= np.median(raws, axis=(1, 2), keepdims=True)
+		cyts /= np.median(cyts, axis=(1, 2), keepdims=True)
+		
+		raws = resize(raws, [raws.shape[0], 236, 200])
+		cyts = resize(cyts, [cyts.shape[0], 236, 200])
+		
+		np.save(os.path.join(folder, 'raw2D'), raws)
+		np.save(os.path.join(folder, 'cyt2D'), cyts)
