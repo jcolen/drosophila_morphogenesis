@@ -19,113 +19,10 @@ sys.path.insert(0, os.path.join(basedir, 'src'))
 
 from utils.dataset import *
 from convnext_models import *
-	
-def residual(u, v):
-	umag = torch.linalg.norm(u, dim=-3)
-	vmag = torch.linalg.norm(v, dim=-3)
-	
-	uavg = torch.sqrt(umag.pow(2).mean(dim=(-2, -1), keepdims=True))
-	vavg = torch.sqrt(vmag.pow(2).mean(dim=(-2, -1), keepdims=True))
+from atlas_processing.anisotropy_detection import cell_size
 
-	res = uavg**2 * vmag**2 + vavg**2 * umag**2 - 2 * uavg * vavg * torch.einsum('...ijk,...ijk->...jk', u, v)
-	res /= 2 * vavg**2 * uavg**2
-	return res
-
-def kld_loss(params, mu, logvar):
-	kld = mu.pow(2) + logvar.exp() - logvar - 1
-	kld = 0.5 * kld.sum(axis=-1).mean()
-	return kld
-
-class VAE_Evolver(VAE):
-	'''
-	Translation model with a LSTM block at the latent bottleneck
-	'''
-	def __init__(self, 
-				 hidden_size=64,
-				 lstm_layers=2,
-				 *args, **kwargs):
-		super(VAE_Evolver, self).__init__(*args, **kwargs)
-		
-		self.evolver = nn.LSTM(input_size=self.num_latent,
-							   proj_size=self.num_latent,
-							   hidden_size=hidden_size,
-							   num_layers=lstm_layers,
-							   batch_first=True)
-
-	def forward(self, x, t=5):
-		b, c, h0, w0 = x.shape
-		x, _ = self.encoder(x)
-				
-		x = x.reshape([b, -1])
-		x = self.field_to_params(x)
-		
-		mu = x[:, :self.num_latent]
-		logvar = x[:, self.num_latent:]
-
-		params = mu
-		if self.training:
-			params = params + torch.randn_like(params) * (0.5 * logvar).exp()
-		
-		params = params[:, None] #Input sequence length 1 - forecast from initial conditions
-		
-		params_list = []
-		params_list.append(params)
-		params, hidden_state = self.evolver(params)
-		params_list.append(params)
-
-		while len(params_list) < t:
-			params1, hidden_state = self.evolver(params, hidden_state)
-			params = params + params1
-			params_list.append(params)
-
-		params_list = torch.cat(params_list, dim=1)
-		b, t, _ = params_list.shape
-		params_list = params_list.reshape([b*t, -1])
-			
-		z = self.params_to_field(params_list)
-		z = F.gelu(z)
-		z = z.reshape([b*t, -1, *self.bottleneck_size])
-		
-		z = self.decoder(z)
-		if (z.shape[-2] != h0) or (z.shape[-1] != w0):
-			z = torch.nn.functional.interpolate(z, size=[h0, w0], mode='bilinear')	
-
-		z = z.reshape([b, t, *z.shape[-3:]])
-
-		return z, (params, mu, logvar)
-
-class SequenceDataset(AlignedDataset):
-	def __init__(self, 
-				 max_len=5,
-				 *args,
-				 **kwargs):
-		super(SequenceDataset, self).__init__(*args, **kwargs)
-
-		self.max_len = max_len
-		#Repackage dataset to account for sequences
-		self.seq_df = pd.DataFrame()
-		for eId in self.df.embryoID.unique():
-			#Drop last max_len-1 from sequence
-			sub = self.df[self.df.embryoID == eId]
-			self.seq_df = self.seq_df.append(sub.iloc[:-max_len+1])
-	
-	def __len__(self):
-		return len(self.seq_df)
-
-	def __getitem__(self, idx):
-		sample = {}
-		index = self.seq_df.index[idx]
-		for i in range(self.max_len):
-			si = super(SequenceDataset, self).__getitem__(index+i)
-			for key in si:
-				if torch.is_tensor(si[key]):
-					if key in sample: sample[key] = torch.cat([sample[key], si[key][None]])
-					else: sample[key] = si[key][None]
-				else:
-					if key in sample: sample[key].append(si[key])
-					else: sample[key] = [si[key]]
-
-		return sample
+import gc
+import psutil
 
 def run_train(dataset,
 			  model_kwargs,
@@ -140,12 +37,12 @@ def run_train(dataset,
 	train, val = random_split(dataset, [len(dataset)-val_size, val_size])
 	val_indices = val.indices
 	val_df = dataset.df.iloc[val_indices]
-	train_loader = DataLoader(train, **dl_kwargs)
-	val_loader = DataLoader(val, **dl_kwargs)
+	train_loader = DataLoader(train, **dl_kwargs, collate_fn=dataset.collate_fn)
+	val_loader = DataLoader(val, **dl_kwargs, collate_fn=dataset.collate_fn)
 
 	model = VAE_Evolver(**model_kwargs)
 	model.to(device)
-	print(model_kwargs['input'], model_kwargs['output'])
+	print('Training ', model_kwargs['input'], model_kwargs['output'])
 	optimizer = torch.optim.Adam(
 		filter(lambda p: p.requires_grad, model.parameters()), 
 		lr=model_kwargs['lr'])
@@ -159,51 +56,56 @@ def run_train(dataset,
 	best_res = 1e5
 	
 	for epoch in range(epochs):
+		model.train()
+		#torch.autograd.set_detect_anomaly(True)
 		with tqdm(train_loader, unit='batch') as ttrain:
 			for batch in ttrain:
-				if isinstance(model_kwargs['input'], list):
-					x = torch.cat([batch[i] for i in model_kwargs['input']], axis=-3).to(device)
-				else:
-					x = batch[model_kwargs['input']].to(device)
+				x = torch.cat(
+					[batch[i][:, 0] for i in model_kwargs['input']],
+					axis=-3
+				)
 				y0 = batch[model_kwargs['output']].to(device)
 
 				optimizer.zero_grad()
-				y, pl = model.forward(x[:, 0])
+				y, pl = model.forward(x.to(device), batch['lengths'])
 				res = residual(y, y0).mean()
-				mag = (y.pow(2).sum(dim=(2,3,4)) - y0.pow(2).sum(dim=(2,3,4))).abs().mean()
 				kld = kld_loss(*pl)
-				loss = res + model_kwargs['alpha'] * mag + model_kwargs['beta'] * kld
+				loss = res + model_kwargs['beta'] * kld
 				loss.backward()
 				torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
 				optimizer.step()
 
+		gc.collect()
+		torch.cuda.empty_cache()
+
 		val_loss = 0.
 		res_val = 0.
-		mag_val = 0.
 		kld_val = 0.
+		model.eval()
 		with torch.no_grad():
 			with tqdm(val_loader, unit='batch') as tval:
 				for batch in tval:
-					if isinstance(model_kwargs['input'], list):
-						x = torch.cat([batch[i] for i in model_kwargs['input']], axis=-3).to(device)
-					else:
-						x = batch[model_kwargs['input']].to(device)
+					x = torch.cat(
+						[batch[i][:, 0] for i in model_kwargs['input']],
+						axis=-3
+					)
 					y0 = batch[model_kwargs['output']].to(device)
 					
-					y, pl = model(x[:, 0])
+					y, pl = model.forward(x.to(device), batch['lengths'])
 					res = residual(y, y0).mean()
-					mag = (y.pow(2).sum(dim=(2,3,4)) - y0.pow(2).sum(dim=(2,3,4))).abs().mean()
 					kld = kld_loss(*pl)
-					loss = res + model_kwargs['alpha'] * mag + model_kwargs['beta'] * kld
+					loss = res + model_kwargs['beta'] * kld
 					val_loss += loss.item() / len(val_loader)
 					res_val += res.item() / len(val_loader)
-					mag_val += mag.item() / len(val_loader)
 					kld_val += kld.item() / len(val_loader)
+					gc.collect()
 
 		scheduler.step(val_loss)
 	
-		outstr = 'Epoch %d\tVal Loss=%g' % (epoch, val_loss)
-		outstr += '\tRes=%g\tKLD=%g' % (res_val, kld_val)
+		outstr = 'Epoch %d\tVal Loss=%.3g' % (epoch, val_loss)
+		outstr += '\tRes=%.3g\tKLD=%.3g' % (res_val, kld_val)
+		outstr += '\tMem Usage=%.3f GB' % (
+			psutil.Process(os.getpid()).memory_info().rss / 1e9)
 		print(outstr)
 		if res_val < best_res:
 			save_dict = {
@@ -217,6 +119,9 @@ def run_train(dataset,
 				save_dict, 
 				os.path.join(model_logdir, 'beta=%.2g.ckpt' % model_kwargs['beta']))
 			best_res = res_val
+		
+		gc.collect()
+		torch.cuda.empty_cache()
 
 from argparse import ArgumentParser
 if __name__ == '__main__':
@@ -224,58 +129,103 @@ if __name__ == '__main__':
 	parser.add_argument('--num_latent', type=int, default=32)
 	parser.add_argument('--hidden_size', type=int, default=64)
 	parser.add_argument('--lstm_layers', type=int, default=2)
-	parser.add_argument('--alpha', type=float, default=0)
-	parser.add_argument('--beta', type=float, default=1e-3)
+	parser.add_argument('--beta', type=float, default=0)
 	parser.add_argument('--lr', type=float, default=1e-4)
 	model_kwargs = vars(parser.parse_args())
 
-	transform=Compose([Reshape2DField(), ToTensor()])
 	dl_kwargs = dict(
-		num_workers=2, 
+		num_workers=4, 
 		batch_size=8, 
 		shuffle=True, 
 		pin_memory=True
 	)
-	
-	cad = AtlasDataset('WT', 'ECad-GFP', 'tensor2D', transform=transform)
-	sqh = AtlasDataset('WT', 'sqh-mCherry', 'tensor2D', transform=transform)
-	vel = AtlasDataset('WT', 'ECad-GFP', 'velocity2D', transform=transform)
-	dataset = SequenceDataset(
-		datasets=[sqh, cad, vel], 
-		key_names=['sqh', 'cad', 'vel'],
-		max_len=5)
-
 	model_kwargs['stage_dims'] = [[32,32],[64,64],[128,128],[256,256]]
-	model_kwargs['in_channels'] = 8
 	model_kwargs['out_channels'] = 2
-	model_kwargs['input'] = ['sqh', 'cad']
 	model_kwargs['output'] = 'vel'
+
+	cad = AtlasDataset('WT', 'ECad-GFP', 'cyt2D', 
+		transform=Compose([Reshape2DField(), Smooth2D(sigma=cell_size), ToTensor()]))
+	cad_vel = AtlasDataset('WT', 'ECad-GFP', 'velocity2D', 
+		transform=Compose([Reshape2DField(), ToTensor()]))
+
+	sqh = AtlasDataset('Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP', 'tensor2D',
+		transform=Compose([Reshape2DField(), ToTensor()]), drop_time=True)
+	sqh_vel = AtlasDataset('Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP', 'velocity2D',
+		transform=Compose([Reshape2DField(), ToTensor()]), drop_time=True)
+
+	'''
+	Myosin and cadherin
+	'''
+	dataset = TrajectoryDataset(
+		datasets=[
+			('sqh', sqh),
+			('vel', sqh_vel),
+			('cad', cad),
+			('vel', cad_vel),
+		],
+		ensemble=3,
+	)
+	model_kwargs['in_channels'] = 5
+	model_kwargs['input'] = ['sqh', 'cad']
 	run_train(dataset, model_kwargs, dl_kwargs)
-	
+
+
+	'''
+	Myosin only
+	'''
+	dataset = TrajectoryDataset(
+		datasets=[
+			('sqh', sqh),
+			('vel', sqh_vel),
+		],
+	)
 	model_kwargs['in_channels'] = 4
-	model_kwargs['input'] = 'sqh'
+	model_kwargs['input'] = ['sqh']
 	run_train(dataset, model_kwargs, dl_kwargs)
 
-	model_kwargs['input'] = 'cad'
-	run_train(dataset, model_kwargs, dl_kwargs)
-
-	rnt = AtlasDataset('WT', 'Runt', 'raw2D', transform=transform)
-	vel = AtlasDataset('WT', 'Runt', 'velocity2D', transform=transform)
-	dataset = SequenceDataset(
-		datasets=[rnt, vel],
-		key_names=['rnt', 'vel'],
-		max_len=5)
-
+	'''
+	Cadherin only
+	'''
+	dataset = TrajectoryDataset(
+		datasets=[
+			('cad', cad),
+			('vel', cad_vel),
+		],
+	)
 	model_kwargs['in_channels'] = 1
-	model_kwargs['input'] = 'rnt'
+	model_kwargs['input'] = ['cad']
 	run_train(dataset, model_kwargs, dl_kwargs)
 
-	hst = AtlasDataset('WT', 'histone-RFP', 'raw2D', transform=transform, drop_no_time=False)
-	vel = AtlasDataset('WT', 'histone-RFP', 'velocity2D', transform=transform, drop_no_time=False)
-	dataset = SequenceDataset(
-		datasets=[hst, vel],
-		key_names=['hst', 'vel'],
-		max_len=5)
+	'''
+	Runt dataset
+	'''
+	rnt = AtlasDataset('WT', 'Runt', 'raw2D',
+		transform=Compose([Reshape2DField(), ToTensor()]))
+	rnt_vel = AtlasDataset('WT', 'Runt', 'velocity2D', 
+		transform=Compose([Reshape2DField(), ToTensor()]))
+	dataset = TrajectoryDataset(
+		datasets = [
+			('rnt', rnt),
+			('vel', rnt_vel),
+		]
+	)
+	model_kwargs['in_channels'] = 1
+	model_kwargs['input'] = ['rnt']
+	run_train(dataset, model_kwargs, dl_kwargs)
 
-	model_kwargs['input'] = 'hst'
+	'''
+	Histones dataset
+	'''
+	hst = AtlasDataset('WT', 'histone-RFP', 'raw2D',
+		transform=Compose([Reshape2DField(), ToTensor()]), drop_time=True)
+	hst_vel = AtlasDataset('WT', 'histone-RFP', 'velocity2D',
+		transform=Compose([Reshape2DField(), ToTensor()]), drop_time=True)
+	dataset = TrajectoryDataset(
+		datasets = [
+			('hst', hst),
+			('vel', hst_vel),
+		]
+	)
+	model_kwargs['in_channels'] = 1
+	model_kwargs['input'] = ['hst']
 	run_train(dataset, model_kwargs, dl_kwargs)

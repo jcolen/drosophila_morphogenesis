@@ -214,26 +214,21 @@ def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3, dro
 
 if __name__=='__main__':
 	savedirs = [
-		'WT/ECad-GFP',
+		#'toll[RM9]/Sqh-GFP',
+		#'spaetzle[A]/Sqh-GFP',
+		#'WT/ECad-GFP',
 		#'Halo_Hetero_Twist[ey53]_Hetero/Sqh-GFP',
 		#'WT/sqh-mCherry',
 		#'WT/moesin-GFP',
 		#'WT/utr-mCherry',
-		#'WT/Sqh_RokK116A-GFP',
-		#'WT/histone-RFP',
+		'WT/histone-RFP',
+		'WT/Runt',
+		'WT/Even_Skipped',
 		#'WT/Tartan/',
-		#'WT/Bazooka-GFP',
-		#'WT/Runt',
-		#'WT/Even_Skipped',
 		#'WT/Fushi_Tarazu',
 		#'WT/Hairy',
 		#'WT/Paired',
 		#'WT/Sloppy_Paired',
-		#'Even-Skipped[r13]/Spaghetti_Squash-GFP',
-		#'TollRM9/Spaghetti_Squash-GFP',
-		#'optoRhoGEF2_sqhCherry/headIllumination',
-		#'optoRhoGEF2_sqhCherry/singlePlaneIllumination'
-		#'WT/sqh-GFP_twistPlus',
 	]
 
 	for savedir in savedirs:
@@ -252,7 +247,7 @@ if __name__=='__main__':
 		print(fulldir)# len(df))
 		collect_velocity_fields(fulldir)
 		#collect_anisotropy_tensor(fulldir)
-		collect_thresholded_cytosolic_normalization(fulldir)
-		build_ensemble_timeline(fulldir, init_unc=1, 
-			t_min=-10, t_max=40,
-			drop_times='Sqh' in savedir)
+		#collect_thresholded_cytosolic_normalization(fulldir)
+		#build_ensemble_timeline(fulldir, init_unc=1, 
+		#	t_min=-10, t_max=40,
+		#	drop_times='Sqh' in savedir)

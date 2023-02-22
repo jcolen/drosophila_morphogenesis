@@ -3,6 +3,26 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision.ops import StochasticDepth
+from psutil import virtual_memory
+
+def residual(u, v):
+	umag = torch.linalg.norm(u, dim=-3)
+	vmag = torch.linalg.norm(v, dim=-3)
+
+	uavg = torch.sqrt(umag.pow(2).mean(dim=(-2, -1), keepdims=True))
+	vavg = torch.sqrt(vmag.pow(2).mean(dim=(-2, -1), keepdims=True))
+
+	res = uavg**2 * vmag**2 + vavg**2 * umag**2 - 2 * uavg * vavg * torch.einsum('...ijk,...ijk->...jk', u, v)
+	denom = 2 * vavg**2 * uavg**2
+	denom[denom == 0] += 1
+	res /= denom
+	return res
+
+def kld_loss(params, mu, logvar):
+	kld = mu.pow(2) + logvar.exp() - logvar - 1
+	kld = 0.5 * kld.sum(axis=-1).mean()
+	return kld
+
 
 class LayerNorm2d(torch.nn.LayerNorm):
 	r""" LayerNorm for channels_first tensors with 2d spatial dimensions (ie N, C, H, W).
@@ -13,8 +33,10 @@ class LayerNorm2d(torch.nn.LayerNorm):
 
 	def forward(self, x) -> torch.Tensor:
 		if x.is_contiguous(memory_format=torch.contiguous_format):
-			return torch.nn.functional.layer_norm(
-				x.permute(0, 2, 3, 1), self.normalized_shape, self.weight, self.bias, self.eps).permute(0, 3, 1, 2)
+			return F.layer_norm(
+				x.permute(0, 2, 3, 1), 
+				self.normalized_shape, 
+				self.weight, self.bias, self.eps).permute(0, 3, 1, 2)
 		else:
 			s, u = torch.var_mean(x, dim=1, unbiased=False, keepdim=True)
 			x = (x - u) * torch.rsqrt(s + self.eps)
@@ -41,6 +63,7 @@ class ConvNextBlock(nn.Module):
 		x = self.conv2(x)
 		x = self.dropout(x)
 		return x
+
 class Encoder(nn.Module):
 	def __init__(self, 
 				 input_dims,
@@ -69,12 +92,10 @@ class Encoder(nn.Module):
 			self.stages.append(stage)
 	
 	def forward(self, x): 
-		encoder_outputs = []
 		for i in range(len(self.stages)):
-			encoder_outputs.append(x)
 			x = self.downsample_blocks[i](x)
 			x = self.stages[i](x)
-		return x, encoder_outputs
+		return x
 	
 class Decoder(nn.Module):
 	def __init__(self,
@@ -157,7 +178,50 @@ class VAE(nn.Module):
 
 	def forward(self, x):
 		b, c, h0, w0 = x.shape
-		x, _ = self.encoder(x)
+		x = self.encoder(x)
+				
+		x = x.reshape([b, -1])
+		x = self.field_to_params(x)
+		
+		mu = x[:, :self.num_latent]
+		logvar = x[:, self.num_latent:]
+		
+		params = mu
+		if self.training:
+			params = params + torch.randn_like(params) * (0.5 * logvar).exp()
+			
+		x = self.params_to_field(params)
+		x = F.gelu(x)
+		x = x.reshape([b, -1, *self.bottleneck_size])
+		
+		x = self.decoder(x)
+		if (x.shape[-2] != h0) or (x.shape[-1] != w0):
+			x = torch.nn.functional.interpolate(x, size=[h0, w0], mode='bilinear')	
+
+		return x, (params, mu, logvar)
+
+class VAE_Evolver(VAE):
+	'''
+	Translation model with a LSTM block at the latent bottleneck
+	Forecast the initial condition for a specified amount of time
+	'''
+	def __init__(self, 
+				 *args,
+				 hidden_size=64,
+				 lstm_layers=2,
+				 **kwargs):
+		super(VAE_Evolver, self).__init__(*args, **kwargs)
+		
+		self.evolver = nn.LSTM(input_size=self.num_latent,
+							   proj_size=self.num_latent,
+							   hidden_size=hidden_size,
+							   num_layers=lstm_layers,
+							   batch_first=True)
+
+	def forward(self, x, lengths):
+		#Encoder step identical to standard VAE
+		b, c, h0, w0 = x.shape
+		x = self.encoder(x)
 				
 		x = x.reshape([b, -1])
 		x = self.field_to_params(x)
@@ -165,16 +229,42 @@ class VAE(nn.Module):
 		mu = x[:, :self.num_latent]
 		logvar = x[:, self.num_latent:]
 
+		#VAE Reparameterization trick
 		params = mu
 		if self.training:
 			params = params + torch.randn_like(params) * (0.5 * logvar).exp()
-			
-		z = self.params_to_field(params)
-		z = F.gelu(z)
-		z = z.reshape([b, -1, *self.bottleneck_size])
 		
-		z = self.decoder(z)
-		if (z.shape[-2] != h0) or (z.shape[-1] != w0):
-			z = torch.nn.functional.interpolate(z, size=[h0, w0], mode='bilinear')	
+		#Input sequence length = 1 (forecast from ICs)
+		params_list = params
+		params = params[:, None]
+		params_list = []
+		params_list.append(params)
 
-		return z, (params, mu, logvar)
+		params1, hidden_state = self.evolver(params)
+		params = params + params1
+		params_list.append(params)
+		
+		while len(params_list) < np.max(lengths):
+			params1, hidden_state = self.evolver(params, hidden_state)
+			params = params + params1
+			params_list.append(params)
+
+		params_list = torch.cat(params_list, dim=1)
+		b, t, _ = params_list.shape
+		params_list = params_list.reshape([b*t, -1])
+			
+		x = self.params_to_field(params_list)
+		x = F.gelu(x)
+		x = x.reshape([b*t, -1, *self.bottleneck_size])
+		
+		x = self.decoder(x)
+		if (x.shape[-2] != h0) or (x.shape[-1] != w0):
+			x = torch.nn.functional.interpolate(x, size=[h0, w0], mode='bilinear')	
+
+		x = x.reshape([b, t, *x.shape[-3:]])
+
+		#Pad away excess predictions
+		for i in range(b):
+			x[i, lengths[i]:] *= 0.
+
+		return x, (params, mu, logvar)

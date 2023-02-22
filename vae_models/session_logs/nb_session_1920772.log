@@ -1,0 +1,41 @@
+  jupyter lab --no-browser --ip=${HOST_IP} --port 8100 
+[I 2023-02-22 10:25:43.076 ServerApp] jupyterlab | extension was successfully linked.
+[I 2023-02-22 10:25:43.337 ServerApp] jupyterlab_hdf | extension was found and enabled by nbclassic. Consider moving the extension to Jupyter Server's extension paths.
+[I 2023-02-22 10:25:43.338 ServerApp] jupyterlab_hdf | extension was successfully linked.
+[I 2023-02-22 10:25:43.355 ServerApp] nbresuse | extension was found and enabled by nbclassic. Consider moving the extension to Jupyter Server's extension paths.
+[I 2023-02-22 10:25:43.355 ServerApp] nbresuse | extension was successfully linked.
+[I 2023-02-22 10:25:43.355 ServerApp] nbclassic | extension was successfully linked.
+[I 2023-02-22 10:25:43.369 LabApp] JupyterLab extension loaded from /project/vitelli/ml_venv/lib/python3.7/site-packages/jupyterlab
+[I 2023-02-22 10:25:43.369 LabApp] JupyterLab application directory is /project/vitelli/ml_venv/share/jupyter/lab
+[I 2023-02-22 10:25:43.371 ServerApp] jupyterlab | extension was successfully loaded.
+[I 2023-02-22 10:25:43.372 ServerApp] jupyterlab_hdf | extension was successfully loaded.
+[I 2023-02-22 10:25:43.375 ServerApp] nbclassic | extension was successfully loaded.
+[I 2023-02-22 10:25:43.375 ServerApp] nbresuse | extension was successfully loaded.
+[I 2023-02-22 10:25:43.376 ServerApp] Serving notebooks from local directory: /project/vitelli/jonathan/REDO_fruitfly/src/vae_models
+[I 2023-02-22 10:25:43.376 ServerApp] Jupyter Server 1.6.4 is running at:
+[I 2023-02-22 10:25:43.376 ServerApp] http://10.50.251.51:8100/lab?token=...
+[I 2023-02-22 10:25:43.376 ServerApp]     http://127.0.0.1:8100/lab?token=...
+[I 2023-02-22 10:25:43.376 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[I 2023-02-22 10:26:09.262 ServerApp] 302 GET / (10.50.248.65) 0.37ms
+[W 2023-02-22 10:26:12.634 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src/DecompositionForecasting.ipynb?content=0&1677083172599 (10.50.248.65): No such file or directory: fruit_fly/REDO/src/DecompositionForecasting.ipynb
+[W 2023-02-22 10:26:12.634 ServerApp] No such file or directory: fruit_fly/REDO/src/DecompositionForecasting.ipynb
+[W 2023-02-22 10:26:12.634 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src/DecompositionForecasting.ipynb?content=0&1677083172599 (10.50.248.65) 0.83ms referer=http://localhost:8100/lab?
+[W 2023-02-22 10:26:12.635 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src/ReservoirForecasting.ipynb?content=0&1677083172599 (10.50.248.65): No such file or directory: fruit_fly/REDO/src/ReservoirForecasting.ipynb
+[W 2023-02-22 10:26:12.635 ServerApp] No such file or directory: fruit_fly/REDO/src/ReservoirForecasting.ipynb
+[W 2023-02-22 10:26:12.635 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src/ReservoirForecasting.ipynb?content=0&1677083172599 (10.50.248.65) 0.97ms referer=http://localhost:8100/lab?
+[W 2023-02-22 10:26:12.635 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src/ClosedLoopPINN/NeuralODE_Method.ipynb?content=0&1677083172599 (10.50.248.65): No such file or directory: fruit_fly/REDO/src/ClosedLoopPINN/NeuralODE_Method.ipynb
+[W 2023-02-22 10:26:12.635 ServerApp] No such file or directory: fruit_fly/REDO/src/ClosedLoopPINN/NeuralODE_Method.ipynb
+[W 2023-02-22 10:26:12.636 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src/ClosedLoopPINN/NeuralODE_Method.ipynb?content=0&1677083172599 (10.50.248.65) 1.02ms referer=http://localhost:8100/lab?
+[W 2023-02-22 10:26:12.641 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src/atlas_processing/NewDynamicAtlasInterface.ipynb?content=0&1677083172599 (10.50.248.65): No such file or directory: fruit_fly/REDO/src/atlas_processing/NewDynamicAtlasInterface.ipynb
+[W 2023-02-22 10:26:12.641 ServerApp] No such file or directory: fruit_fly/REDO/src/atlas_processing/NewDynamicAtlasInterface.ipynb
+[W 2023-02-22 10:26:12.641 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src/atlas_processing/NewDynamicAtlasInterface.ipynb?content=0&1677083172599 (10.50.248.65) 0.93ms referer=http://localhost:8100/lab?
+[W 2023-02-22 10:26:12.642 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src/vae_models/DeepNNForecasting.ipynb?content=0&1677083172599 (10.50.248.65): No such file or directory: fruit_fly/REDO/src/vae_models/DeepNNForecasting.ipynb
+[W 2023-02-22 10:26:12.642 ServerApp] No such file or directory: fruit_fly/REDO/src/vae_models/DeepNNForecasting.ipynb
+[W 2023-02-22 10:26:12.642 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src/vae_models/DeepNNForecasting.ipynb?content=0&1677083172599 (10.50.248.65) 2.12ms referer=http://localhost:8100/lab?
+[I 2023-02-22 10:26:12.791 LabApp] Build is up to date
+[W 2023-02-22 10:26:13.205 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src/vae_models?1677083173164 (10.50.248.65): No such file or directory: fruit_fly/REDO/src/vae_models
+[W 2023-02-22 10:26:13.205 ServerApp] No such file or directory: fruit_fly/REDO/src/vae_models
+[W 2023-02-22 10:26:13.205 ServerApp] 404 GET /api/contents/fruit_fly/REDO/src/vae_models?1677083173164 (10.50.248.65) 0.70ms referer=http://localhost:8100/lab?
+[I 2023-02-22 10:26:15.002 ServerApp] New terminal with automatic name: 1
+TermSocket.open: 1
+TermSocket.open: Opened 1
