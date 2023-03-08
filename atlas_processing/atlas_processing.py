@@ -135,8 +135,11 @@ def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3, dro
 	
 	if drop_times:
 		df.time = df.eIdx
+	else:
+		df = df.dropna(axis=0)
 
 	if os.path.exists(os.path.join(savedir, 'morphodynamic_offsets.csv')):
+			print('Correcting for offsets!')
 			morpho = pd.read_csv(os.path.join(savedir, 'morphodynamic_offsets.csv'), index_col='embryoID')
 			for eId in df.embryoID.unique():
 				df.loc[df.embryoID == eId, 'time'] -= morpho.loc[eId, 'offset']
@@ -158,9 +161,10 @@ def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3, dro
 			matches = df[np.abs(df.time - t) < max_unc]
 			if len(matches) == 0:
 				max_unc += 1
-				warnings.warn('t=%d\tIncreasing uncertainty to %d' % (t, max_unc))
 			else:
 				flag = False
+		if max_unc > init_unc:
+			warnings.warn('t=%d\tIncreasing uncertainty to %d' % (t, max_unc))
 
 		frame = {}
 		total_weight = 0.
@@ -195,9 +199,12 @@ def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3, dro
 					frame[key] = frame[key] + weight*eframe[key]
 				else:
 					frame[key] = weight*eframe[key]
-
-			ap_coordinates = np.load(os.path.join(row.folder, 'AP_coordinates.npy'), mmap_mode='r')
-			dv_coordinates = np.load(os.path.join(row.folder, 'DV_coordinates.npy'), mmap_mode='r')
+			
+			try:
+				ap_coordinates = np.load(os.path.join(row.folder, 'AP_coordinates.npy'), mmap_mode='r')
+				dv_coordinates = np.load(os.path.join(row.folder, 'DV_coordinates.npy'), mmap_mode='r')
+			except:
+				pass
 	
 		for key in frame:
 			frame[key] = frame[key] / total_weight
@@ -209,8 +216,10 @@ def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3, dro
 
 	for key in movies:
 		np.save(os.path.join(outdir, key), np.stack(movies[key]))
-	np.save(os.path.join(outdir, 'AP_coordinates'), ap_coordinates)
-	np.save(os.path.join(outdir, 'DV_coordinates'), dv_coordinates)
+	
+	if ap_coordinates is not None:
+		np.save(os.path.join(outdir, 'AP_coordinates'), ap_coordinates)
+		np.save(os.path.join(outdir, 'DV_coordinates'), dv_coordinates)
 
 if __name__=='__main__':
 	savedirs = [
@@ -218,18 +227,19 @@ if __name__=='__main__':
 		#'spaetzle[A]/Sqh-GFP',
 		#'WT/ECad-GFP',
 		#'Halo_Hetero_Twist[ey53]_Hetero/Sqh-GFP',
-		#'WT/sqh-mCherry',
-		#'WT/moesin-GFP',
-		#'WT/utr-mCherry',
-		'WT/histone-RFP',
-		'WT/Runt',
-		'WT/Even_Skipped',
-		#'WT/Tartan/',
-		#'WT/Fushi_Tarazu',
-		#'WT/Hairy',
-		#'WT/Paired',
-		#'WT/Sloppy_Paired',
+		#'WT/histone-RFP',
+		#'WT/Runt',
+		#'WT/Even_Skipped',
+		'WT/Tartan/',
+		'WT/Fushi_Tarazu',
+		'WT/Paired',
+		'WT/Sloppy_Paired',
 	]
+	
+	#savedir = 'spaetzle[A]/Sqh-GFP'
+	#fulldir = os.path.join(basedir, savedir)
+	#print(fulldir)
+	#collect_anisotropy_tensor(fulldir, threshold_sigma=7)
 
 	for savedir in savedirs:
 		fulldir = os.path.join(basedir, savedir)
@@ -237,17 +247,25 @@ if __name__=='__main__':
 		'''
 		Static datasets
 		'''
-		#df = convert_matstruct_to_csv(fulldir, prefix='static')
-		#build_ensemble_timeline(fulldir, init_unc=1)
+		df = convert_matstruct_to_csv(fulldir, prefix='static')
+		#We use a 20-minute morphodynamic offset for Runt
+		offsets = pd.DataFrame(columns=['embryoID', 'offset']).set_index('embryoID')
+		for eId in df.embryoID.unique():
+			offsets.loc[eId, 'offset'] = 20
+		offsets.to_csv(os.path.join(fulldir, 'morphodynamic_offsets.csv'))
+		build_ensemble_timeline(fulldir, init_unc=1,
+			t_min=-10, t_max=40)
 
 		'''
 		Dynamic datasets
 		'''
-		df = convert_matstruct_to_csv(fulldir, prefix='dynamic')
-		print(fulldir)# len(df))
-		collect_velocity_fields(fulldir)
+		#df = convert_matstruct_to_csv(fulldir, prefix='dynamic')
+		#print(fulldir)# len(df))
+		#collect_velocity_fields(fulldir)
 		#collect_anisotropy_tensor(fulldir)
+		#collect_anisotropy_tensor(fulldir, threshold_sigma=7) #toll, spz
 		#collect_thresholded_cytosolic_normalization(fulldir)
 		#build_ensemble_timeline(fulldir, init_unc=1, 
 		#	t_min=-10, t_max=40,
-		#	drop_times='Sqh' in savedir)
+		#	drop_times=np.any([a in savedir for a in ['Sqh', 'Eve', 'hist']]))
+	

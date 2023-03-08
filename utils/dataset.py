@@ -50,6 +50,7 @@ class AtlasDataset(torch.utils.data.Dataset):
 				 label,
 				 filename,
 				 drop_time=False,
+				 tmin=None, tmax=None,
 				 transform=ToTensor()):
 		'''
 		Genotype, label are identical arguments to da.DynamicAtlas
@@ -63,27 +64,46 @@ class AtlasDataset(torch.utils.data.Dataset):
 		
 		self.path = os.path.join(atlas_dir, genotype, label)
 		self.filename = filename
-		self.df = pd.read_csv(os.path.join(atlas_dir, genotype, label, 'dynamic_index.csv'))
 
-		if drop_time:
-			self.df.time = self.df.eIdx
+		if os.path.exists(os.path.join(atlas_dir, genotype, label, 'dynamic_index.csv')):
+			self.df = pd.read_csv(os.path.join(atlas_dir, genotype, label, 'dynamic_index.csv'))
+
+			if drop_time:
+				self.df.time = self.df.eIdx
+			else:
+				self.df = self.df.dropna(axis=0)
+
+			if os.path.exists(os.path.join(atlas_dir, genotype, label, 'morphodynamic_offsets.csv')):
+				morpho = pd.read_csv(os.path.join(atlas_dir, genotype, label, 'morphodynamic_offsets.csv'), index_col='embryoID')
+				for eId in self.df.embryoID.unique():
+					self.df.loc[self.df.embryoID == eId, 'time'] -= morpho.loc[eId, 'offset']
 		else:
-			self.df = self.df.dropna(axis=0)
+			#Use the ensemble timeline for static images
+			self.df = pd.DataFrame()
+			folder = os.path.join(atlas_dir, genotype, label, 'ensemble')
+			self.df['time'] = np.load(os.path.join(folder, 't.npy'))
+			self.df['embryoID'] = -1
+			self.df['folder'] = folder
+			self.df['eIdx'] = self.df.index
 
-		if os.path.exists(os.path.join(atlas_dir, genotype, label, 'morphodynamic_offsets.csv')):
-			morpho = pd.read_csv(os.path.join(atlas_dir, genotype, label, 'morphodynamic_offsets.csv'), index_col='embryoID')
-			for eId in self.df.embryoID.unique():
-				self.df.loc[self.df.embryoID == eId, 'time'] -= morpho.loc[eId, 'offset']
+		if tmin is not None:
+			self.df = self.df[self.df.time >= tmin].reset_index(drop=True)
+		if tmax is not None:
+			self.df = self.df[self.df.time <= tmax].reset_index(drop=True)
 
 		self.values = {}
 
 		folders = self.df.folder.unique()
 		for folder in tqdm(folders):
-			embryo_ID = int(os.path.basename(folder))
+			embryo_ID = os.path.basename(folder)
+			try:
+				embryo_ID = int(embryo_ID)
+			except: #Label ensembles as -1
+				embryo_ID = -1
 			self.values[embryo_ID] = np.load(os.path.join(folder, filename+'.npy'), mmap_mode='r')
 
 		self.genotype = genotype
-		self.label = label + '_' + filename[:-4]
+		self.label = label + '_' + filename
 		self.transform = transform
 	
 	def __len__(self):
@@ -113,7 +133,9 @@ class JointDataset(torch.utils.data.Dataset):
 	'''
 	def __init__(self, 
 				 datasets,
+				 live_key='v',
 				 ensemble=0):
+		self.live_key = live_key
 		self.ensemble = ensemble
 		self.values = {}
 		self.transforms = []
@@ -123,7 +145,7 @@ class JointDataset(torch.utils.data.Dataset):
 		for i in range(len(datasets)):
 			key, dataset = datasets[i]
 			dfi = dataset.df
-			dfi['time'] = np.round(dfi['time']).astype(int) #Round time to int for merge
+			#dfi['time'] = np.round(dfi['time']).astype(int) #Round time to int for merge
 			dfi['key'] = key
 			dfi['dataset_idx'] = int(i)
 			df = df.append(dfi, ignore_index=True)
@@ -138,7 +160,10 @@ class JointDataset(torch.utils.data.Dataset):
 			self.transforms.append(dataset.transform)
 
 		#Build an index for unique embryoID/timestamp combinations
-		df['merged_index'] = df.groupby(['embryoID', 'time']).ngroup()
+		mask = (df.key == self.live_key)
+		df.loc[mask, 'merged_index'] = df[mask].groupby(['embryoID', 'time']).ngroup()
+		df.loc[~mask, 'merged_index'] = -1
+		df.merged_index = df.merged_index.astype(int)
 		self.df = df
 		self.keys = self.df.key.unique()
 
@@ -170,12 +195,18 @@ class JointDataset(torch.utils.data.Dataset):
 		return frame
 		
 	def __getitem__(self, idx):
-		rows = self.df[self.df.merged_index == idx]
+		row = self.df[self.df.merged_index == idx] #Only returns embryos with flow
 
-		sample = {}
+		eId = row.embryoID.values[0]
+		time = row.time.values[0]
+		rows = self.df[(self.df.embryoID == eId) & (self.df.time == time)]
+
+		sample = {
+			'embryoID': eId,
+			'time': time
+		}
+
 		for i,row in rows.iterrows():
-			sample['embryoID'] = row.embryoID
-			sample['time'] = row.time
 			sample[row.key] = self.values[row.embryoID][row.key][row.eIdx]
 			
 			if self.transforms[row.dataset_idx] is not None:
@@ -198,12 +229,12 @@ class TrajectoryDataset(JointDataset):
 
 		df = pd.DataFrame()
 		for eId in self.df.embryoID.unique():
-			sub = self.df[self.df.embryoID == eId]
-			sub['max_len'] = np.max(sub.time) - sub.time
+			sub = self.df[self.df.embryoID == eId].copy()
+			sub['max_len'] = np.max(sub.eIdx) - sub.eIdx
 			df = df.append(sub, ignore_index=True)
 
 		#Re-compute merged index
-		mask = df.max_len > 1
+		mask = (df.max_len > 1) & (df.key == self.live_key)
 		df.loc[mask, 'sequence_index'] = df[mask].groupby(['embryoID', 'time']).ngroup()
 		df.loc[~mask, 'sequence_index'] = -1
 		df.sequence_index = df.sequence_index.astype(int)
@@ -216,6 +247,7 @@ class TrajectoryDataset(JointDataset):
 		row = self.df[self.df.sequence_index == idx].iloc[0]
 		seq_len = 2 + np.rint(np.abs(np.random.normal(scale=self.seq_sigma)))
 		seq_len = min(int(seq_len), row.max_len)
+		seq_len = min(seq_len, 5*self.seq_sigma)
 
 		eId = row.embryoID
 		times = np.arange(row.time, row.time+seq_len).astype(int)
@@ -226,7 +258,15 @@ class TrajectoryDataset(JointDataset):
 		sample = {}
 
 		for merged_index in merged_idxs:
-			si = super(TrajectoryDataset, self).__getitem__(merged_index)
+			try:
+				si = super(TrajectoryDataset, self).__getitem__(merged_index)
+			except:
+				print('Error fetching %d - merged indices: ' % idx, merged_index)
+				print(row)
+				print(seq_len)
+				print(merged_idxs)
+				print(eId, times)
+				return
 			for key in si:
 				if not key in sample:
 					sample[key] = []

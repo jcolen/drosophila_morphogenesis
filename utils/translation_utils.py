@@ -8,6 +8,7 @@ from utils.decomposition_utils import *
 import pickle as pk
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.model_selection import train_test_split
+from sklearn import linear_model
 from scipy.interpolate import interp1d
 from tqdm import tqdm
 from math import ceil
@@ -185,6 +186,8 @@ def collect_decomposed_data(h5f, key, tmin, tmax, feature_names=None):
 
 	if feature_names is None:
 		feature_names = list(h5f['X_cpt'][key].keys())
+		#feature_names = [fn for fn in feature_names if not 'E_active' in fn]
+		feature_names = [fn for fn in feature_names if not 'm_ij m_ij' in fn]
 
 	data = h5f['X_cpt'][key]
 	#Pass 1 - get the proper time range
@@ -257,20 +260,23 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 				X_dot += X[..., loc:loc+1]
 				X = np.delete(X, loc, axis=-1)
 				feature_names.remove(feat)
-	
-	#HARDCODED overweighting of component 0
-	if component_repeat is not None:
-		print('Repeating components by this factor %s' % str(component_repeat))
-		assert component_repeat.shape[0] == X.shape[1]
-		X = repeat_components(X, component_repeat)
-		X_dot = repeat_components(X_dot, component_repeat)
-		component_weight = repeat_components(component_weight[None], component_repeat)[0]
+			to_remove = []
+			for i in range(len(feature_names)):
+				if feat in feature_names[i]:
+					X = np.delete(X, i, axis=-1)
+					to_remove.append(i)
+			feature_names = [feature_names[i] for i in range(len(feature_names)) if not i in to_remove]
+				
+	print(X.shape, X_dot.shape)
 
-	if len(X) > 1:
-		print('Applying train/test split')
-		X, _, X_dot, _ = train_test_split(X, X_dot, test_size=0.33)
+	#if len(X) > 1:
+	#	print('Applying train/test split')
+	#	X, _, X_dot, _ = train_test_split(X, X_dot, test_size=0.2)
+
+	print(X.shape, X_dot.shape)
 
 	#Build optimizer (with ensembling)
+
 	optimizer = ps.STLSQ(threshold=threshold, alpha=alpha, normalize_columns=True)
 	if n_models > 1:
 		bagging = True

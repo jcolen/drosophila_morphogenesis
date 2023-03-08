@@ -168,8 +168,8 @@ def multiply_tensor_by_scalar(data, tensors, scalars):
 
 	
 def add_dorsal_sources(data, couple='c', key='RECTANGLE',
-					   x_path='Public/dorsal_mask_',
-					   t_path='Public/dorsal_mask_time.npy'):
+					   x_path='Public/Masks/dorsal_mask_',
+					   t_path='Public/Masks/dorsal_mask_time.npy'):
 	'''
 	Add the time-aligned and advected dorsal source to this dataset
 	'''

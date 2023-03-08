@@ -48,10 +48,13 @@ class ClosedLoopPINN(nn.Module):
 				 upper_bound,
 				 hidden_width=100,
 				 n_hidden_layers=7,
+				 beta_0=1,
+				 dorsal_weight=1e2,
 				 save_every=1000):
 		super(ClosedLoopPINN, self).__init__()
 		self.save_every = save_every
-		self.beta = 1
+		self.beta = beta_0
+		self.dorsal_weight = dorsal_weight
 		self.n_hidden_layers = n_hidden_layers
 		self.hidden_width = hidden_width
 		act = Sin
@@ -112,7 +115,7 @@ class ClosedLoopPINN(nn.Module):
 		sqh = scvdp[:, 0:4].reshape([scvdp.shape[0], 2, 2])
 		cad = scvdp[:, 4:5]
 		vel = scvdp[:, 5:7]
-		dor = 0.5*(torch.tanh(3*scvdp[:, 7:8].squeeze()) + 1) #range [0, 1]
+		dor = 0.5*(torch.tanh(scvdp[:, 7:8].squeeze()) + 1) #range [0, 1]
 		pre = scvdp[:, 8:9].squeeze()
 		return sqh, cad, vel, dor, pre 
 	
@@ -155,14 +158,15 @@ class ClosedLoopPINN(nn.Module):
 		#So we won't let it store too much information
 		cad_dyn =  dt_cad + torch.einsum('bj,bj->b', vel, grad_cad) #advection
 		cad_dyn -= -torch.exp(self.cad_coefs[0]) * cad.squeeze() #detachment
-		cad_dyn -= +torch.exp(self.cad_coefs[1]) * cad.squeeze() * torch.einsum('bkk->b', grad_v) #dilution
-		cad_dyn -= +torch.exp(self.cad_coefs[2]) * dor #dorsal source
+		cad_dyn -= -torch.exp(self.cad_coefs[1]) * cad.squeeze() * torch.einsum('bkk->b', grad_v) #dilution
+		#cad_dyn -= +torch.exp(self.cad_coefs[2]) * dor #dorsal source
+		cad_dyn -= dor #Dorsal source (no coefficient now)
 		 
 		'''
 		Active/Passive strain decomposition
 		'''			  
 		O = -0.5 * (torch.einsum('bij->bij', grad_v) - torch.einsum('bji->bij', grad_v))
-		E = 0.5 *  (torch.einsum('bij->bij', grad_v) - torch.einsum('bji->bij', grad_v))
+		E = 0.5 *  (torch.einsum('bij->bij', grad_v) + torch.einsum('bji->bij', grad_v))
 		
 		deviatoric = sqh - 0.5 * torch.einsum('bkk,ij->bij', sqh, torch.eye(2, device=sqh.device))
 		sqh_0 = torch.linalg.norm(sqh, dim=(1, 2)).mean()
@@ -191,26 +195,19 @@ class ClosedLoopPINN(nn.Module):
 		sqh_loss = (sqh - self.sqh_train[idx]).pow(2).sum()
 		cad_loss = (cad - self.cad_train[idx]).pow(2).sum()
 		vel_loss = (vel - self.vel_train[idx]).pow(2).sum()
+
+		cad_scale = self.cad_train[idx].pow(2).sum().item() / step_size
+		sqh_scale = self.sqh_train[idx].pow(2).sum().item() / step_size
+		vel_scale = self.vel_train[idx].pow(2).sum().item() / step_size
 		
-		'''
-		print(sqh_loss.item(), cad_loss.item(), vel_loss.item())
-		print(
-			self.sqh_train[idx].pow(2).sum().item(),
-			self.cad_train[idx].pow(2).sum().item(),
-			self.vel_train[idx].pow(2).sum().item()
-		)
-		print(dor_dyn.pow(2).sum().item(),
-			  cad_dyn.pow(2).sum().item(),
-			  sqh_dyn.pow(2).sum().item())
-		sqh_loss /= self.sqh_train[idx].pow(2).sum()
-		cad_loss /= self.cad_train[idx].pow(2).sum()
-		vel_loss /= self.vel_train[idx].pow(2).sum()		
-		'''
-		mse = sqh_loss + cad_loss + vel_loss
-		phys = stokes_loss.pow(2).sum() + \
-			   dor_dyn.pow(2).sum() + \
-			   cad_dyn.pow(2).sum() + \
-			   sqh_dyn.pow(2).sum() 
+		#Scale MSE losses by magnitudes
+		mse = sqh_loss / sqh_scale + \
+			  cad_loss / cad_scale + \
+			  vel_loss / vel_scale
+		phys = stokes_loss.pow(2).sum() / vel_scale + \
+			   dor_dyn.pow(2).sum() * self.dorsal_weight + \
+			   cad_dyn.pow(2).sum() / cad_scale + \
+			   sqh_dyn.pow(2).sum() / sqh_scale
 		   
 		return mse, phys
 	
@@ -224,12 +221,11 @@ class ClosedLoopPINN(nn.Module):
 					phys.item() if loss else 0.,
 				)
 		outstr += '\t%.3f grad^2 v - grad p = -div(m)\n' % self.vel_coefs[0].exp().item()
-		outstr += '\tD_t c = -%.3f c + %.3f c div(v) + %.3f Gamma^{D}\n' % (
+		outstr += '\tD_t c = -%.3g c + %.3g c div(v) + Gamma^{D}\n' % (
 			self.cad_coefs[0].exp().item(),
 			self.cad_coefs[1].exp().item(),
-			self.cad_coefs[2].exp().item()
 		)
-		outstr += '\tD_t m = -%.3f m + (%.3f - %.3f c){m, E_p} + Tr(m) (%.3f Gamma^{DV} + %.3f m)' % (
+		outstr += '\tD_t m = -%.3g m + (%.3g - %.3g c){m, E_p} + Tr(m) (%.3g Gamma^{DV} + %.3g m)' % (
 			self.sqh_coefs[0].exp().item(),
 			self.sqh_coefs[1].exp().item(),
 			self.sqh_coefs[2].exp().item(),
@@ -360,6 +356,6 @@ if __name__=='__main__':
 	model = ClosedLoopPINN(
 		t_train, y_train, x_train,
 		sqh_train, cad_train, vel_train,
-		lower_bound, upper_bound)
+		lower_bound, upper_bound, beta_0=1e1)
 	model.to(device)
-	model.train(0, int(1e6), inc_beta=int(3e5))
+	model.train(0, int(1.2e6), inc_beta=int(3e5))

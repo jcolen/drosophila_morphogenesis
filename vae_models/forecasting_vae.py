@@ -49,7 +49,7 @@ def run_train(dataset,
 	scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=5)
 
 	model_logdir = os.path.join(logdir, 
-		'_'.join([model.__class__.__name__,str(model_kwargs['input']), model_kwargs['output']]))
+		'_'.join([model.__class__.__name__,','.join(model_kwargs['input']), model_kwargs['output']]))
 	if not os.path.exists(model_logdir):
 		os.mkdir(model_logdir)
 
@@ -152,6 +152,21 @@ if __name__ == '__main__':
 		transform=Compose([Reshape2DField(), ToTensor()]), drop_time=True)
 	sqh_vel = AtlasDataset('Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP', 'velocity2D',
 		transform=Compose([Reshape2DField(), ToTensor()]), drop_time=True)
+
+	rnt = AtlasDataset('WT', 'Runt', 'raw2D', 
+		transform=Compose([transform, Smooth2D(sigma=3), ToTensor()]))
+	rnt_vel = AtlasDataset('WT', 'Runt', 'velocity2D', 
+		transform=Compose([transform, ToTensor()]))
+
+	hst = AtlasDataset('WT', 'histone-RFP', 'raw2D', 
+		transform=Compose([transform, Smooth2D(sigma=3), ToTensor()]), drop_time=True,)
+	hst_vel = AtlasDataset('WT', 'histone-RFP', 'velocity2D', 
+		transform=Compose([transform, ToTensor()]), drop_time=True,)
+	
+	eve = AtlasDataset('WT', 'Even_Skipped', 'raw2D', 
+		transform=Compose([transform, Smooth2D(sigma=3), ToTensor()]), drop_time=True)
+	eve_vel = AtlasDataset('WT', 'Even_Skipped', 'velocity2D', 
+		transform=Compose([transform, ToTensor()]), drop_time=True)
 
 	'''
 	Myosin and cadherin

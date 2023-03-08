@@ -56,7 +56,7 @@ def anisotropy_tensor(frame,
 	m_smooth = m_smooth.transpose(2, 3, 0, 1)
 	return m_smooth
 		
-def collect_anisotropy_tensor(savedir, **wr_kwargs):
+def collect_anisotropy_tensor(savedir, threshold_sigma=None, **wr_kwargs):
 	'''
 	We are LOCKING IN to IJ ordering
 	Spatial ordering is [ROWS, COLUMNS] or [Y, X]
@@ -85,6 +85,12 @@ def collect_anisotropy_tensor(savedir, **wr_kwargs):
 		for fId in tqdm(frames):
 			movie.seek(fId)
 			raw = np.array(movie)
+			
+			#Clip fiduciary bead intensity
+			if threshold_sigma is not None:
+				threshold = raw.mean() + threshold_sigma * raw.std()
+				raw[raw > threshold] = threshold
+			
 			cyt = cytosolic_normalize(raw)
 			
 			tensor = anisotropy_tensor(cyt, **wr_kwargs)
