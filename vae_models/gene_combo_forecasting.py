@@ -55,38 +55,47 @@ if __name__ == '__main__':
 	prd = AtlasDataset('WT', 'Paired', 'raw2D', transform=transform)
 	trt = AtlasDataset('WT', 'Tartan', 'raw2D', transform=transform)
 
-	'''
-	Runt forecasting
-	'''
+	#Runt + Eve
 	dataset = TrajectoryDataset(
 		datasets=[
 			('rnt', rnt),
 			('eve', eve),
+			('vel', rnt_vel),
+			('vel', eve_vel),
+		], live_key='vel',
+		ensemble=1)
+	model_kwargs['in_channels'] = 2
+	model_kwargs['input'] = ['rnt', 'eve']
+	run_train(dataset, model_kwargs, dl_kwargs)
+
+	#Runt + PRG
+	dataset = TrajectoryDataset(
+		datasets=[
+			('rnt', rnt),
+			('vel', rnt_vel),
 			('ftz', ftz),
 			('slp', slp),
 			('prd', prd),
 			('trt', trt),
-			('vel', rnt_vel),
 		], 
 		live_key='vel', 
 		ensemble=1)
 
-	for key in ['eve', 'ftz', 'slp', 'prd', 'trt']:
+	for key in ['ftz', 'slp', 'prd', 'trt']:
 		model_kwargs['in_channels'] = 2
 		model_kwargs['input'] = ['rnt', key]
 		run_train(dataset, model_kwargs, dl_kwargs)
 	
 	'''
-	Eve forecasting
-	'''
+	#Eve + PRG
 	dataset = TrajectoryDataset(
 		datasets=[
 			('eve', eve),
+			('vel', eve_vel),
 			('ftz', ftz),
 			('slp', slp),
 			('prd', prd),
 			('trt', trt),
-			('vel', eve_vel),
 		], 
 		live_key='vel', 
 		ensemble=1)
@@ -95,3 +104,4 @@ if __name__ == '__main__':
 		model_kwargs['in_channels'] = 2
 		model_kwargs['input'] = ['eve', key]
 		run_train(dataset, model_kwargs, dl_kwargs)
+	'''

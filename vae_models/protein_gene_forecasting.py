@@ -42,9 +42,9 @@ if __name__ == '__main__':
 	Define datasets
 	'''
 	cadRaw = AtlasDataset('WT', 'ECad-GFP', 'raw2D',
-		transform=Compose([Reshape2DField(), Smooth2D(sigma=7), ToTensor()]))
-	cadCyt = AtlasDataset('WT', 'ECad-GFP', 'cyt2D', 
-		transform=Compose([Reshape2DField(), Smooth2D(sigma=7), ToTensor()]))
+		transform=Compose([Reshape2DField(), Smooth2D(sigma=8), ToTensor()]))
+	#cadCyt = AtlasDataset('WT', 'ECad-GFP', 'cyt2D', 
+	#	transform=Compose([Reshape2DField(), Smooth2D(sigma=7), ToTensor()]))
 	cad_vel = AtlasDataset('WT', 'ECad-GFP', 'velocity2D', 
 		transform=Compose([Reshape2DField(), ToTensor()]))
 
@@ -118,8 +118,6 @@ if __name__ == '__main__':
 	
 	'''
 	Cyt Cadherin + Genes
-	'''
-	
 	dataset = TrajectoryDataset(
 		datasets=[
 			('cadCyt', cadCyt),
@@ -145,3 +143,4 @@ if __name__ == '__main__':
 	model_kwargs['in_channels'] = 2
 	model_kwargs['input'] = ['cadCyt', 'eve']
 	run_train(dataset, model_kwargs, dl_kwargs)
+	'''

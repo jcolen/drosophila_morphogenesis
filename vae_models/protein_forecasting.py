@@ -42,9 +42,9 @@ if __name__ == '__main__':
 	Define datasets
 	'''
 	cadRaw = AtlasDataset('WT', 'ECad-GFP', 'raw2D',
-		transform=Compose([Reshape2DField(), Smooth2D(sigma=7), ToTensor()]))
-	cadCyt = AtlasDataset('WT', 'ECad-GFP', 'cyt2D', 
-		transform=Compose([Reshape2DField(), Smooth2D(sigma=7), ToTensor()]))
+		transform=Compose([Reshape2DField(), Smooth2D(sigma=8), ToTensor()]))
+	#cadCyt = AtlasDataset('WT', 'ECad-GFP', 'cyt2D', 
+	#	transform=Compose([Reshape2DField(), Smooth2D(sigma=8), ToTensor()]))
 	cad_vel = AtlasDataset('WT', 'ECad-GFP', 'velocity2D', 
 		transform=Compose([Reshape2DField(), ToTensor()]))
 
@@ -53,9 +53,7 @@ if __name__ == '__main__':
 	sqh_vel = AtlasDataset('Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP', 'velocity2D',
 		transform=Compose([Reshape2DField(), ToTensor()]), drop_time=True)
 
-	'''
-	Myosin
-	'''
+	#Myosin
 	dataset = TrajectoryDataset(
 		datasets=[
 			('sqh', sqh),
@@ -67,9 +65,7 @@ if __name__ == '__main__':
 	model_kwargs['input'] = ['sqh']
 	run_train(dataset, model_kwargs, dl_kwargs)
 
-	'''
-	Cadherin
-	'''
+	#Cadherin
 	dataset = TrajectoryDataset(
 		datasets=[
 			('cadRaw', cadRaw),
@@ -80,7 +76,8 @@ if __name__ == '__main__':
 	model_kwargs['in_channels'] = 1
 	model_kwargs['input'] = ['cadRaw']
 	run_train(dataset, model_kwargs, dl_kwargs)
-	
+
+	'''
 	dataset = TrajectoryDataset(
 		datasets=[
 			('cadCyt', cadCyt),
@@ -91,3 +88,4 @@ if __name__ == '__main__':
 	model_kwargs['in_channels'] = 1
 	model_kwargs['input'] = ['cadCyt']
 	run_train(dataset, model_kwargs, dl_kwargs)
+	'''

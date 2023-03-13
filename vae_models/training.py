@@ -11,7 +11,8 @@ warnings.filterwarnings('ignore')
 
 from tqdm import tqdm
 
-from torch.utils.data import DataLoader, random_split
+from sklearn.model_selection import train_test_split
+from torch.utils.data import DataLoader, random_split, Subset
 from torchvision.transforms import Compose
 
 basedir = '/project/vitelli/jonathan/REDO_fruitfly/'
@@ -23,6 +24,32 @@ from convnext_models import *
 import gc
 import psutil
 
+def train_val_split(dataset, mode='embryo'):
+	val_size = len(dataset) // 5
+	live_df = dataset.df[
+		(dataset.df.sequence_index >= 0) & \
+		(dataset.df.key == dataset.live_key)
+	]
+	embryos = live_df.embryoID.unique()
+	embryos = dataset.df[dataset.df.sequence_index >= 0].embryoID.unique()
+	if len(embryos) > 1:
+		train, val = train_test_split(embryos, test_size=0.33, random_state=42)
+		print('Train embryos: ', train)
+		print('Val embryos: ', val)
+		train_idxs = live_df[live_df.embryoID.isin(train)].sequence_index.values
+		val_idxs = live_df[live_df.embryoID.isin(val)].sequence_index.values
+		train = Subset(dataset, train_idxs)
+		val= Subset(dataset, val_idxs)
+	else:
+		print('Only one embryo - splitting on indices instead')
+		train, val = random_split(
+			dataset,
+			[len(dataset)-val_size, val_size], 
+			generator=torch.Generator().manual_seed(42))
+	
+	return train, val
+	
+
 def run_train(dataset,
 			  model_kwargs,
 			  dl_kwargs,
@@ -32,11 +59,11 @@ def run_train(dataset,
 
 	device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-	val_size = len(dataset) // 5
-	train, val = random_split(
-		dataset,
-		[len(dataset)-val_size, val_size], 
-		generator=torch.Generator().manual_seed(42))
+	train, val = train_val_split(dataset, mode='embryo')
+
+
+	print('Train size: ', len(train))
+	print('Val size: ', len(val))
 	train_loader = DataLoader(train, **dl_kwargs, collate_fn=dataset.collate_fn)
 	val_loader = DataLoader(val, **dl_kwargs, collate_fn=dataset.collate_fn)
 

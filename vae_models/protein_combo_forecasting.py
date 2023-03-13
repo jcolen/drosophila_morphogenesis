@@ -42,9 +42,9 @@ if __name__ == '__main__':
 	Define datasets
 	'''
 	cadRaw = AtlasDataset('WT', 'ECad-GFP', 'raw2D',
-		transform=Compose([Reshape2DField(), Smooth2D(sigma=7), ToTensor()]))
-	cadCyt = AtlasDataset('WT', 'ECad-GFP', 'cyt2D', 
-		transform=Compose([Reshape2DField(), Smooth2D(sigma=7), ToTensor()]))
+		transform=Compose([Reshape2DField(), Smooth2D(sigma=8), ToTensor()]))
+	#cadCyt = AtlasDataset('WT', 'ECad-GFP', 'cyt2D', 
+	#	transform=Compose([Reshape2DField(), Smooth2D(sigma=7), ToTensor()]))
 	cad_vel = AtlasDataset('WT', 'ECad-GFP', 'velocity2D', 
 		transform=Compose([Reshape2DField(), ToTensor()]))
 
@@ -61,25 +61,27 @@ if __name__ == '__main__':
 			('sqh', sqh),
 			('vel', sqh_vel),
 			('cadRaw', cadRaw),
-			('vel', cad_vel),
+			#('vel', cad_vel),
 		],
 		live_key='vel',
-		ensemble=2,
+		ensemble=5,
 	)
 	model_kwargs['in_channels'] = 5
 	model_kwargs['input'] = ['sqh', 'cadRaw']
 	run_train(dataset, model_kwargs, dl_kwargs)
 	
+	'''
 	dataset = TrajectoryDataset(
 		datasets=[
 			('sqh', sqh),
 			('vel', sqh_vel),
 			('cadCyt', cadCyt),
-			('vel', cad_vel),
+			#('vel', cad_vel),
 		],
 		live_key='vel',
-		ensemble=2,
+		ensemble=5,
 	)
 	model_kwargs['in_channels'] = 5
 	model_kwargs['input'] = ['sqh', 'cadCyt']
 	run_train(dataset, model_kwargs, dl_kwargs)
+	'''
