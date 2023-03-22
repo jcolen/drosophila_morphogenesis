@@ -149,14 +149,13 @@ def collect_overleaf_data(h5f, key, tmin, tmax):
 	'''
 	Collect only those terms which correspond to the proposed Overleaf equations
 	'''
+def overleaf_feature_names(key):
 	if key == 'c':
 		feature_names = [
 			'Dorsal_Source', 
 			'c', 
 			'c Tr(E)',
 			#'c Tr(m_ij)',
-			#'c^2', 
-			#'c^2 Tr(m_ij)',
 			'v dot grad c', 
 		]
 	elif key == 'm_ij':
@@ -164,18 +163,18 @@ def collect_overleaf_data(h5f, key, tmin, tmax):
 			'v dot grad m_ij',
 			'[O, m_ij]', 
 			'm_ij',
+			#'c m_ij',
 			'{m_ij, E_passive}',
+			#'m_ij Tr(E_passive)',
 			'c {m_ij, E_passive}',
 			#'Static_DV',
-			'c Static_DV',
+			#'c Static_DV',
 			'Static_DV Tr(m_ij)',
-			'c m_ij',
-			'c m_ij Tr(m_ij)',
+			'm_ij Tr(m_ij)',
+			#'c m_ij',
+			#'c m_ij Tr(m_ij)',
 		]
-	else:
-		raise RuntimeError('Overleaf model not proposed for %s' % key)
-
-	return collect_decomposed_data(h5f, key, tmin, tmax, feature_names)
+	return feature_names
 
 def collect_decomposed_data(h5f, key, tmin, tmax, feature_names=None):
 	'''
@@ -186,7 +185,7 @@ def collect_decomposed_data(h5f, key, tmin, tmax, feature_names=None):
 
 	if feature_names is None:
 		feature_names = list(h5f['X_cpt'][key].keys())
-		#feature_names = [fn for fn in feature_names if not 'E_active' in fn]
+		feature_names = [fn for fn in feature_names if not 'E_active' in fn]
 		feature_names = [fn for fn in feature_names if not 'm_ij m_ij' in fn]
 
 	data = h5f['X_cpt'][key]
@@ -207,15 +206,48 @@ def collect_decomposed_data(h5f, key, tmin, tmax, feature_names=None):
 
 	return X, X_dot, feature_names
 
-def repeat_components(x, N):
+def collect_raw_data(h5f, key, tmin, tmax, feature_names=None, keep_frac=0.2):
 	'''
-	Repeat PCA components during fitting procedure to over-weight them
+	Collect the raw data from a given h5f library and return X, X_dot, and the feature names
 	'''
-	N[N == 0] = 1 #Avoid eliminating components
+	if not key in h5f['X_cpt']:
+		return None, None, None
+
+	if feature_names is None:
+		feature_names = list(h5f['X_cpt'][key].keys())
+		feature_names = [fn for fn in feature_names if not 'E_active' in fn]
+		feature_names = [fn for fn in feature_names if not 'm_ij m_ij' in fn]
+
+	data = h5f['X_cpt'][key]
+	#Pass 1 - get the proper time range
+	for feature in feature_names:
+		tmin = max(tmin, np.min(data[feature].attrs['t']))
+		tmax = min(tmax, np.max(data[feature].attrs['t']))
+
 	X = []
-	for i in range(x.shape[1]):
-		X.append(np.repeat(x[:, i:i+1], N[i], axis=1))
-	return np.concatenate(X, axis=1)
+	data = h5f['X_raw']
+	#Pass 2 - collect points within that time range
+	for feature in feature_names:
+		t = data[feature].attrs['t']
+		X.append(data[feature][np.logical_and(t >= tmin, t <= tmax), ...])
+	X = np.stack(X, axis=-1)
+	
+	t = h5f['X_dot'][key].attrs['t']
+	X_dot = h5f['X_dot'][key][np.logical_and(t >= tmin, t <= tmax), ...]
+	
+	if keep_frac < 1:
+		space_points = X.shape[-3] * X.shape[-2]
+		keep_points = int(keep_frac * space_points)
+		mask = np.zeros(space_points, dtype=bool)
+		mask[np.random.choice(range(space_points), keep_points, replace=False)] = True
+		mask = mask.reshape([X.shape[-3], X.shape[-2]])
+		X = X[..., mask, :]
+		X_dot = X_dot[..., mask, :]
+
+	X = X.reshape([X.shape[0], -1, X.shape[-1]])
+	X_dot = X_dot.reshape([X.shape[0], -1, 1])
+
+	return X, X_dot, feature_names
 
 def fit_sindy_model(h5f, key, tmin, tmax,
 					component_weight=None,
@@ -225,8 +257,9 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 					n_candidates_to_drop=5,
 					n_subset=None,
 					material_derivative=False, 
-					component_repeat=None,
 					overleaf_only=False,
+					collect_function=collect_decomposed_data,
+					withold=[],
 					**kwargs):
 	'''
 	Fit a SINDy model on data filled by a given key in an h5py file
@@ -234,15 +267,18 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 	'''
 	if overleaf_only:
 		print('Using only overleaf-allowed terms')
-		collect_function = collect_overleaf_data
+		feature_names = overleaf_feature_names(key)
 	else:
-		collect_function = collect_decomposed_data
+		feature_names = None
 
 	#Collect data
 	print('Collecting data')
 	X, X_dot = [], []
 	for eId in list(h5f.keys()):
-		x, x_dot, fn = collect_function(h5f[eId], key, tmin, tmax)
+		if eId == 'ensemble':
+			print('Skipping ensemble average from fit!')
+			continue
+		x, x_dot, fn = collect_function(h5f[eId], key, tmin, tmax, feature_names=feature_names)
 		if fn is None: 
 			continue
 		X.append(x)
@@ -266,20 +302,23 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 					X = np.delete(X, i, axis=-1)
 					to_remove.append(i)
 			feature_names = [feature_names[i] for i in range(len(feature_names)) if not i in to_remove]
+
+	#Remove witheld features
+	for feat in withold:
+		if feat in feature_names:
+			loc = feature_names.index(feat)
+			X = np.delete(X, loc, axis=-1)
+			feature_names.remove(feat)
 				
-	print(X.shape, X_dot.shape)
-
-	#if len(X) > 1:
-	#	print('Applying train/test split')
-	#	X, _, X_dot, _ = train_test_split(X, X_dot, test_size=0.2)
-
-	print(X.shape, X_dot.shape)
+	if len(X) > 1:
+		print('Applying train/test split')
+		X, test, X_dot, test_dot = train_test_split(X, X_dot, test_size=0.2)
 
 	#Build optimizer (with ensembling)
 
 	optimizer = ps.STLSQ(threshold=threshold, alpha=alpha, normalize_columns=True)
 	if n_models > 1:
-		bagging = True
+		print('Using an ensemble optimizer!')
 		if n_candidates_to_drop == 0:
 			n_candidates_to_drop = None
 		if n_subset is None:
@@ -293,18 +332,34 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 			n_models=n_models,
 			n_subset=n_subset,
 			n_candidates_to_drop=n_candidates_to_drop)
+
 	sindy = FlySINDy(
 		optimizer=optimizer,
 		feature_names=feature_names,
 	)
-	
-	#Fit and print
 	sindy.fit(x=X, x_dot=X_dot, component_weight=component_weight)
-	sindy.material_derivative_ = material_derivative
+	
+	#Ensemble using test error
+	#Get test error for each element in ensemble
+	if n_models > 1:
+		X, X_dot = test, test_dot
+		coef_ = sindy.optimizer.coef_
+		coef_list = sindy.optimizer.coef_list
+		mses = []
+		for i in range(len(coef_list)):
+			sindy.optimizer.coef_ = coef_list[i]
+			pred = sindy.model.predict(X).reshape(X_dot.shape)
+			mse = np.mean((pred - X_dot)**2, axis=(0, -1)) #MSE of each component
+			mses.append(mse)
+
+		sindy.coef_list_ = sindy.optimizer.coef_list
+		sindy.mses_list_ = mses
+
+		sindy.optimizer.coef_ = coef_
+
 	sindy.print(lhs=['D_t %s ' % key])
 	return sindy
 
-	
 def evolve_rk4_grid(x0, x_dot, model, keep, tmin=0, tmax=10, step_size=0.2):
 	'''
 	RK4 evolution of a spatial field given its derivatives

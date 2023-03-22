@@ -50,7 +50,7 @@ class AtlasDataset(torch.utils.data.Dataset):
 				 label,
 				 filename,
 				 drop_time=False,
-				 tmin=None, tmax=None,
+				 tmin=-15, tmax=45,
 				 transform=ToTensor()):
 		'''
 		Genotype, label are identical arguments to da.DynamicAtlas
@@ -67,24 +67,18 @@ class AtlasDataset(torch.utils.data.Dataset):
 
 		if os.path.exists(os.path.join(atlas_dir, genotype, label, 'dynamic_index.csv')):
 			self.df = pd.read_csv(os.path.join(atlas_dir, genotype, label, 'dynamic_index.csv'))
+		elif os.path.exists(os.path.join(atlas_dir, genotype, label, 'static_index.csv')):
+			self.df = pd.read_csv(os.path.join(atlas_dir, genotype, label, 'static_index.csv'))
 
-			if drop_time:
-				self.df.time = self.df.eIdx
-			else:
-				self.df = self.df.dropna(axis=0)
-
-			if os.path.exists(os.path.join(atlas_dir, genotype, label, 'morphodynamic_offsets.csv')):
-				morpho = pd.read_csv(os.path.join(atlas_dir, genotype, label, 'morphodynamic_offsets.csv'), index_col='embryoID')
-				for eId in self.df.embryoID.unique():
-					self.df.loc[self.df.embryoID == eId, 'time'] -= morpho.loc[eId, 'offset']
+		if drop_time:
+			self.df.time = self.df.eIdx
 		else:
-			#Use the ensemble timeline for static images
-			self.df = pd.DataFrame()
-			folder = os.path.join(atlas_dir, genotype, label, 'ensemble')
-			self.df['time'] = np.load(os.path.join(folder, 't.npy'))
-			self.df['embryoID'] = -1
-			self.df['folder'] = folder
-			self.df['eIdx'] = self.df.index
+			self.df = self.df.dropna(axis=0)
+
+		if os.path.exists(os.path.join(atlas_dir, genotype, label, 'morphodynamic_offsets.csv')):
+			morpho = pd.read_csv(os.path.join(atlas_dir, genotype, label, 'morphodynamic_offsets.csv'), index_col='embryoID')
+			for eId in self.df.embryoID.unique():
+				self.df.loc[self.df.embryoID == eId, 'time'] -= morpho.loc[eId, 'offset']
 
 		if tmin is not None:
 			self.df = self.df[self.df.time >= tmin].reset_index(drop=True)
@@ -95,11 +89,7 @@ class AtlasDataset(torch.utils.data.Dataset):
 
 		folders = self.df.folder.unique()
 		for folder in tqdm(folders):
-			embryo_ID = os.path.basename(folder)
-			try:
-				embryo_ID = int(embryo_ID)
-			except: #Label ensembles as -1
-				embryo_ID = -1
+			embryo_ID = int(os.path.basename(folder))
 			self.values[embryo_ID] = np.load(os.path.join(folder, filename+'.npy'), mmap_mode='r')
 
 		self.genotype = genotype
@@ -179,7 +169,7 @@ class JointDataset(torch.utils.data.Dataset):
 			nearest = df.iloc[(df.time - time).abs().argsort()[:self.ensemble]]
 		else: #Otherwise, select self.ensemble random rows
 			nearest = nearest.sample(self.ensemble)
-
+			
 		frame = []
 		for i, row in nearest.iterrows():
 			data = self.values[row.embryoID][key][row.eIdx]
@@ -237,9 +227,28 @@ class TrajectoryDataset(JointDataset):
 		mask = (df.max_len > 1) & (df.key == self.live_key)
 		df.loc[mask, 'sequence_index'] = df[mask].groupby(['embryoID', 'time']).ngroup()
 		df.loc[~mask, 'sequence_index'] = -1
+
+		df['train_mask'] = 'all'
+		df['val_mask'] = 'all'
 		df.sequence_index = df.sequence_index.astype(int)
 		self.df = df
-	
+
+	def get_mask(self, key, size):
+		mask = torch.zeros(size, dtype=bool)
+		if key == 'all':
+			mask[...] = 1
+		elif key == 'left':
+			mask[:size[0]//2] = 1
+		elif key == 'right':
+			mask[size[0]//2:] = 1
+		elif key == 'anterior':
+			mask[:, :size[1]//2] = 1
+		elif key == 'posterior':
+			mask[:, size[1]//2:] = 1
+
+		return mask
+
+
 	def __len__(self):
 		return self.df.sequence_index.max()+1
 	
@@ -282,6 +291,9 @@ class TrajectoryDataset(JointDataset):
 					sample[key] = torch.tensor(sample[key])
 				except:
 					pass
+
+		sample['train_mask'] = self.get_mask(row.train_mask, sample[self.live_key].shape[-2:])
+		sample['val_mask'] = self.get_mask(row.val_mask, sample[self.live_key].shape[-2:])
 				
 		return sample
 
@@ -289,7 +301,99 @@ class TrajectoryDataset(JointDataset):
 		batch = {}
 		for key in batch0[0]:
 			batch[key] = [b[key] for b in batch0]
-			batch['lengths'] = [len(bk) for bk in batch[key]]
-			batch[key] = torch.nn.utils.rnn.pad_sequence(batch[key], batch_first=True, padding_value=0)
+			if 'mask' in key:
+				batch[key] = torch.stack(batch[key], dim=0) #B, H, W
+			else:
+				batch['lengths'] = [len(bk) for bk in batch[key]]
+				batch[key] = torch.nn.utils.rnn.pad_sequence(batch[key], batch_first=True, padding_value=0)
 
 		return batch
+
+class SequenceDataset(JointDataset):
+	'''
+	Trajectory dataset but with a sequence of fixed length
+	'''
+	def __init__(self, *args, max_len=3, **kwargs):
+		super(SequenceDataset, self).__init__(*args, **kwargs)
+		self.max_len = max_len
+
+		df = pd.DataFrame()
+		for eId in self.df.embryoID.unique():
+			sub = self.df[self.df.embryoID == eId].copy()
+			sub['max_len'] = np.max(sub.eIdx) - sub.eIdx
+			df = df.append(sub, ignore_index=True)
+
+		#Re-compute merged index
+		mask = (df.max_len >= max_len) & (df.key == self.live_key)
+		df.loc[mask, 'sequence_index'] = df[mask].groupby(['embryoID', 'time']).ngroup()
+		df.loc[~mask, 'sequence_index'] = -1
+
+		df['train_mask'] = 'all'
+		df['val_mask'] = 'all'
+		df.sequence_index = df.sequence_index.astype(int)
+		self.df = df
+
+		self.collate_fn = None #Use default collate_fn
+
+	def get_mask(self, key, size):
+		mask = torch.zeros(size, dtype=bool)
+		if key == 'all':
+			mask[...] = 1
+		elif key == 'left':
+			mask[:size[0]//2] = 1
+		elif key == 'right':
+			mask[size[0]//2:] = 1
+		elif key == 'anterior':
+			mask[:, :size[1]//2] = 1
+		elif key == 'posterior':
+			mask[:, size[1]//2:] = 1
+
+		return mask
+
+
+	def __len__(self):
+		return self.df.sequence_index.max()+1
+	
+	def __getitem__(self, idx):
+		row = self.df[self.df.sequence_index == idx].iloc[0]
+		seq_len = self.max_len
+
+		eId = row.embryoID
+		times = np.arange(row.time, row.time+seq_len).astype(int)
+
+		merged_idxs = np.arange(row.merged_index,
+								row.merged_index+seq_len).astype(int)
+
+		sample = {}
+
+		for merged_index in merged_idxs:
+			try:
+				si = super(SequenceDataset, self).__getitem__(merged_index)
+			except:
+				print('Error fetching %d - merged indices: ' % idx, merged_index)
+				print(row)
+				print(seq_len)
+				print(merged_idxs)
+				print(eId, times)
+				return
+			for key in si:
+				if not key in sample:
+					sample[key] = []
+				sample[key].append(si[key])
+
+		for key in sample:
+			if torch.is_tensor(sample[key][0]):
+				sample[key] = torch.stack(sample[key], dim=0)
+			elif isinstance(sample[key][0], np.ndarray):
+				sample[key] = np.stack(sample[key])
+			else:
+				try:
+					sample[key] = torch.tensor(sample[key])
+				except:
+					pass
+
+		sample['train_mask'] = self.get_mask(row.train_mask, sample[self.live_key].shape[-2:])
+		sample['val_mask'] = self.get_mask(row.val_mask, sample[self.live_key].shape[-2:])
+		sample['lengths'] = self.max_len
+				
+		return sample

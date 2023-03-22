@@ -59,31 +59,22 @@ def symmetric_tensor_couple(data, keys=['m_ij', 'E']):
 			raw[feat] = y
 		raw[feat].attrs.update(combined_attrs)
 
-def add_static_sources(data, couple='m_ij'):
+def scalar_couple(data, scalars):
 	'''
-	Add a static DV and AP source to the library
+	Generate all order 2 couplings of scalar fields
 	'''
 	raw = data['X_raw']
-	if not couple in raw:
-		raise ValueError('%s not in X_raw' % like)
-	
-	x = np.zeros_like(raw[couple])
-	x[:, 0, 0, :, :] = 1
-	if not 'Static_DV' in raw:
-		raw['Static_DV'] = x
-	raw['Static_DV'].attrs.update({'space': 0, 't': raw[couple].attrs['t']})
-	symmetric_tensor_couple(data, [couple, 'Static_DV'])
-	del raw['%s Tr(%s)' % (couple, 'Static_DV')]
-	
-	'''
-	x = np.zeros_like(raw[couple])
-	x[:, 1, 1, :, :] = 1
-	if not 'Static_AP' in raw:
-		raw['Static_AP'] = x
-	raw['Static_AP'].attrs.update({'space': 0})
-	symmetric_tensor_couple(data, [couple, 'Static_AP'])
-	del raw['%s Tr(%s)' % (couple, 'Static_AP')]
-	'''
+	for key1, key2 in combinations(scalars, 2):
+		x1 = raw[key1]
+		x2 = raw[key2]
+
+		combined_attrs, x1, x2 = combine_attrs(x1, x2)
+
+		feat = '%s %s' % (key1, key2)
+		if feat not in raw:
+			raw[feat] = x1 * x2
+		raw[feat].attrs.update(combined_attrs)
+
 	
 def remove_terms(data, max_space_order=1):
 	raw = data['X_raw']
@@ -103,6 +94,7 @@ def active_strain_decomposition(data, key='m_ij'):
 	x = raw[key]
 	
 	deviatoric = x - 0.5 * np.einsum('bkkyx,ij->bijyx', x, np.eye(2))
+	deviatoric[deviatoric == 0] = 1e-5
 	
 	x_0 = np.linalg.norm(x, axis=(1, 2), keepdims=True).mean(axis=(3, 4), keepdims=True)
 	dev_mag = np.linalg.norm(deviatoric, axis=(1, 2), keepdims=True)
@@ -113,7 +105,7 @@ def active_strain_decomposition(data, key='m_ij'):
 	E_active = 0.5 * E_active * dev_mag / x_0
 	
 	E_passive = E - E_active
-	
+
 	attrs = dict(E.attrs)
 	
 	#Remove regular strain terms from library
@@ -124,7 +116,19 @@ def active_strain_decomposition(data, key='m_ij'):
 	
 	raw['E_passive'] = E_passive
 	raw['E_passive'].attrs.update(attrs)
-	
+
+def tensor_to_scalar(data, tensors):
+	'''
+	Convert tensors to scalars by taking the trace (order 1)
+	'''
+	raw = data['X_raw']
+	for key in tensors:
+		x = raw[key]
+		feat = 'Tr(%s)' % key
+		if not feat in raw:
+			raw[feat] = np.einsum('bkkyx->byx', x)
+		raw[feat].attrs.update(x.attrs)
+
 def scalar_tensor_couple(data, scalars, tensors):
 	'''
 	Order-1 couplings between a scalar and tensors
@@ -167,7 +171,7 @@ def multiply_tensor_by_scalar(data, tensors, scalars):
 		raw[feat].attrs.update(combined_attrs)
 
 	
-def add_dorsal_sources(data, couple='c', key='RECTANGLE',
+def add_dorsal_source(data, couple='c', key='RECTANGLE',
 					   x_path='Public/Masks/dorsal_mask_',
 					   t_path='Public/Masks/dorsal_mask_time.npy'):
 	'''
@@ -187,7 +191,32 @@ def add_dorsal_sources(data, couple='c', key='RECTANGLE',
 	raw['Dorsal_Source'] = x
 	raw['Dorsal_Source'].attrs.update({'space': 0})
 	raw['Dorsal_Source'].attrs.update({'t': t})
+
+def add_static_sources(data, couple='m_ij'):
+	'''
+	Add a static DV and AP source to the library
+	'''
+	raw = data['X_raw']
+	if not couple in raw:
+		raise ValueError('%s not in X_raw' % like)
 	
+	x = np.zeros_like(raw[couple])
+	x[:, 0, 0, :, :] = 1
+	if not 'Static_DV' in raw:
+		raw['Static_DV'] = x
+	raw['Static_DV'].attrs.update({'space': 0, 't': raw[couple].attrs['t']})
+	symmetric_tensor_couple(data, [couple, 'Static_DV'])
+	del raw['%s Tr(%s)' % (couple, 'Static_DV')]
+
+def add_constant_source(data, couple='c'):
+	raw = data['X_raw']
+	if not couple in raw:
+		raise ValueError('%s not in X_raw' % like)
+
+	x = np.ones_like(raw[couple])
+	if not '1' in raw:
+		raw['1'] = x
+	raw['1'].attrs.update({'space': 0, 't': raw[couple].attrs['t']})
 
 def material_derivative_terms(data, keys=['c']):
 	'''

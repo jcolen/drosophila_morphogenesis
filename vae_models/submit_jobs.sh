@@ -2,8 +2,8 @@
 
 inputs=("gene" "protein" "gene_combo" "protein_combo" "protein_gene")
 inputs=("protein_combo")
-inputs=("gene" "protein" "protein_combo")
-inputs=("gene")
+inputs=("gene_combo")
+inputs=("protein")
 for input in ${inputs[@]}; do
 	echo $input
 	cp slurm_python.slurm job.slurm

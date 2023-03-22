@@ -43,6 +43,7 @@ ap_min = 3.230
 ap_max = 455.701
 dv_min = 3.227
 dv_max = 536.891
+dv_midpoint = dv_min + 0.5 * (dv_max - dv_min)
 
 
 '''
@@ -61,7 +62,7 @@ def color_2D(ax, f, vmax_std=None, **im_kwargs):
 	else:
 		ax.imshow(f, **im_kwargs)
 	ax.set(xticks=[], yticks=[])
-	ax.set(xlim=[ap_min, ap_max], ylim=[dv_min, dv_max])
+	ax.set(xlim=[ap_min, ap_max], ylim=[dv_min, dv_midpoint])
 	ax.set_aspect('equal')
 
 def plot_tensor2D(ax, f0, skip=20, both=False, linecolor='white', linewidth=0.007, **im_kwargs):
@@ -110,7 +111,7 @@ def plot_tensor2D(ax, f0, skip=20, both=False, linecolor='white', linewidth=0.00
 		ax.quiver(X, Y, ev[:, 1], ev[:, 0], **qwargs)
 	
 	ax.set(xticks=[], yticks=[])
-	ax.set(xlim=[ap_min, ap_max], ylim=[dv_min, dv_max])
+	ax.set(xlim=[ap_min, ap_max], ylim=[dv_min, dv_midpoint])
 	ax.set_aspect('equal')
 
 def plot_vector2D(ax, f, skip=10, color='black', width=0.005, **kwargs):
@@ -125,5 +126,5 @@ def plot_vector2D(ax, f, skip=10, color='black', width=0.005, **kwargs):
 	f0 = f[:, ::skip, ::skip].reshape([2, -1])
 	ax.quiver(X, Y, f0[1], f0[0], pivot='middle', color=color, width=width, **kwargs)
 	ax.set(xticks=[], yticks=[])
-	ax.set(xlim=[ap_min, ap_max], ylim=[dv_min, dv_max])
+	ax.set(xlim=[ap_min, ap_max], ylim=[dv_min, dv_midpoint])
 	ax.set_aspect('equal')

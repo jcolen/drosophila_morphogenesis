@@ -31,9 +31,9 @@ def s2s_terms(x, group, YY, XX, key='Rnt'):
 	lib[feat] = x
 	attrs[feat] = {key: 1, 'space': 0}
 
-	feat = '%s^2' % key
-	lib[feat] = x**2
-	attrs[feat] = {key: 2, 'space': 0}
+	#feat = '%s^2' % key
+	#lib[feat] = x**2
+	#attrs[feat] = {key: 2, 'space': 0}
 	
 	feat = 'grad(%s)^2' % key
 	lib[feat] = np.einsum('tyxi,tyxi->tyx', d1_x, d1_x)
@@ -71,7 +71,7 @@ def s2t_terms(x, group, YY, XX, key='Rnt'):
 
 def build_scalar_library(folder, embryoID, group, key='c', base='cyt',
 						 project=True,
-						 threshold=0.95, sigma=8):
+						 threshold=0.95, sigma=7):
 	'''
 	Build a library from scalar information
 	'''

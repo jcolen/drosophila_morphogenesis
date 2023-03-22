@@ -5,6 +5,23 @@ import torch.nn.functional as F
 from torchvision.ops import StochasticDepth
 from psutil import virtual_memory
 
+def masked_residual(u, v, mask):
+	umag = torch.linalg.norm(u, dim=-3)
+	vmag = torch.linalg.norm(v, dim=-3)
+
+	uavg = torch.sqrt(umag.pow(2).mean(dim=(-2, -1), keepdims=True))
+	vavg = torch.sqrt(vmag.pow(2).mean(dim=(-2, -1), keepdims=True))
+
+	res = uavg**2 * vmag**2 + vavg**2 * umag**2 - 2 * uavg * vavg * torch.einsum('...ijk,...ijk->...jk', u, v)
+	denom = 2 * vavg**2 * uavg**2
+	denom[denom == 0] += 1
+	res /= denom
+
+	res = res * mask #Only use the masked region
+	res = res.sum(dim=(-2, -1)) / mask.sum(dim=(-2, -1))
+
+	return res
+
 def residual(u, v):
 	umag = torch.linalg.norm(u, dim=-3)
 	vmag = torch.linalg.norm(v, dim=-3)
@@ -244,7 +261,7 @@ class VAE_Evolver(VAE):
 		params = params + params1
 		params_list.append(params)
 		
-		while len(params_list) < np.max(lengths):
+		while len(params_list) < torch.max(lengths):
 			params1, hidden_state = self.evolver(params, hidden_state)
 			params = params + params1
 			params_list.append(params)

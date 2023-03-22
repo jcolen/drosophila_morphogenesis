@@ -59,7 +59,9 @@ class FlySINDy(SINDy):
 	'''
 	def __init__(self,
 				 optimizer,
-				 feature_names):
+				 feature_names,
+				 material_derivative=True):
+		self.material_derivative = material_derivative
 		super(FlySINDy, self).__init__(
 			optimizer=optimizer, 
 			feature_names=feature_names,
@@ -109,11 +111,9 @@ class FlySINDy(SINDy):
 		self.n_features_in_ = self.model.steps[0][1].n_features_in_
 		self.n_output_features_ = self.model.steps[0][1].n_output_features_
 		self.n_control_features_ = 0
+		self.material_derivative_ = self.material_derivative
 
 		return self
-
-	def predict(self, x):
-		raise RuntimeError('FlySINDy object does not implement predict, try predict_h5f')
 
 	def differentiate(self, x, t=None, multiple_trajectories=False):
 		raise RuntimeError('FlySINDy object does not differentiate fields!')

@@ -119,6 +119,40 @@ def collect_velocity_fields(savedir, subdir='PIV_filtered', prefix='VeloT_medfil
 		np.save(os.path.join(folder, 'DV_coordinates'), Ypix * piv_pixel_size)
 		np.save(os.path.join(folder, 'AP_coordinates'), Xpix * piv_pixel_size)
 
+def downsample_raw_tiff(savedir, threshold_sigma=10):
+	df = pd.DataFrame()
+	if os.path.exists(os.path.join(savedir, 'static_index.csv')):
+		df = pd.read_csv(os.path.join(savedir, 'static_index.csv'))
+		print('Found static index')
+	elif os.path.exists(os.path.join(savedir, 'dynamic_index.csv')):
+		df = pd.read_csv(os.path.join(savedir, 'dynamic_index.csv'))
+		print('Found dynamic index')
+
+	for folder in df.folder.unique():
+		ss = df[df.folder == folder]
+		eID = ss.embryoID.iloc[0]
+		tiff_fn = os.path.join(folder, ss.tiff.iloc[0])
+		movie = Image.open(tiff_fn)
+		frames = np.sort(ss.eIdx.values)
+		print('Embryo: ', eID, movie.n_frames, len(frames))
+		raws = []
+		for fId in tqdm(frames):
+			movie.seek(fId)
+			raw = np.array(movie)
+			
+			#Clip fiduciary bead intensity
+			if threshold_sigma is not None:
+				threshold = raw.mean() + threshold_sigma * raw.std()
+				raw[raw > threshold] = threshold
+			
+			raws.append(raw)
+		
+		raws = np.stack(raws).astype(float)
+		raws /= np.median(raws, axis=(1, 2), keepdims=True)
+		
+		raws = resize(raws, [raws.shape[0], 236, 200])
+		np.save(os.path.join(folder, 'raw2D'), raws)
+	
 '''
 Build static ensembled timeline
 '''
@@ -230,10 +264,11 @@ if __name__=='__main__':
 		#'WT/histone-RFP',
 		#'WT/Runt',
 		#'WT/Even_Skipped',
-		'WT/Tartan/',
-		'WT/Fushi_Tarazu',
-		'WT/Paired',
-		'WT/Sloppy_Paired',
+		#'WT/Tartan/',
+		#'WT/Fushi_Tarazu',
+		#'WT/Paired',
+		#'WT/Sloppy_Paired',
+		'WT/Even_Skipped-YFP',
 	]
 	
 	#savedir = 'spaetzle[A]/Sqh-GFP'
@@ -247,14 +282,15 @@ if __name__=='__main__':
 		'''
 		Static datasets
 		'''
-		df = convert_matstruct_to_csv(fulldir, prefix='static')
+		#df = convert_matstruct_to_csv(fulldir, prefix='static')
+		#downsample_raw_tiff(fulldir)
 		#We use a 20-minute morphodynamic offset for Runt
-		offsets = pd.DataFrame(columns=['embryoID', 'offset']).set_index('embryoID')
-		for eId in df.embryoID.unique():
-			offsets.loc[eId, 'offset'] = 20
-		offsets.to_csv(os.path.join(fulldir, 'morphodynamic_offsets.csv'))
-		build_ensemble_timeline(fulldir, init_unc=1,
-			t_min=-10, t_max=40)
+		#offsets = pd.DataFrame(columns=['embryoID', 'offset']).set_index('embryoID')
+		#for eId in df.embryoID.unique():
+		#	offsets.loc[eId, 'offset'] = 20
+		#offsets.to_csv(os.path.join(fulldir, 'morphodynamic_offsets.csv'))
+		#build_ensemble_timeline(fulldir, init_unc=1,
+		#	t_min=-10, t_max=40)
 
 		'''
 		Dynamic datasets
@@ -262,10 +298,11 @@ if __name__=='__main__':
 		#df = convert_matstruct_to_csv(fulldir, prefix='dynamic')
 		#print(fulldir)# len(df))
 		#collect_velocity_fields(fulldir)
+		#downsample_raw_tiff(fulldir)
 		#collect_anisotropy_tensor(fulldir)
 		#collect_anisotropy_tensor(fulldir, threshold_sigma=7) #toll, spz
 		#collect_thresholded_cytosolic_normalization(fulldir)
-		#build_ensemble_timeline(fulldir, init_unc=1, 
-		#	t_min=-10, t_max=40,
-		#	drop_times=np.any([a in savedir for a in ['Sqh', 'Eve', 'hist']]))
+		build_ensemble_timeline(fulldir, init_unc=1, 
+			t_min=-10, t_max=40,
+			drop_times=np.any([a in savedir for a in ['Sqh', 'Eve', 'hist']]))
 	

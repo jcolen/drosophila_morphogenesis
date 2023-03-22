@@ -4,5 +4,7 @@ Figures
 *.csv
 *.swp
 *.h5
+*.png
+*.svg
 *.npy
 *.ckpt
