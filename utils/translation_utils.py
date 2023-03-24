@@ -155,7 +155,6 @@ def overleaf_feature_names(key):
 			'Dorsal_Source', 
 			'c', 
 			'c Tr(E)',
-			#'c Tr(m_ij)',
 			'v dot grad c', 
 		]
 	elif key == 'm_ij':
@@ -163,16 +162,13 @@ def overleaf_feature_names(key):
 			'v dot grad m_ij',
 			'[O, m_ij]', 
 			'm_ij',
-			#'c m_ij',
-			'{m_ij, E_passive}',
-			#'m_ij Tr(E_passive)',
-			'c {m_ij, E_passive}',
-			#'Static_DV',
-			#'c Static_DV',
+			'm_ij Tr(E_passive)',
 			'Static_DV Tr(m_ij)',
 			'm_ij Tr(m_ij)',
-			#'c m_ij',
-			#'c m_ij Tr(m_ij)',
+			'Dorsal_Source m_ij',
+			'Dorsal_Source m_ij Tr(E_passive)',
+			'Dorsal_Source Static_DV',
+			'Dorsal_Source m_ij Tr(m_ij)',
 		]
 	return feature_names
 
@@ -185,8 +181,8 @@ def collect_decomposed_data(h5f, key, tmin, tmax, feature_names=None):
 
 	if feature_names is None:
 		feature_names = list(h5f['X_cpt'][key].keys())
-		feature_names = [fn for fn in feature_names if not 'E_active' in fn]
-		feature_names = [fn for fn in feature_names if not 'm_ij m_ij' in fn]
+		#feature_names = [fn for fn in feature_names if not 'E_active' in fn]
+		#feature_names = [fn for fn in feature_names if not 'm_ij m_ij' in fn]
 
 	data = h5f['X_cpt'][key]
 	#Pass 1 - get the proper time range
@@ -387,9 +383,10 @@ def evolve_rk4_grid(x0, x_dot, model, keep, tmin=0, tmax=10, step_size=0.2):
 		xtt = x[ii] + (k1 + 2 * k2 + 2 * k3 + k4) * step_size / 6
 		
 		#Project onto PCA components
-		xtt = xtt.reshape([1, -1])
-		xtt = model.inverse_transform(model.transform(xtt), keep)
-		x[ii+1] = xtt.reshape(x[ii+1].shape)
+		#xtt = xtt.reshape([1, -1])
+		#xtt = model.inverse_transform(model.transform(xtt), keep)
+		#x[ii+1] = xtt.reshape(x[ii+1].shape)
+		x[ii+1] = xtt
 
 	return x, tt
 
@@ -437,8 +434,10 @@ def sindy_predictions_plot(x_pred, x_int, x_model, times, keep, data, plot_fn=pl
 	'''
 	Plot a summary of the predictions of a sindy model
 	'''
-	ncols = 4
-	step = x_pred.shape[0] // ncols
+	step = 5 #minutes
+	ncols = int(np.ceil(np.ptp(times) / step))
+	dt = times[1] - times[0]
+	step = int(step // dt)
 
 	x_true = x_int(times)
 	x_true = x_model.inverse_transform(x_model.transform(x_true)[:, keep], keep)
@@ -467,29 +466,14 @@ def sindy_predictions_plot(x_pred, x_int, x_model, times, keep, data, plot_fn=pl
 	v = data['fields/v']
 	v2 = np.linalg.norm(v, axis=1).mean(axis=(1, 2))
 
-	fig, ax = plt.subplots(1, 1, figsize=(2, 2))
-	ax.plot(times, error)
-	ax.set(ylim=[0, 1], 
-		   ylabel='Error Rate',
-		   xlabel='Time')
-	#ax2 = ax.twinx()
-	#ax2.plot(v.attrs['t'], v2, color='red')
-	#ax2.set_yticks([])
-	#ax2.set_ylabel('$v^2$', color='red')
-	ax.set_xlim([times.min(), times.max()])
-
-	axis = ax
-
 	fig, ax = plt.subplots(3, ncols, figsize=(1*ncols, 3))
 
-	offset = min(5, x_pred.shape[0] - ncols*step) 
 	for i in range(ncols):
-		ii = i*step + offset
+		ii = min(i*step, len(x_pred)-1)
 		plot_fn(ax[0, i], x_pred[ii], vmin=vmin, vmax=vmax)
 		plot_fn(ax[1, i], x_true[ii], vmin=vmin, vmax=vmax)
 		color_2D(ax[2, i], res[ii], vmin=0, vmax=1, cmap='jet')
 
-		axis.axvline(times[ii], zorder=-1, color='black', linestyle='--')
 		ax[0, i].set_title('t=%d' % times[ii])
 
 	for a in ax.flatten():

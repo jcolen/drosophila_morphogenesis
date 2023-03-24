@@ -6,5 +6,6 @@ Figures
 *.h5
 *.png
 *.svg
+session_logs
 *.npy
 *.ckpt

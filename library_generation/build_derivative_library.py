@@ -61,8 +61,8 @@ if __name__=='__main__':
 	datadir = '/project/vitelli/jonathan/REDO_fruitfly/src/Public'
 
 	sets = [
-		#('c', ['WT', 'ECad-GFP'], 'cyt'),
-		('c', ['WT', 'ECad-GFP'], 'raw'),
+		('c', ['WT', 'ECad-GFP'], 'cyt'),
+		#('c', ['WT', 'ECad-GFP'], 'raw'),
 		('v', ['WT', 'ECad-GFP'], 'velocity'),
 		#('v', ['Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP'], 'velocity'),
 		#('m_ij', ['Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP'], 'tensor'),
