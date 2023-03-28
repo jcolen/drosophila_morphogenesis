@@ -7,7 +7,7 @@ import numpy as np
 import os
 
 basedir = '/project/vitelli/jonathan/REDO_fruitfly/src'
-geo_dir = os.path.join(basedir, 'data', 'embryo_geometry')
+geo_dir = '/project/vitelli/jonathan/REDO_fruitfly/flydrive.synology.me/minimalData/Atlas_Data/embryo_geometry'
 from fenics import Mesh
 
 mesh = Mesh(os.path.join(geo_dir, 'embryo_coarse_noll.xml'))
