@@ -38,7 +38,6 @@ if __name__ == '__main__':
 	sqh_vel = AtlasDataset('Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP', 'velocity2D',
 		transform=Compose([Reshape2DField(), ToTensor()]), drop_time=True)
 
-	'''
 	#Myosin
 	dataset = TrajectoryDataset(
 		datasets=[
@@ -50,7 +49,6 @@ if __name__ == '__main__':
 	model_kwargs['in_channels'] = 4
 	model_kwargs['input'] = ['sqh']
 	run_train(dataset, model_kwargs)
-	'''
 
 	#Cadherin
 	#dataset = TrajectoryDataset(

@@ -110,7 +110,9 @@ class ClosedLoopPINN(nn.Module):
 		scvdp = self.model(H)
 		sqh = scvdp[:, 0:4].reshape([scvdp.shape[0], 2, 2])
 		vel = scvdp[:, 4:6]
-		dor = 0.5*(torch.tanh(scvdp[:, 6:7].squeeze()) + 1) #range [0, 1]
+		#dor = 0.5*(torch.tanh(scvdp[:, 6:7].squeeze()) + 1) #range [0, 1]
+		dor = scvdp[:, 6:7].exp().squeeze()
+		#dor = dor - dor.min() #Source has a minimum of zero
 		pre = scvdp[:, 7:8].squeeze()
 		return sqh, vel, dor, pre 
 	
@@ -142,7 +144,7 @@ class ClosedLoopPINN(nn.Module):
 		lapl_v = self.gradient(grad_v[..., 0], y) + \
 				 self.gradient(grad_v[..., 1], x)
 		
-		stokes_loss = self.vel_coefs[0].exp() * lapl_v - grad_p + self.vel_coefs[1].exp() * torch.einsum('bijj->bi', grad_sqh)
+		stokes_loss = self.vel_coefs[0].exp() * lapl_v - grad_p + self.vel_coefs[1].tanh() * torch.einsum('bijj->bi', grad_sqh)
 		dor_dyn = dt_dor + torch.einsum('bj,bj->b', vel, grad_dor) #advection
 	
 		'''
@@ -202,7 +204,7 @@ class ClosedLoopPINN(nn.Module):
 				)
 		outstr += '\t%.3f grad^2 v - grad p = -%.3f div(m)\n' % (
 			self.vel_coefs[0].exp().item(),
-			self.vel_coefs[1].exp().item(),
+			self.vel_coefs[1].tanh().item(),
 		)
 		outstr += '\tD_t m = -(%.3g - %.3g s) m + (%.3g - %.3g s){m, E_p} + (%.3g - %.3g s) Tr(m) Gamma^{DV} + (%.3g - %.3g s) Tr(m) m' % (
 			self.sqh_coefs[0].exp().item(),

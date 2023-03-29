@@ -408,7 +408,7 @@ def sindy_predict(data, key, sindy, model, keep, tmin=None, tmax=None):
 	time = time[np.logical_and(time >= tmin, time <= tmax)]
 
 	
-	#Pass 2 - add in the temrs
+	#Pass 2 - add in the terms
 	x_dot_pred = np.zeros([tmax-tmin+1, *x_true.shape[1:]])
 	coefs = sindy.coefficients()[0]
 	for i, feature in enumerate(sindy.feature_names):

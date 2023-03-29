@@ -21,8 +21,8 @@ beta=0
 echo "STARTING EMBRYO SPLIT"
 python INPUTS_forecasting.py --beta $beta --mode embryo
 
-#echo "STARTING LR SPLIT"
-#python INPUTS_forecasting.py --beta $beta --mode LR
+echo "STARTING LR SPLIT"
+python INPUTS_forecasting.py --beta $beta --mode LR
 
-#echo "STARTING AP SPLIT"
-#python INPUTS_forecasting.py --beta $beta --mode AP
+echo "STARTING AP SPLIT"
+python INPUTS_forecasting.py --beta $beta --mode AP

@@ -15,6 +15,30 @@ class Reshape2DField(object):
 		else:
 			return sample.reshape([-1, *sample.shape[-2:]])
 
+class ApplyVFAPMask(object):
+	def __init__(self, dv0=10, dv1=-10, ap0=10, ap1=-10):
+		self.dv0 = dv0
+		self.dv1 = dv1
+		self.ap0 = ap0
+		self.ap1 = ap1
+
+	def __call__(self, sample):
+		if isinstance(sample, dict):
+			sample['value'] = sample['value'].copy()
+			sample['value'][..., :self.dv0, :] = 0
+			sample['value'][..., self.dv1:, :] = 0
+			sample['value'][..., :self.ap0] = 0
+			sample['value'][..., self.ap1:] = 0
+			return sample
+		else:
+			sample = sample.copy()
+			sample[..., :self.dv0, :] = 0
+			sample[..., self.dv1:, :] = 0
+			sample[..., :self.ap0] = 0
+			sample[..., self.ap1:] = 0
+			return sample
+		
+
 class Smooth2D(object):
 	def __init__(self, sigma=3):
 		self.sigma = sigma
@@ -50,7 +74,7 @@ class AtlasDataset(torch.utils.data.Dataset):
 				 label,
 				 filename,
 				 drop_time=False,
-				 tmin=-15, tmax=45,
+				 tmin=-15, tmax=30,
 				 transform=ToTensor()):
 		'''
 		Genotype, label are identical arguments to da.DynamicAtlas

@@ -117,7 +117,7 @@ def run_train(dataset,
 	train_loader = DataLoader(train, **dl_kwargs, collate_fn=dataset.collate_fn)
 	val_loader = DataLoader(val, **dl_kwargs, collate_fn=dataset.collate_fn)
 
-	model = VAE_Evolver(**model_kwargs)
+	model = MaskedVAE_Evolver(**model_kwargs)
 	model.to(device)
 	print('Training ', model_kwargs['input'], model_kwargs['output'])
 	optimizer = torch.optim.Adam(

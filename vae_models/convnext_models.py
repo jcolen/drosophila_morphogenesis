@@ -174,6 +174,7 @@ class VAE(nn.Module):
 		self.encoder = Encoder(in_channels, stage_dims)
 		self.decoder = Decoder(num_latent, out_channels, stage_dims)
 		
+		self.input_size = input_size
 		self.num_latent = num_latent
 
 		downsample_factor = 2**(len(stage_dims)-1+2)
@@ -285,3 +286,21 @@ class VAE_Evolver(VAE):
 			x[i, lengths[i]:] *= 0.
 
 		return x, (params, mu, logvar)
+
+class MaskedVAE_Evolver(VAE_Evolver):
+	def __init__(self, 
+				 *args,
+				 dv_min=15,
+				 dv_max=-15,
+				 ap_min=15, 
+				 ap_max=-15,
+				 **kwargs):
+		super(MaskedVAE_Evolver, self).__init__(*args, **kwargs)
+		
+		self.mask = torch.ones(self.input_size, dtype=bool)
+		self.mask[dv_min:dv_max, ap_min:ap_max] = 0
+		self.mask = torch.nn.Parameter(self.mask, requires_grad=False)
+
+	def forward(self, x, lengths):
+		x[..., self.mask] = 0.
+		return super(MaskedVAE_Evolver, self).forward(x, lengths)
