@@ -176,8 +176,8 @@ class SVDPipeline(Pipeline):
 		y = self.inverse_transform(self.transform(X))
 
 		#Only score in the masked regions
-		X = X[..., self['masker'].mask]
-		y = y[..., self['masker'].mask]
+		X = X[..., self['masker'].mask].squeeze()
+		y = y[..., self['masker'].mask].squeeze()
 
 		if metric == residual:
 			score = residual(X, y)
@@ -206,6 +206,8 @@ def build_decomposition_model(dataset, model_type=SVDPipeline, tmin=-15, tmax=45
 	y0 = []
 	for e in df.embryoID.unique():
 		e_data = dataset.values[e]
+		e_idx = df[df.embryoID == e].eIdx.values
+		e_data = e_data[e_idx]
 		t = e_data.shape[0]
 		h, w = e_data.shape[-2:]
 		y0.append(e_data.reshape([t, -1, h, w]))
@@ -222,6 +224,7 @@ def build_decomposition_model(dataset, model_type=SVDPipeline, tmin=-15, tmax=45
 	model = model_type(whiten=True, **model_kwargs)
 
 	train_mask = (df.set == 'train') & (df.time >= tmin) & (df.time <= tmax)
+	train_mask = (df.time >= tmin) & (df.time <= tmax)
 	train = y0[df[train_mask].index]
 	
 	if dataset.filename == 'velocity2D':
@@ -263,6 +266,7 @@ def get_decomposition_results(dataset,
 		model, df = build_decomposition_model(dataset, model_type, **model_kwargs)
 		pk.dump(model, open(path+'.pkl', 'wb'))
 		df.to_csv(path+'.csv')
+		print(path)
 		
 	return model, df
 
