@@ -109,6 +109,8 @@ def active_strain_decomposition(data, key='m_ij'):
 	attrs = dict(E.attrs)
 	
 	#Remove regular strain terms from library
+	raw['E_full'] = E[()]
+	raw['E_full'].attrs.update(attrs)
 	del raw['E']
 	
 	raw['E_active'] = E_active
@@ -207,6 +209,7 @@ def add_static_sources(data, couple='m_ij'):
 	raw['Static_DV'].attrs.update({'space': 0, 't': raw[couple].attrs['t']})
 	symmetric_tensor_couple(data, [couple, 'Static_DV'])
 	del raw['%s Tr(%s)' % (couple, 'Static_DV')]
+	del raw['{%s, %s}' % (couple, 'Static_DV')]
 
 def add_constant_source(data, couple='c'):
 	raw = data['X_raw']

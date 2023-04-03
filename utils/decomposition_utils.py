@@ -50,8 +50,7 @@ class LeftRightSymmetrize(BaseEstimator, TransformerMixin):
 		return self
 
 	def transform(self, X):
-		#X_flip = np.flip(X, axis=-2) #Flip DV axis
-		X_flip = X[..., ::-1, :].copy()
+		X_flip = X[..., ::-1, :].copy() #Flip DV axis
 
 		#Invert DV component of vector field
 		if self.n_vec_components_ == 2:
