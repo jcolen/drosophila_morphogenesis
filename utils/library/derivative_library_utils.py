@@ -1,22 +1,10 @@
-import numpy as np
-import h5py
 import os
-
-import sys
-
-basedir = '/project/vitelli/jonathan/REDO_fruitfly/'
-sys.path.insert(0, os.path.join(basedir, 'src'))
-import warnings
-from utils.dataset import *
-from utils.translation_utils import *
-from utils.decomposition_utils import *
-
-import pandas as pd
 import pickle as pk
-from tqdm import tqdm
-
+import numpy as np
+import pandas as pd
 import pysindy as ps
-from scipy.io import loadmat
+
+from ..decomposition.decomposition_model import SVDPipeline
 
 def project_embryo_data(folder, embryoID, base, threshold=0.95, model_type=SVDPipeline):
 	'''
@@ -25,10 +13,12 @@ def project_embryo_data(folder, embryoID, base, threshold=0.95, model_type=SVDPi
 	return the inverse_transformed PCA data keeping only terms up to a given explained variance
 	'''
 	#Check if SVDPipeline exists for this data
-	path = os.path.join(folder, 'decomposition_models', '%s_%s' % (base, model_type.__name__))
-	print('Checking for  %s for this dataset' % model_type.__name__)
+	path = os.path.join(folder, 'decomposition_models', f'{base}_{model_type.__name__}')
+	print(f'Checking for {model_type.__name__} for this dataset')
+	
+	with open(f'{path}.pkl', 'rb') as f:
+		model = pk.load(f)
 
-	model = pk.load(open(path+'.pkl', 'rb'))
 	df = pd.read_csv(path+'.csv')
 	
 	df = df[df.embryoID == embryoID]
@@ -53,16 +43,6 @@ def get_derivative_tensors(x, YY, XX, order=2):
 			equivalent to 2.5 x original pixel size 
 		The original units are 1pix=0.2619 um, so 1 PIV pix = 0.65479 um
 	'''
-	#geometry = loadmat('/project/vitelli/jonathan/REDO_fruitfly/flydrive.synology.me/minimalData/vitelli_sharing/pixel_coordinates.mat')
-	#XX, YY = geometry['XX'][0, :], geometry['YY'][:, 0]
-
-	# Change units of coordinates to microns instead of pixels
-	#original_pixel_size = 0.2619 #microns
-	#piv_rescale_factor = 0.4
-	#piv_pixel_size = original_pixel_size / piv_rescale_factor
-	#XX *= piv_pixel_size
-	#YY *= piv_pixel_size
-
 	diffY = ps.SmoothedFiniteDifference(d=1, axis=-2)
 	diffX = ps.SmoothedFiniteDifference(d=1, axis=-1)
 	diffY.smoother_kws['axis'] = -2
@@ -93,7 +73,7 @@ def validate_key_and_derivatives(x, group, YY, XX, key, order=2):
 	flag = False
 	dx = []
 	for i in range(order):
-		name = 'D%d %s' % (i+1, key)
+		name = f'D{i+1} {key}' % (i+1, key)
 		if name in group:
 			dx.append(group[name])
 		else:
@@ -103,7 +83,7 @@ def validate_key_and_derivatives(x, group, YY, XX, key, order=2):
 		print('Computing derivatives!')
 		dx = get_derivative_tensors(x, YY, XX, order=order)
 		for i in range(order):
-			name = 'D%d %s' % (i+1, key)
+			name = f'D{i+1} {key}' % (i+1, key)
 			if name in group:
 				del group[name]
 			group.create_dataset(name, data=dx[i])

@@ -1,21 +1,32 @@
+'''
+Dataset objects for pytorch training on Dynamic Atlas
+'''
+
 import os
 import numpy as np
 import pandas as pd
 import torch
 
 from scipy.ndimage import gaussian_filter
-import gc
 from tqdm import tqdm
 
-class Reshape2DField(object):
+atlas_dir = '/project/vitelli/jonathan/REDO_fruitfly/src/Public'
+
+class Reshape2DField():
+	'''
+	Reshape field into [C, H, W]
+	'''
 	def __call__(self, sample):
 		if isinstance(sample, dict):
 			sample['value'] = sample['value'].reshape([-1, *sample['value'].shape[-2:]])
 			return sample
-		else:
-			return sample.reshape([-1, *sample.shape[-2:]])
+		
+		return sample.reshape([-1, *sample.shape[-2:]])
 
-class ApplyVFAPMask(object):
+class ApplyVFAPMask():
+	'''
+	Apply a mask to the data by cropping the edges
+	'''
 	def __init__(self, dv0=10, dv1=-10, ap0=10, ap1=-10):
 		self.dv0 = dv0
 		self.dv1 = dv1
@@ -30,16 +41,19 @@ class ApplyVFAPMask(object):
 			sample['value'][..., :self.ap0] = 0
 			sample['value'][..., self.ap1:] = 0
 			return sample
-		else:
-			sample = sample.copy()
-			sample[..., :self.dv0, :] = 0
-			sample[..., self.dv1:, :] = 0
-			sample[..., :self.ap0] = 0
-			sample[..., self.ap1:] = 0
-			return sample
+
+		sample = sample.copy()
+		sample[..., :self.dv0, :] = 0
+		sample[..., self.dv1:, :] = 0
+		sample[..., :self.ap0] = 0
+		sample[..., self.ap1:] = 0
+		return sample
 		
 
-class Smooth2D(object):
+class Smooth2D():
+	'''
+	Smooth field with a gaussian filter over space
+	'''
 	def __init__(self, sigma=3):
 		self.sigma = sigma
 
@@ -51,19 +65,20 @@ class Smooth2D(object):
 			sample['value'] = np.stack([gaussian_filter(sample['value'][c], sigma=self.sigma) \
 				for c in range(sample['value'].shape[0])], axis=0)
 			return sample
-		else:
-			return np.stack([gaussian_filter(sample[c], sigma=self.sigma) \
-				for c in range(sample.shape[0])], axis=0)
+		
+		return np.stack([gaussian_filter(sample[c], sigma=self.sigma) \
+			for c in range(sample.shape[0])], axis=0)
 
-class ToTensor(object):
+class ToTensor():
+	'''
+	Convert field to torch Tensor
+	'''
 	def __call__(self, sample):
 		if isinstance(sample, dict):
 			sample['value'] = torch.tensor(sample['value'], dtype=torch.float32)
 			return sample
-		else:
-			return torch.tensor(sample, dtype=torch.float32)
-
-atlas_dir = '/project/vitelli/jonathan/REDO_fruitfly/src/Public'
+		
+		return torch.tensor(sample, dtype=torch.float32)
 
 class AtlasDataset(torch.utils.data.Dataset):
 	'''
@@ -100,7 +115,9 @@ class AtlasDataset(torch.utils.data.Dataset):
 			self.df = self.df.dropna(axis=0)
 
 		if os.path.exists(os.path.join(atlas_dir, genotype, label, 'morphodynamic_offsets.csv')):
-			morpho = pd.read_csv(os.path.join(atlas_dir, genotype, label, 'morphodynamic_offsets.csv'), index_col='embryoID')
+			morpho = pd.read_csv(os.path.join(atlas_dir, genotype, label, 
+											  'morphodynamic_offsets.csv'), 
+								 index_col='embryoID')
 			for eId in self.df.embryoID.unique():
 				self.df.loc[self.df.embryoID == eId, 'time'] -= morpho.loc[eId, 'offset']
 
@@ -114,7 +131,9 @@ class AtlasDataset(torch.utils.data.Dataset):
 		folders = self.df.folder.unique()
 		for folder in tqdm(folders):
 			embryo_ID = int(os.path.basename(folder))
-			self.values[embryo_ID] = np.load(os.path.join(folder, filename+'.npy'), mmap_mode='r')
+			self.values[embryo_ID] = np.load(
+				os.path.join(folder, filename+'.npy'),
+				mmap_mode='r')
 
 		self.genotype = genotype
 		self.label = label + '_' + filename
@@ -238,7 +257,7 @@ class TrajectoryDataset(JointDataset):
 	Return a time sequence of multiple fields
 	'''
 	def __init__(self, *args, seq_sigma=3, **kwargs):
-		super(TrajectoryDataset, self).__init__(*args, **kwargs)
+		super().__init__(*args, **kwargs)
 		self.seq_sigma = seq_sigma
 
 		df = pd.DataFrame()
@@ -292,14 +311,14 @@ class TrajectoryDataset(JointDataset):
 
 		for merged_index in merged_idxs:
 			try:
-				si = super(TrajectoryDataset, self).__getitem__(merged_index)
-			except:
-				print('Error fetching %d - merged indices: ' % idx, merged_index)
+				si = super().__getitem__(merged_index)
+			except Exception:
+				print(f'Error fetching {idx} - merged indices: ', merged_index)
 				print(row)
 				print(seq_len)
 				print(merged_idxs)
 				print(eId, times)
-				return
+				return None
 			for key in si:
 				if not key in sample:
 					sample[key] = []
@@ -313,7 +332,7 @@ class TrajectoryDataset(JointDataset):
 			else:
 				try:
 					sample[key] = torch.tensor(sample[key])
-				except:
+				except Exception:
 					pass
 
 		sample['train_mask'] = self.get_mask(row.train_mask, sample[self.live_key].shape[-2:])
@@ -338,7 +357,7 @@ class SequenceDataset(JointDataset):
 	Trajectory dataset but with a sequence of fixed length
 	'''
 	def __init__(self, *args, max_len=3, **kwargs):
-		super(SequenceDataset, self).__init__(*args, **kwargs)
+		super().__init__(*args, **kwargs)
 		self.max_len = max_len
 
 		df = pd.DataFrame()
@@ -392,14 +411,14 @@ class SequenceDataset(JointDataset):
 
 		for merged_index in merged_idxs:
 			try:
-				si = super(SequenceDataset, self).__getitem__(merged_index)
-			except:
-				print('Error fetching %d - merged indices: ' % idx, merged_index)
+				si = super().__getitem__(merged_index)
+			except Exception:
+				print(f'Error fetching {idx} - merged indices: ', merged_index)
 				print(row)
 				print(seq_len)
 				print(merged_idxs)
 				print(eId, times)
-				return
+				return None
 			for key in si:
 				if not key in sample:
 					sample[key] = []
@@ -413,7 +432,7 @@ class SequenceDataset(JointDataset):
 			else:
 				try:
 					sample[key] = torch.tensor(sample[key])
-				except:
+				except Exception:
 					pass
 
 		sample['train_mask'] = self.get_mask(row.train_mask, sample[self.live_key].shape[-2:])
