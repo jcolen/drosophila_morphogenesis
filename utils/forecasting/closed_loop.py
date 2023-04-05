@@ -7,7 +7,7 @@ from scipy.integrate import solve_ivp
 from sklearn.base import BaseEstimator
 from torchdiffeq import odeint
 
-from ..decomposition.decomposition_model import StandardShaper
+from .transforms import InputProcessor, PoleSmoother
 from .transforms import CovariantEmbryoGradient, ActiveStrainDecomposition
 
 class ClosedFlyLoop(BaseEstimator, nn.Module):
@@ -23,27 +23,35 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 	def __init__(self,
 				 v_model=None,
 				 v_thresh=0.,
-				 sigma=3):
+				 sigma=3,
+				 dv_mode='circular',
+				 ap_mode='replicate'):
 		nn.Module.__init__(self)
-		self.v_model = v_model
-		self.sigma = sigma
-		self.v_thresh = v_thresh
 		
-		self.shaper = StandardShaper()
-		self.active = ActiveStrainDecomposition()
-		self.gradient = CovariantEmbryoGradient(sigma=sigma,
-												dv_mode='circular', 
-												ap_mode='replicate')
+		self.v_model = v_model
+		self.v_thresh = v_thresh
+		self.sigma = sigma
+		self.ap_mode = ap_mode
+		self.dv_mode = dv_mode
 		
 	def fit(self, X, y0=None):
 		self.gamma_dv_ = np.array([
 				[1., 0.], 
 				[0., 0.]
-		])[..., None, None]
+		])[..., None, None] #Constant over space
 		
-		self.shaper.fit(X)
-		self.gradient.fit(X)
-		self.active.fit(X)
+		self.inputs = InputProcessor().fit(X)
+		self.active = ActiveStrainDecomposition().fit(X)
+		self.gradient = CovariantEmbryoGradient(
+			sigma=self.sigma,
+			dv_mode=self.dv_mode,
+			ap_mode=self.ap_mode,
+		).fit(X)
+		self.smoother = PoleSmoother(
+			sigma=self.sigma,
+			dv_mode=self.dv_mode,
+			ap_mode=self.ap_mode,
+		).fit(X)
 		
 		if torch.is_tensor(X):
 			self.mode_ = 'torch'
@@ -74,22 +82,37 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		v *= vnorm >= self.v_thresh
 				
 		return v
+	
+	def rhs(self, m, s, v, E):
+		'''
+		Compute the right hand side of the myosin dynamics
+		'''
+		#Active/Passive strain decomposition
+		E_active = self.active.transform(E, m)
+		E_passive = E - E_active
+
+		trm = self.einsum_('kkyx->yx', m)
+
+		rhs  = -(0.066 - 0.061 * s) * m #Detachment
+		rhs +=  (0.489 + 0.318 * s) * m * self.einsum_('kkyx->yx', E) #Strain recruitment
+		rhs +=  (0.564 - 0.393 * s) * trm * m #Tension recruitment
+		rhs +=  (0.047 - 0.037 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
+
+		return rhs
 		
 	def forward(self, t, y):
 		#Get myosin and source
-		y = self.shaper.transform(y[None]).squeeze()
-		m = y[:4].reshape([2, 2, *y.shape[-2:]])
-		s = y[4:].squeeze()
+		m, s = self.inputs.transform(y)
 		
 		#Compute flow from myosin/cadherin
-		v = self.get_velocity(t, y[:4]).squeeze()
+		v = self.get_velocity(t, m.reshape([4, *m.shape[-2:]])).squeeze()
 
 		#Gradients
 		d1_m = self.gradient(m)
 		d1_s = self.gradient(s)
 		d1_v = self.gradient(v)
 		
-		#Source is passively advected
+		#Source dynamics - passive advection
 		sdot = -1.000 * self.einsum_('iyx,yxi->yx', v, d1_s)
 
 		#Flow derivative tensors
@@ -98,35 +121,18 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		E = 0.5 * (self.einsum_('iyxj->ijyx', d1_v) + \
 				   self.einsum_('jyxi->ijyx', d1_v))
 
-		#Active/Passive strain decomposition
-		E_active = self.active.transform(E, m)
-		E_passive = E - E_active
-
-		trm = self.einsum_('kkyx->yx', m)[None, None]
-		s = s[None, None]
-		
-		#Myosin dynamics
+		#Myosin dynamics - comoving derivative
 		mdot =	-self.einsum_('kyx,ijyxk->ijyx', v, d1_m)
 		mdot -=  self.einsum_('ikyx,kjyx->ijyx', O, m)
-		mdot -= -self.einsum_('ikyx,kjyx->ijyx', m, O)	
+		mdot -= -self.einsum_('ikyx,kjyx->ijyx', m, O)
+
+		#Myosin dynamics - right hand side
+		mdot +=  self.rhs(m, s, v, E)
+
+		#mdot = self.smoother.transform(mdot)
+		#sdot = self.smoother.transform(sdot)
 		
-		mdot += -(0.085 - 0.077 * s) * m
-		mdot +=  (0.717 - 0.528 * s) * trm * m
-		mdot +=  (0.051 - 0.037 * s) * trm * self.gamma_dv_
-		mdot +=  (1.465 - 0.216 * s) * m * self.einsum_('kkyx->yx', E)
-		mdot += -(1.814 - 1.003 * s) * m * self.einsum_('kkyx->yx', E_passive) 
-		
-		if self.mode_ == 'torch':
-			ydot = torch.cat([
-				mdot.reshape([4, *mdot.shape[-2:]]),
-				sdot.reshape([1, *sdot.shape[-2:]]),
-			])
-		else:
-			ydot = np.concatenate([
-				mdot.reshape([4, *mdot.shape[-2:]]),
-				sdot.reshape([1, *sdot.shape[-2:]]),
-			]).flatten()
-		
+		ydot = self.inputs.inverse_transform(mdot, sdot)
 		return ydot
 	
 	def integrate(self, y0, t):
@@ -139,7 +145,8 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 
 		elif self.mode_ == 'numpy':
 			out = solve_ivp(self.forward, [t[0], t[-1]], y0.flatten(), method='RK45', t_eval=t)
-			y = self.shaper.transform(out['y'].T)
+			y = out['y'].T.reshape([-1, self.inputs.n_components_,
+									*self.inputs.data_shape_])
 			m = y[:, :4].reshape([-1, 2, 2, *y.shape[-2:]])
 			s = y[:, 4:]
 			v = self.get_velocity(t, y[:, :4])

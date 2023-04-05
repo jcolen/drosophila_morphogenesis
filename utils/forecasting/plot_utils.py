@@ -60,7 +60,7 @@ def sqh_vel_plot(m, v, t, dt=5, skip=20):
 	Y = Y[bot][slc]
 	vwargs = dict(pivot='middle', width=0.005, color='black')
 
-	mnorm = np.linalg.norm(m, axis=(1, 2))
+	mnorm = np.linalg.norm(m, axis=(1, 2))[..., 20:-20]
 	mmin = np.min(mnorm)
 	mmax = np.max(mnorm)
 	mwargs = dict(vmin=mmin, vmax=mmax, alpha=alpha)
@@ -201,7 +201,7 @@ def comparison_plot(t, *fields,
 			ax2 = ax[-1, -1].twinx()
 			ax2.plot(t, znorm, color='grey')
 			ax2.set_yticklabels([])
-			ax2.set_ylabel('Mean flow\n($\\mu$m / min)')
+			ax2.set_ylabel('Mean flow\n($\\mu$m / min)', labelpad=0)
 
 
 		ax[i, 0].set_ylabel(field, labelpad=labelpad)
@@ -216,11 +216,13 @@ def comparison_plot(t, *fields,
 			axis.invert_xaxis()
 			axis.axis('off')
 
-	ax[-1, -1].set_ylabel('Error Rate', labelpad=-6)
-	ax[-1, -1].set(ylim=[-0.05, 1.05], yticks=[0, 1])
+	ax[-1, -1].set_ylabel('Error Rate', labelpad=0)
+	ax[-1, -1].set(ylim=[-0.05, 1.05])
 	
 	norm = Normalize(vmin=-20, vmax=np.max(t))
-	fig.subplots_adjust(right=0.98, wspace=0.4, hspace=0.3)
+	fig.subplots_adjust(right=0.97, wspace=0.35, hspace=0.3)
 	for i in range(n_rows-1):
+		pos = ax[i, 0].get_position()
+		cax = fig.add_axes([0.98, pos.y0, 0.01, pos.y1-pos.y0])
 		plt.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=plt.get_cmap(colors[i])),
-					 ax=ax[i, -1], label='Time (min)', ticks=[])
+					 cax=cax, label='Time (min)', ticks=[])

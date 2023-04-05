@@ -10,7 +10,7 @@ from scipy.interpolate import RectBivariateSpline
 
 from ..plot_utils import dv_min, dv_max, ap_min, ap_max
 
-def gaussian_kernel1d(sigma, order, radius):
+def gaussian_kernel1d(sigma, order=0, radius=None):
 	"""
 	Computes a 1-D Gaussian convolution kernel.
 	Copied from the scipy v1.10 source code on github, since the function is 
@@ -19,6 +19,8 @@ def gaussian_kernel1d(sigma, order, radius):
 	"""
 	if order < 0:
 		raise ValueError('order must be non-negative')
+	if radius is None:
+		radius = int(4 * sigma + 0.5)
 	exponent_range = np.arange(order + 1)
 	sigma2 = sigma * sigma
 	x = np.arange(-radius, radius+1)
@@ -57,6 +59,41 @@ numpy_pad_keys = [
 	'wrap'
 ]
 
+class InputProcessor(BaseEstimator, TransformerMixin):
+	'''
+	Proceses inputs and shapes them correctly
+	'''
+	def fit(self, X, y=None):
+		self.data_shape_ = X.shape[-2:]
+		self.n_components_ = np.prod(X.shape[:-2])
+
+		if torch.is_tensor(X):
+			self.mode_ = 'torch'
+		else:
+			self.mode_ = 'numpy'
+
+		return self
+	
+	def transform(self, X):
+		X = X.reshape([self.n_components_, *self.data_shape_])
+		m = X[:4].reshape([2,2,*self.data_shape_])
+		s = X[4:].squeeze()
+		return m, s
+
+	def inverse_transform(self, m, s):
+		if self.mode_ == 'torch':
+			X = torch.cat([
+				m.reshape([4, *self.data_shape_]),
+				s.reshape([1, *self.data_shape_])
+			])
+		elif self.mode_ == 'numpy':
+			X = np.concatenate([
+				m.reshape([4, *self.data_shape_]),
+				s.reshape([1, *self.data_shape_])
+			]).flatten()
+		return X
+		
+
 class EmbryoPadder(BaseEstimator, TransformerMixin):
 	'''
 	Pads a field defined over an embryo 
@@ -79,6 +116,9 @@ class EmbryoPadder(BaseEstimator, TransformerMixin):
 		self.ap_pad = ap_pad
 	
 	def fit(self, X, y0=None):
+		'''
+		Make sure to check that the padding keys are compatible
+		'''
 		if torch.is_tensor(X):
 			self.mode_ = 'torch'
 			if self.dv_mode in numpy_pad_keys:
@@ -105,12 +145,30 @@ class EmbryoPadder(BaseEstimator, TransformerMixin):
 
 	def pad_AP(self, X):
 		if self.mode_ == 'numpy':
-			return np.pad(X, ((0, 0), (0, 0), (self.ap_pad, self.ap_pad)), mode=self.ap_mode_)
+			x =  np.pad(X, 
+						((0, 0), (0, 0), (self.ap_pad, self.ap_pad)), 
+						mode=self.ap_mode_)
 
 		elif self.mode_ == 'torch':
-			return F.pad(X, (self.ap_pad, self.ap_pad), mode=self.ap_mode_)
+			x =  F.pad(X,
+					   (self.ap_pad, self.ap_pad), 
+					   mode=self.ap_mode_)
+
+		#Reflective boundary conditions along the AP axis should invert the DV axis
+		if self.ap_mode_ == 'reflect':
+			if self.mode_ == 'numpy':
+				x[...,  :self.ap_pad] = np.flip(x[...,  :self.ap_pad], (-2,))
+				x[..., -self.ap_pad:] = np.flip(x[..., -self.ap_pad:], (-2,))
+			elif self.mode_ == 'torch':
+				x[...,  :self.ap_pad] = torch.flip(x[...,  :self.ap_pad], (-2,))
+				x[..., -self.ap_pad:] = torch.flip(x[..., -self.ap_pad:], (-2,))
+
+			#Handle vectorial or tensorial nature
+			if x.shape[0] == 2:
+				x[...,  :self.ap_pad] *= -1
+				x[..., -self.ap_pad:] *= -1
 		
-		return None
+		return x
 	
 	def pad_DV(self, X):
 		if self.mode_ == 'numpy':
@@ -151,13 +209,80 @@ class EmbryoPadder(BaseEstimator, TransformerMixin):
 		x = self.crop_DV(x)
 		return x.reshape([*c, *x.shape[-2:]])
 
+class PoleSmoother(BaseEstimator, TransformerMixin, torch.nn.Module):
+	'''
+	Smooth an embryo field at the anterior and posterior poles
+	'''
+	def __init__(self, 
+				 sigma=7,
+				 dv_mode='periodic',
+				 ap_mode='reflect'):
+		torch.nn.Module.__init__(self)
+		self.sigma = sigma
+		self.dv_mode = dv_mode
+		self.ap_mode = ap_mode
+
+	def fit(self, X, y0=None):
+		self.kernel_ = gaussian_kernel1d(sigma=self.sigma)[::-1]
+		self.pad_ = self.kernel_.shape[0] // 2
+		self.padder_ = EmbryoPadder(
+			dv_mode=self.dv_mode,
+			dv_pad=self.pad_,
+			ap_mode=self.ap_mode,
+			ap_pad=self.pad_,
+		).fit(X)
+
+		#Define operation mode
+		if torch.is_tensor(X):
+			self.mode_ = 'torch'
+			self.kernel_ = torch.nn.Parameter(
+				torch.from_numpy(self.kernel_.copy()[None, None]),
+				requires_grad=False
+			)
+		else:
+			self.mode_ = 'numpy'
+
+		return self
+
+	def smooth(self, X):
+		if self.mode_ == 'numpy':
+			x = correlate1d(X, self.kernel_, axis=-2, mode='nearest')
+			x = correlate1d(x, self.kernel_, axis=-1, mode='nearest')
+			x = self.padder_.inverse_transform(x) #Remove padding
+
+		elif self.mode_ == 'torch':
+			x = X[:, None]
+			x = F.conv2d(x, self.kernel_.view(1, 1, 1, -1))
+			x = F.conv2d(x, self.kernel_.view(1, 1, -1, 1)) 
+			x = x[:, 0]
+
+		return x
+	
+	def transform(self, X):
+		c = X.shape[:-2]
+		h, w = X.shape[-2:]
+		x = X.reshape([-1, h, w])
+
+		#Smooth in areas near poles
+		z = self.padder_.transform(x)
+		z = self.smooth(z)
+
+		x[...,  :self.pad_] = z[...,  :self.pad_]
+		x[..., -self.pad_:] = z[..., -self.pad_:]
+		
+		x = x.reshape([*c, h, w])
+		return x
+
+	def forward(self, X):
+		return self.transform(X)
+
 class EmbryoGradient(BaseEstimator, TransformerMixin, torch.nn.Module):
 	'''
 	Compute gradient on the embryo surface
 	'''
 	def __init__(self, 
 				 sigma=3,
-				 dv_mode='periodic',
+				 dv_mode='circular',
 				 ap_mode='edge'):
 		torch.nn.Module.__init__(self)
 		self.sigma = sigma
@@ -177,17 +302,8 @@ class EmbryoGradient(BaseEstimator, TransformerMixin, torch.nn.Module):
 			sigma = (self.sigma, self.sigma)
 
 		#Define kernels
-		self.dv_kernel_ = gaussian_kernel1d(
-			sigma=sigma[0],
-			order=1,
-			radius=int(4*sigma[0]+0.5),
-		)[::-1]
-
-		self.ap_kernel_ = gaussian_kernel1d(
-			sigma=sigma[1],
-			order=1,
-			radius=int(4*sigma[1]+0.5),
-		)[::-1]
+		self.dv_kernel_ = gaussian_kernel1d(sigma=sigma[0], order=1)[::-1]
+		self.ap_kernel_ = gaussian_kernel1d(sigma=sigma[1], order=1)[::-1]
 
 		#Instantiate the padding object
 		self.padder_ = EmbryoPadder(
@@ -195,18 +311,17 @@ class EmbryoGradient(BaseEstimator, TransformerMixin, torch.nn.Module):
 			dv_pad=self.dv_kernel_.shape[0] // 2,
 			ap_mode=self.ap_mode,
 			ap_pad=self.ap_kernel_.shape[0] // 2,
-		)
-		self.padder_.fit(X)
+		).fit(X)
 
 		#Define operation mode
 		if torch.is_tensor(X):
 			self.mode_ = 'torch'
 			self.dv_kernel_ = torch.nn.Parameter(
-				torch.from_numpy(self.dv_kernel_.copy()[None, None]),
+				torch.from_numpy(self.dv_kernel_.copy()[None, None, :, None]),
 				requires_grad=False
 			)
 			self.ap_kernel_ = torch.nn.Parameter(
-				torch.from_numpy(self.ap_kernel_.copy()[None, None]),
+				torch.from_numpy(self.ap_kernel_.copy()[None, None, None, :]),
 				requires_grad=False
 			)
 		else:
@@ -220,10 +335,7 @@ class EmbryoGradient(BaseEstimator, TransformerMixin, torch.nn.Module):
 			grad = self.padder_.inverse_transform(grad) #Remove padding
 
 		elif self.mode_ == 'torch':
-			c, h, w = X.shape
-			grad = X.permute(0, 2, 1).reshape([-1, 1, h])
-			grad = F.conv1d(grad, self.dv_kernel_)
-			grad = grad.reshape([c, w, -1]).permute(0, 2, 1)
+			grad = F.conv2d(X[:, None], self.dv_kernel_)[:, 0]
 			grad = self.padder_.crop_AP(grad) #Remove AP padding
 
 		return grad / self.dDV_
@@ -233,10 +345,7 @@ class EmbryoGradient(BaseEstimator, TransformerMixin, torch.nn.Module):
 			grad = correlate1d(X, self.ap_kernel_, axis=-1, mode='nearest')
 			grad = self.padder_.inverse_transform(grad) #Remove padding
 		elif self.mode_ == 'torch':
-			c, h, w = X.shape
-			grad = X.reshape([-1, 1, w])
-			grad = F.conv1d(grad, self.ap_kernel_)
-			grad = grad.reshape([c, h, -1])
+			grad = F.conv2d(X[:, None], self.ap_kernel_)[:, 0]
 			grad = self.padder_.crop_DV(grad) #Remove DV padding
 
 		return grad / self.dAP_
