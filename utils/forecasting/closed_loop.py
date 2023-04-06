@@ -9,7 +9,7 @@ from sklearn.utils.validation import check_is_fitted, NotFittedError
 from scipy.integrate import solve_ivp
 from torchdiffeq import odeint
 
-from .transforms import InputProcessor, PoleSmoother
+from .transforms import InputProcessor, EmbryoSmoother
 from .transforms import CovariantEmbryoGradient, ActiveStrainDecomposition
 
 class ClosedFlyLoop(BaseEstimator, nn.Module):
@@ -49,7 +49,7 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 			dv_mode=self.dv_mode,
 			ap_mode=self.ap_mode,
 		).fit(X)
-		self.smoother = PoleSmoother(
+		self.smoother = EmbryoSmoother(
 			sigma=self.sigma,
 			dv_mode=self.dv_mode,
 			ap_mode=self.ap_mode,
@@ -128,9 +128,26 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		rhs  =  self.rhs(m, s, v, E)
 
 		mdot = -lhs + rhs
+
+		mdot = self.postprocess(mdot)
+		sdot = self.postprocess(sdot)
 		
 		ydot = self.inputs.inverse_transform(mdot, sdot)
 		return ydot
+
+	def postprocess(self, f, dv_cut=10, ap_cut=10):
+		#fill edges 
+		f[..., :dv_cut, :] = f[..., dv_cut:dv_cut+1, :]
+		f[..., -dv_cut:, :] = f[..., -dv_cut-1:-dv_cut, :]
+
+		f[..., :ap_cut] = f[..., ap_cut:ap_cut+1]
+		f[..., -ap_cut:] = f[..., -ap_cut-1:-ap_cut]
+		
+		#smooth 
+		f = self.smoother.transform(f)
+
+		return f
+
 	
 	def integrate(self, y0, t):
 		print('Initializing')

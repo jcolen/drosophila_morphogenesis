@@ -210,9 +210,10 @@ class EmbryoPadder(BaseEstimator, TransformerMixin):
 		x = self.crop_DV(x)
 		return x.reshape([*c, *x.shape[-2:]])
 
-class PoleSmoother(BaseEstimator, TransformerMixin, torch.nn.Module):
+
+class EmbryoSmoother(BaseEstimator, TransformerMixin, torch.nn.Module):
 	'''
-	Smooth an embryo field at the anterior and posterior poles
+	Smooth an embryo field
 	'''
 	def __init__(self, 
 				 sigma=7,
@@ -265,6 +266,25 @@ class PoleSmoother(BaseEstimator, TransformerMixin, torch.nn.Module):
 		x = X.reshape([-1, h, w])
 
 		#Smooth in areas near poles
+		x = self.padder_.transform(x)
+		x = self.smooth(x)
+		
+		x = x.reshape([*c, h, w])
+		return x
+
+	def forward(self, X):
+		return self.transform(X)
+
+class PoleSmoother(EmbryoSmoother):
+	'''
+	Smooth only at the embryo poles
+	'''
+	def transform(self, X):
+		c = X.shape[:-2]
+		h, w = X.shape[-2:]
+		x = X.reshape([-1, h, w])
+
+		#Smooth in areas near poles
 		z = self.padder_.transform(x)
 		z = self.smooth(z)
 
@@ -273,9 +293,6 @@ class PoleSmoother(BaseEstimator, TransformerMixin, torch.nn.Module):
 		
 		x = x.reshape([*c, h, w])
 		return x
-
-	def forward(self, X):
-		return self.transform(X)
 
 class EmbryoGradient(BaseEstimator, TransformerMixin, torch.nn.Module):
 	'''

@@ -37,8 +37,6 @@ N_vector = sparse.vstack([sparse.hstack(E1), sparse.hstack(E2)])
 N_tensor = sparse.vstack([sparse.hstack(E11), sparse.hstack(E12), 
 						  sparse.hstack(E21), sparse.hstack(E22)])
 
-
-
 def left_right_symmetrize(pc, r_verts=embryo_mesh.coordinates()):
 	#Build coordinate points for flipped mesh
 	l_faces = r_verts.copy()
