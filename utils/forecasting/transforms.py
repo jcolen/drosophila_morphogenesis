@@ -75,22 +75,23 @@ class InputProcessor(BaseEstimator, TransformerMixin):
 		return self
 	
 	def transform(self, X):
-		X = X.reshape([self.n_components_, *self.data_shape_])
-		m = X[:4].reshape([2,2,*self.data_shape_])
-		s = X[4:].squeeze()
+		X = X.reshape([-1, self.n_components_, *self.data_shape_])
+		m = X[:, :4].reshape([-1, 2, 2, *self.data_shape_]).squeeze()
+		s = X[:, 4:].squeeze()
 		return m, s
 
 	def inverse_transform(self, m, s):
 		if self.mode_ == 'torch':
 			X = torch.cat([
-				m.reshape([4, *self.data_shape_]),
-				s.reshape([1, *self.data_shape_])
-			])
+				m.reshape([-1, 4, *self.data_shape_]),
+				s.reshape([-1, 1, *self.data_shape_])
+			], dim=1)
 		elif self.mode_ == 'numpy':
 			X = np.concatenate([
-				m.reshape([4, *self.data_shape_]),
-				s.reshape([1, *self.data_shape_])
-			]).flatten()
+				m.reshape([-1, 4, *self.data_shape_]),
+				s.reshape([-1, 1, *self.data_shape_])
+			], axis=1)
+			X = X.flatten()
 		return X
 		
 

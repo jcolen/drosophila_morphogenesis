@@ -3,8 +3,10 @@ from torch import nn
 
 import numpy as np
 
-from scipy.integrate import solve_ivp
 from sklearn.base import BaseEstimator
+from sklearn.utils.validation import check_is_fitted, NotFittedError
+
+from scipy.integrate import solve_ivp
 from torchdiffeq import odeint
 
 from .transforms import InputProcessor, PoleSmoother
@@ -87,10 +89,6 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		'''
 		Compute the right hand side of the myosin dynamics
 		'''
-		#Active/Passive strain decomposition
-		E_active = self.active.transform(E, m)
-		E_passive = E - E_active
-
 		trm = self.einsum_('kkyx->yx', m)
 
 		rhs  = -(0.066 - 0.061 * s) * m #Detachment
@@ -105,7 +103,7 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		m, s = self.inputs.transform(y)
 		
 		#Compute flow from myosin/cadherin
-		v = self.get_velocity(t, m.reshape([4, *m.shape[-2:]])).squeeze()
+		v = self.get_velocity(t, y).squeeze()
 
 		#Gradients
 		d1_m = self.gradient(m)
@@ -113,42 +111,47 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		d1_v = self.gradient(v)
 		
 		#Source dynamics - passive advection
-		sdot = -1.000 * self.einsum_('iyx,yxi->yx', v, d1_s)
+		sdot = -self.einsum_('iyx,yxi->yx', v, d1_s)
 
 		#Flow derivative tensors
 		O = -0.5 * (self.einsum_('iyxj->ijyx', d1_v) - \
-					self.einsum_('jyxi->ijyx', d1_v))
-		E = 0.5 * (self.einsum_('iyxj->ijyx', d1_v) + \
-				   self.einsum_('jyxi->ijyx', d1_v))
+					self.einsum_('iyxj->jiyx', d1_v))
+		E =  0.5 * (self.einsum_('iyxj->ijyx', d1_v) + \
+				    self.einsum_('iyxj->jiyx', d1_v))
 
 		#Myosin dynamics - comoving derivative
-		mdot =	-self.einsum_('kyx,ijyxk->ijyx', v, d1_m)
-		mdot -=  self.einsum_('ikyx,kjyx->ijyx', O, m)
-		mdot -= -self.einsum_('ikyx,kjyx->ijyx', m, O)
+		lhs  =	self.einsum_('kyx,ijyxk->ijyx', v, d1_m)
+		lhs +=  self.einsum_('ikyx,kjyx->ijyx', O, m)
+		lhs -=  self.einsum_('ikyx,kjyx->ijyx', m, O)
 
 		#Myosin dynamics - right hand side
-		mdot +=  self.rhs(m, s, v, E)
+		rhs  =  self.rhs(m, s, v, E)
 
-		#mdot = self.smoother.transform(mdot)
-		#sdot = self.smoother.transform(sdot)
+		mdot = -lhs + rhs
 		
 		ydot = self.inputs.inverse_transform(mdot, sdot)
 		return ydot
 	
 	def integrate(self, y0, t):
+		print('Initializing')
+		try: 
+			check_is_fitted(self)
+		except NotFittedError:
+			self.fit(y0)
+
 		if self.mode_ == 'torch':
+			print('Using torchdiffeq solver')
 			with torch.no_grad():
 				y = odeint(self, y0, t, method='rk4')
-				m = y[:, :4].reshape([-1, 2, 2, *y.shape[-2:]]).cpu().numpy()
-				s = y[:, 4:].cpu().numpy()
-				v = self.get_velocity(t, y[:, :4]).cpu().numpy()
+				v = self.get_velocity(t, y).cpu().numpy()
+				y = y.cpu().numpy()
 
 		elif self.mode_ == 'numpy':
-			out = solve_ivp(self.forward, [t[0], t[-1]], y0.flatten(), method='RK45', t_eval=t)
-			y = out['y'].T.reshape([-1, self.inputs.n_components_,
-									*self.inputs.data_shape_])
-			m = y[:, :4].reshape([-1, 2, 2, *y.shape[-2:]])
-			s = y[:, 4:]
-			v = self.get_velocity(t, y[:, :4])
+			print('Using scipy solve_ivp')
+			y = solve_ivp(self.forward, [t[0], t[-1]], y0.flatten(), method='RK45', t_eval=t)
+			y = y['y'].T.reshape([-1, self.inputs.n_components_, *self.inputs.data_shape_])
+			v = self.get_velocity(t, y)
+		
+		m, s = self.inputs.transform(y)
 		
 		return m, s, v

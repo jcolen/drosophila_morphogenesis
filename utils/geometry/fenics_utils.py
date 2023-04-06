@@ -8,7 +8,7 @@ from fenics import inner, dx
 
 from scipy import sparse
 
-from .geometry_utils import Nv, N_vector, N_tensor, mesh
+from .geometry_utils import N_vector, N_tensor, embryo_mesh
 
 def interpolate_vertices_to_function(fun_3D, FS):
 	fun = Function(FS)
@@ -38,7 +38,7 @@ def build_operator(expr, v2d, N):
 	A = convert_bilinear_dof(A, v2d, N)
 	return A
 
-def build_gradient_operators(fe, mesh=mesh):
+def build_gradient_operators(fe, mesh=embryo_mesh):
 	'''
 	Returns an inverse assembled fenics operator and 
 	a series of gradient operators for computing gradients on a mesh
@@ -51,9 +51,10 @@ def build_gradient_operators(fe, mesh=mesh):
 		) for i in range(3) ])
 	'''
 	FS = FunctionSpace(mesh, fe)
-	v2d = vertex_to_dof_map(FS).reshape([Nv, -1]).T.flatten()
+	num_vertices = mesh.coordinates().shape[0]
+	v2d = vertex_to_dof_map(FS).reshape([num_vertices, -1]).T.flatten()
 
-	Nc = v2d.shape[0] // Nv
+	Nc = v2d.shape[0] // num_vertices
 
 	if Nc == 1:
 		N = None

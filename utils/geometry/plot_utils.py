@@ -3,13 +3,13 @@ import numpy as np
 from matplotlib.colors import Normalize
 from matplotlib.cm import get_cmap
 
-from .geometry_utils import mesh
+from .geometry_utils import embryo_mesh
 
 '''
 3D plotting
 '''
-def format_ax(ax, mesh=mesh, a0=-90, a1=-90, title=''):
-	verts = mesh.coordinates()
+def format_ax(ax, a0=-90, a1=-90, title=''):
+	verts = embryo_mesh.coordinates()
 	ax.view_init(a0, a1)
 	ax.set_box_aspect((
 		np.ptp(verts[:, 2]),
@@ -35,8 +35,8 @@ def color_3D(ax, f,
 			   linewidth=0., 
 			   title='', 
 			   vmin=None, vmax=None):
-	verts = mesh.coordinates()
-	faces = mesh.cells()
+	verts = embryo_mesh.coordinates()
+	faces = embryo_mesh.cells()
 	p3dc = ax.plot_trisurf(
 		verts[:, 2], verts[:, 0], verts[:, 1],
 		edgecolor='lightgray', linewidth=linewidth, triangles=faces)
@@ -55,7 +55,7 @@ def color_3D(ax, f,
 	format_ax(ax, title=title)
 
 def plot_vector3D(ax, f, title='', cmap='Greys', normalize=True):
-	verts = mesh.coordinates()
+	verts = embryo_mesh.coordinates()
 	color_3D(ax, np.zeros(verts.shape[0]), title=title, cmap=cmap)
 	skip = 3
 
@@ -78,7 +78,7 @@ def plot_tensor3D(ax, f0, skip=6, title='', cmap='inferno', vmin=None, vmax=None
 	ev = np.array([ev[i, :, ei] for i, ei in enumerate(order)])
 	qwargs = dict(pivot='middle', color='white', length=100, normalize=True, arrow_length_ratio=0.5, linewidth=0.5)
 	
-	verts = mesh.coordinates()
+	verts = embryo_mesh.coordinates()
 	mask = verts[:, 1] < 0
 	ev = ev[mask][::skip, :].T
 	rm = verts[mask][::skip, :].T
