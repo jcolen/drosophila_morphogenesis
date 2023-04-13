@@ -83,27 +83,3 @@ if __name__=='__main__':
 			drop_times='Sqh-GFP' in path,
 			key=key,
 			base=base)
-
-	'''
-	dirs = {
-		'Rnt': ['WT', 'Runt'],
-		'Eve': ['WT', 'Even_Skipped'],
-		'Ftz': ['WT', 'Fushi_Tarazu'],
-		'Hry': ['WT', 'Hairy'],
-		'Slp': ['WT', 'Sloppy_Paired'],
-		'Prd': ['WT', 'Paired'],
-		'Trt': ['WT', 'Tartan'],
-	}
-	libfuncs = [
-		#scalar2scalar_library,
-		#scalar2tensor_library,
-		scalar2symtensor_library,
-	]
-	for key in dirs:
-		for libfunc in libfuncs:
-			build_ensemble_derivative_library(
-				os.path.join(datadir, *dirs[key]),
-				'library_PCA.h5',
-				libfunc,
-				key=key)
-	'''

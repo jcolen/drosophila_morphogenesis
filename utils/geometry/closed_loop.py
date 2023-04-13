@@ -73,9 +73,9 @@ class ClosedLoopMesh(ClosedFlyLoop):
 		v = self.get_velocity(t, y).squeeze()
 		
 		#Gradients are computed in tangent space and projected to 3D
-		d1_m = self.gradient(m).reshape([3, 3, -1, 3])
-		d1_s = self.gradient(s).reshape([-1, 3])
-		d1_v = self.gradient(v).reshape([3, -1, 3])
+		d1_m = self.gradient(m)
+		d1_s = self.gradient(s)
+		d1_v = self.gradient(v)
 		
 		#Project fields themselves to 3D
 		s = self.tangent.transform(s)

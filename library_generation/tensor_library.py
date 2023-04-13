@@ -1,48 +1,8 @@
 import numpy as np
 import os
-import sys
-basedir = '/project/vitelli/jonathan/REDO_fruitfly/'
-sys.path.insert(0, os.path.join(basedir, 'src'))
-
-from utils.derivative_library_utils import *
-
-'''
-SYMMETRIC Tensor libraries for anisotropy fields
-'''
-def t2s_terms(x, group, YY, XX, key='m'):
-	d1_x, d2_x = validate_key_and_derivatives(x, group, YY, XX, key, order=2)
-	lib = {}
-	attrs = {}
-	
-	feat = 'Tr(%s)' % key
-	lib[feat] = np.einsum('tiiyx->tyx', x)
-	attrs[feat] = {key: 1, 'space': 0}
-	
-	feat = 'Tr(%s)^2' % key
-	lib[feat] = np.einsum('tiiyx->tyx', x)**2
-	attrs[feat] = {key: 2, 'space': 0}
-	
-	feat = 'grad(grad(%s))' % key
-	lib[feat] = np.einsum('tijyxij->tyx', d2_x)
-	attrs[feat] = {key: 1, 'space': 2}
-	
-	feat = 'grad^2 Tr(%s)' % key
-	lib[feat] = np.einsum('tiiyxjj->tyx', d2_x)
-	attrs[feat] = {key: 1, 'space': 2}
-	
-	feat = 'div(%s) div(%s)' % (key, key)
-	lib[feat] = np.einsum('tijyxj,tikyxk->tyx', d1_x, d1_x)
-	attrs[feat] = {key: 2, 'space': 2}
-	
-	feat = 'Tr(%s) grad^2 Tr(%s)' % (key, key)
-	lib[feat] = np.einsum('tiiyx,tjjyxkk->tyx', x, d2_x)
-	attrs[feat] = {key: 2, 'space': 2}
-	
-	feat = 'grad(Tr(%s))^2' % key
-	lib[feat] = np.einsum('tiiyxj,tkkyxj->tyx', d1_x, d1_x)
-	attrs[feat] = {key: 2, 'space': 2}
-	
-	write_library_to_dataset(lib, group.require_group('scalar_library'), attrs)
+from ..utils.library.derivative_library_utils import validate_key_and_derivatives
+from ..utils.library.derivative_library_utils import write_library_to_dataset
+from ..utils.library.derivative_library_utils import project_embryo_data
 
 def t2t_terms(x, group, YY, XX, key='m'):
 	'''
