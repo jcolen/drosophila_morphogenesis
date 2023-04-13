@@ -6,6 +6,7 @@ from tqdm.auto import tqdm
 from sklearn.model_selection import train_test_split
 
 from .fly_sindy import FlySINDy
+from ..geometry.geometry_utils import embryo_mesh
 
 def overleaf_feature_names(key):
 	if key == 'c':
@@ -105,6 +106,44 @@ def collect_raw_data(h5f, key, tmin, tmax, feature_names=None, keep_frac=0.2):
 
 	return X, X_dot, feature_names
 
+def collect_mesh_data(h5f, key, tmin, tmax, feature_names=None):
+	'''
+	Collect the raw data from a given h5f library and return X, X_dot, and the feature names
+	'''
+	data = h5f['X_tan'][key]
+	if feature_names is None:
+		feature_names = [fn for fn in data.keys() if data[fn].shape == data[key].shape]
+		feature_names = [fn for fn in feature_names if not 'm_ij m_ij' in fn]
+		feature_names = [fn for fn in feature_names if not '{m_ij, m_ij}' in fn]
+
+	#Pass 1 - get the proper time range
+	for feature in feature_names:
+		tmin = max(tmin, np.min(data[feature].attrs['t']))
+		tmax = min(tmax, np.max(data[feature].attrs['t']))
+
+	X = []
+	#Pass 2 - collect points within that time range
+	for feature in feature_names:
+		t = data[feature].attrs['t']
+		X.append(data[feature][np.logical_and(t >= tmin, t <= tmax), ...])
+	X = np.stack(X, axis=-1)
+
+	t = h5f['X_dot_tan'][key].attrs['t']
+	X_dot = h5f['X_dot_tan'][key][np.logical_and(t >= tmin, t <= tmax), ...]
+
+	#Keep only the mesh coordinates away from the poles
+	z = embryo_mesh.coordinates()[:, 2] * 0.2619 #In microns
+	zmax = 0.8 * np.ptp(z) / 2
+	mask = np.abs(z) <= zmax
+
+	X = X[..., mask, :]
+	X_dot = X_dot[..., mask, :]
+	
+	X = X.reshape([X.shape[0], -1, X.shape[-1]])
+	X_dot = X_dot.reshape([X.shape[0], -1, 1])
+
+	return X, X_dot, feature_names
+
 def fit_sindy_model(h5f, key, tmin, tmax,
 					component_weight=None,
 					threshold=1e-1, 
@@ -147,6 +186,8 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 			feature_names = fn
 		X = np.concatenate(X, axis=0)
 		X_dot = np.concatenate(X_dot, axis=0)
+
+		print(X.shape, X_dot.shape)
 
 		#Shift material derivative terms to LHS
 		pbar.update()
