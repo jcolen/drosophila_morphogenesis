@@ -4,7 +4,8 @@ import numpy as np
 from scipy.io import loadmat
 from scipy import sparse
 from scipy.interpolate import RectBivariateSpline, griddata
-from sklearn.neighbors import KDTree
+
+from sklearn.base import BaseEstimator, TransformerMixin
 
 from fenics import Mesh
 
@@ -37,116 +38,141 @@ N_vector = sparse.vstack([sparse.hstack(E1), sparse.hstack(E2)])
 N_tensor = sparse.vstack([sparse.hstack(E11), sparse.hstack(E12), 
 						  sparse.hstack(E21), sparse.hstack(E22)])
 
-def left_right_symmetrize(pc, r_verts=embryo_mesh.coordinates()):
-	#Build coordinate points for flipped mesh
-	l_faces = r_verts.copy()
-	l_faces[..., 1] *= -1
-	
-	tree = KDTree(l_faces)
-	dist, ind = tree.query(r_verts, k=1)
-	ind = ind[:, 0]
-	
-	reflected = pc[:, ind]
-	
-	if reflected.shape[0] == 3:
-		reflected[1] *= -1
-	elif reflected.shape[0] == 9:
-		reflected[1] *= -1
-		reflected[3] *= -1
-		reflected[5] *= -1
-		reflected[7] *= -1
-	
-	return 0.5 * (pc + reflected)
+class MeshInterpolator(BaseEstimator, TransformerMixin):
+	'''
+	Interpolates grid points to mesh vertices
+	Inverse transform interpolates mesh vertices to grid points
+	'''
+	def __init__(self, 
+				 mesh=embryo_mesh,
+				 z_emb=z_emb,
+				 phi_emb=phi_emb):
+		self.mesh = mesh
+		self.z_emb = z_emb
+		self.phi_emb = phi_emb
 
-def interpolate_grid_to_mesh_vertices(f0):
-	header_shape = f0.shape[:-2]
-	f1 = f0.reshape([-1, *f0.shape[-2:]])
+	def fit(self, X, y0=None):
+		self.n_vertices_ = self.mesh.coordinates().shape[0]	
+		return self
 
-	#Interpolate to vertex points
-	Z_AP = np.linspace(z_emb.min(), z_emb.max(), f0.shape[-1])
-	Phi_DV = np.linspace(phi_emb.min(), phi_emb.max(), f0.shape[-2]) #This goes the opposite direction of Y
+	def transform(self, X):
+		header_shape = X.shape[:-2]
+		x0 = X.reshape([-1, *X.shape[-2:]])
 
-	f = []
-	for i in range(f1.shape[0]):
-		fi = RectBivariateSpline(Phi_DV, Z_AP, f1[i])(phi_emb, z_emb, grid=False)
-		f.append(fi)
-	f = np.stack(f).reshape([*header_shape, -1])
+		#Interpolate to vertex points
+		Z_AP = np.linspace(self.z_emb.min(), 
+						   self.z_emb.max(), 
+						   X.shape[-1])
+		Phi_DV = np.linspace(self.phi_emb.min(), 
+							 self.phi_emb.max(), 
+							 X.shape[-2]) #This goes the opposite direction of Y
 
-	#Account for switch of DV direction
-	if len(f.shape) == 2: #It's a vector
-		f[0] *= -1 #Since we inverted phi
+		x1 = []
+		for i in range(x0.shape[0]):
+			xi = RectBivariateSpline(Phi_DV, Z_AP, x0[i])(phi_emb, z_emb, grid=False)
+			x1.append(xi)
+		x1 = np.stack(x1)
 
-	elif len(f.shape) == 3: #It's a tensor
-		f[1, 0] *= -1
-		f[0, 1] *= -1
+		#Account for switch of DV direction
+		if x1.shape[0] == 2: #It's a vector
+			x1[0] *= -1 #Since we inverted phi
 
-	return f
+		elif x1.shape[0] == 4: #It's a tensor
+			x1[1:3] *= -1
+			x1 = x1.reshape([2, 2, -1])
+		else:
+			x1 = x1.squeeze()
 
-def pull_vector_from_tangent_space(M):
-	Mi = M.flatten()
-	return np.einsum('Vi,V->iV', e1, Mi[:num_vertices]) + \
-		   np.einsum('Vi,V->iV', e2, Mi[num_vertices:])
+		return x1
 
-def pull_tensor_from_tangent_space(M):
-	Mi = M.flatten()
-	return np.einsum('Vi,V,Vj->ijV', e1, Mi[:num_vertices], e1) + \
-		   np.einsum('Vi,V,Vj->ijV', e1, Mi[num_vertices:2*num_vertices], e2) + \
-		   np.einsum('Vi,V,Vj->ijV', e2, Mi[2*num_vertices:3*num_vertices], e1) + \
-		   np.einsum('Vi,V,Vj->ijV', e2, Mi[3*num_vertices:], e2)
+	def inverse_transform(self, X, nDV=236, nAP=200):
+		x0 = X.reshape([-1, self.n_vertices_])
+		
+		#Interpolate to vertex points
+		Z_AP = np.linspace(self.z_emb.min(), 
+						   self.z_emb.max(), 
+						   nAP)
+		Phi_DV = np.linspace(self.phi_emb.min(), 
+							 self.phi_emb.max(), 
+							 nDV) #This goes the opposite direction of Y
 
-def pull_from_tangent_space(f0):
-	if f0.shape[-1] != num_vertices:
-		f = interpolate_grid_to_mesh_vertices(f0)
-	else:
-		f = f0
+		x1 = []
+		for i in range(x0.shape[0]):
+			xi = griddata(
+				(phi_emb, z_emb), x0[i], 
+				(Phi_DV[:, None], Z_AP[None, :])
+			)
+			xi_nearest = griddata(
+				(phi_emb, z_emb), x0[i], 
+				(Phi_DV[:, None], Z_AP[None, :]),
+				method='nearest'
+			)
+			xi[np.isnan(xi)] = xi_nearest[np.isnan(xi)]
+				
+			x1.append(xi)
+		x1 = np.stack(x1)
+		
+		if x1.shape[0] == 2: #It's a vector
+			x1[0] *= -1
+		elif x1.shape[0] == 4: #It's a tensor
+			x1[1:3] *= -1
+			x1 = x1.reshape([2, 2, nDV, nAP])
+		
+		return x1
 
-	#Now convert using embryo surface basis vectors
-	if len(f.shape) == 2: #Transforms like a vector
-		return pull_vector_from_tangent_space(f.flatten())
-	elif len(f.shape) == 3: #Transforms like a tensor
-		return pull_tensor_from_tangent_space(f.flatten())
-	else:
-		return f
+class TangentSpaceTransformer(BaseEstimator, TransformerMixin):
+	'''
+	Pulls quantities from the tangent space to 3D space
+	Inverse transform pushes quantities back to tangent space
 
-def interpolate_mesh_vertices_to_grid(f0, nDV=236, nAP=200):
-	f1 = f0.reshape([-1, num_vertices])
-	
-	#Interpolate to vertex points
-	Z_AP = np.linspace(z_emb.min(), z_emb.max(), nAP)
-	Phi_DV = np.linspace(phi_emb.min(), phi_emb.max(), nDV) #This goes the opposite direction of Y
+	Assumes all quantities are defined at the mesh vertices
+	'''
+	def __init__(self, 
+				 mesh=embryo_mesh,
+				 e1=e1,
+				 e2=e2,
+				 N_vector=N_vector,
+				 N_tensor=N_tensor):
+		self.mesh = mesh
+		self.e1 = e1
+		self.e2 = e2
+		self.N_vector = N_vector
+		self.N_tensor = N_tensor
 
-	f = []
-	for i in range(f1.shape[0]):
-		fi = griddata(
-			(phi_emb, z_emb), f1[i], 
-			(Phi_DV[:, None], Z_AP[None, :])
-		)
-		fi_nearest = griddata(
-			(phi_emb, z_emb), f1[i], 
-			(Phi_DV[:, None], Z_AP[None, :]),
-			method='nearest'
-		)
-		fi[np.isnan(fi)] = fi_nearest[np.isnan(fi)]
-			
-		f.append(fi)
-	f = np.stack(f)
-	
-	if f.shape[0] == 2: #It's a vector
-		f[0] *= -1
-	elif f.shape[0] == 4: #It's a tensor
-		f[1:3] *= -1
-	
-	return f
+	def fit(self, X, y0=None):
+		self.n_vertices_ = self.mesh.coordinates().shape[0]
+		return self
 
-def push_to_tangent_space(f0, grid=True):
-	if np.prod(f0.shape) // num_vertices == 3: #Vector
-		f = N_vector.dot(f0.flatten()[:, None])
-	elif np.prod(f0.shape) // num_vertices == 9: #Tensor
-		f = N_tensor.dot(f0.flatten()[:, None])
-	else:
-		f = f0
+	def transform(self, X):
+		n_components = np.prod(X.shape) // self.n_vertices_
+		x0 = X.flatten()
 
-	if grid:
-		return interpolate_mesh_vertices_to_grid(f)
-	
-	return f
+		if n_components == 2: #Transforms like a vector
+			x1	= np.einsum('Vi,V->iV', self.e1, x0[:self.n_vertices_])
+			x1 += np.einsum('Vi,V->iV', self.e2, x0[self.n_vertices_:])
+		elif n_components == 4: #Transforms like a tensor
+			x1	= np.einsum('Vi,V,Vj->ijV', self.e1, x0[:self.n_vertices_], self.e1)
+			x1 += np.einsum('Vi,V,Vj->ijV', self.e1, x0[self.n_vertices_:2*self.n_vertices_], self.e2)
+			x1 += np.einsum('Vi,V,Vj->ijV', self.e2, x0[2*self.n_vertices_:3*self.n_vertices_], self.e1)
+			x1 += np.einsum('Vi,V,Vj->ijV', self.e2, x0[3*self.n_vertices_:], self.e2)
+
+		else: #Scalar
+			x1 = X
+
+		return x1
+
+
+	def inverse_transform(self, X):
+		n_components = np.prod(X.shape) // self.n_vertices_
+		x0 = X.flatten()[:, None]
+
+		if n_components == 3: #Vector
+			x = self.N_vector.dot(x0)
+			x = x.reshape([2, self.n_vertices_])
+		elif n_components == 9: #Tensor
+			x = self.N_tensor.dot(x0)
+			x = x.reshape([2, 2, self.n_vertices_])
+		else:
+			x = X
+
+		return x

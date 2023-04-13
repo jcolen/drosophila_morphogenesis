@@ -5,9 +5,6 @@ from matplotlib.cm import get_cmap
 
 from .geometry_utils import embryo_mesh
 
-'''
-3D plotting
-'''
 def format_ax(ax, a0=-90, a1=-90, title=''):
 	verts = embryo_mesh.coordinates()
 	ax.view_init(a0, a1)

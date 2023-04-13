@@ -90,9 +90,10 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		Compute the right hand side of the myosin dynamics
 		'''
 		trm = self.einsum_('kkyx->yx', m)
+		trE = self.einsum_('kkyx->yx', E)
 
 		rhs  = -(0.066 - 0.061 * s) * m #Detachment
-		rhs +=  (0.489 + 0.318 * s) * m * self.einsum_('kkyx->yx', E) #Strain recruitment
+		rhs +=  (0.489 + 0.318 * s) * m * trE #Strain recruitment
 		rhs +=  (0.564 - 0.393 * s) * trm * m #Tension recruitment
 		rhs +=  (0.047 - 0.037 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
 
