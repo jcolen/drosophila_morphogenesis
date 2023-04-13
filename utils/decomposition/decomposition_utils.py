@@ -57,7 +57,7 @@ def build_decomposition_model(dataset, model_type=SVDPipeline, tmin=-15, tmax=45
 	model.fit(train, scaler_train)
 
 	params = model.transform(y0)
-	df['res'] = model.score(y0, metric=residual).mean(axis=(-2, -1))
+	#df['res'] = model.score(y0, metric=residual).mean(axis=(-2, -1))
 	df['mag'] = np.linalg.norm(model.inverse_transform(params), axis=1).mean(axis=(-1, -2))
 	df = pd.concat([df, pd.DataFrame(params).add_prefix('param')], axis=1)
 
