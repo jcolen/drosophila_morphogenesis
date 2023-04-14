@@ -27,8 +27,6 @@ def build_tensor_library(folder, group, mesh_grad, key='m',base='tensor'):
 		x[i] = tangent.transform(xi) #3, 3, V
 		d1_x[i] = mesh_grad.transform(xi) #3, 3, V, 3
 	
-	lib = {}
-	attrs = {}
 	lib = group.require_group('tensor_library')
 
 	lib.create_dataset(key, data=x)

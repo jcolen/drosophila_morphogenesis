@@ -72,3 +72,40 @@ class LeftRightSymmetrize(BaseEstimator, TransformerMixin):
 			reflected[2, 1] *= -1 #Flip zy
 
 		return 0.5 * (X + reflected)
+
+class ActiveStrainDecomposition(BaseEstimator, TransformerMixin):
+	'''
+	Determine active (myosin-induced) strain rate as decsribed in the manuscript
+	'''
+	def fit(self, X, y0=None):
+		if torch.is_tensor(X):
+			self.mode_ = 'torch'
+		else:
+			self.mode_ = 'numpy'
+
+		return self
+	
+	def transform(self, E, m):
+		if self.mode_ == 'numpy':
+			deviatoric = m - 0.5 * np.einsum('kk...,ij->ij...', m, np.eye(3))
+			dev_mag = np.linalg.norm(deviatoric, axis=(0, 1), keepdims=True)
+
+			m_0 = np.linalg.norm(m, axis=(0, 1), keepdims=True)
+			m_0 = m_0.mean(axis=(-1), keepdims=True)
+
+			devE = np.einsum('kl...,kl...->...', deviatoric, E)[None, None]
+			E_active = E - np.sign(devE) * devE * deviatoric / dev_mag**2
+			E_active = 0.5 * E_active * dev_mag / m_0
+
+		elif self.mode_ == 'torch':
+			deviatoric = m - 0.5 * torch.einsum('kk...,ij->ij...', m, torch.eye(3, device=m.device))
+			dev_mag = torch.linalg.norm(deviatoric, axis=(0, 1), keepdims=True)
+
+			m_0 = torch.linalg.norm(m, dim=(0, 1), keepdims=True)
+			m_0 = m_0.mean(dim=(-1), keepdims=True)
+
+			devE = torch.einsum('kl...,kl...->...', deviatoric, E)[None, None]
+			E_active = E - torch.sign(devE) * devE * deviatoric / dev_mag**2
+			E_active = 0.5 * E_active * dev_mag / m_0 
+
+		return E_active

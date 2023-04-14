@@ -9,25 +9,20 @@ from .fly_sindy import FlySINDy
 from ..geometry.geometry_utils import embryo_mesh
 
 def overleaf_feature_names(key):
-	if key == 'c':
-		feature_names = [
-			'Dorsal_Source', 
-			'c', 
-			'c Tr(E)',
-			'v dot grad c', 
-		]
-	elif key == 'm_ij':
+	if key == 'm_ij':
 		feature_names = [
 			'v dot grad m_ij',
 			'[O, m_ij]', 
 			'm_ij',
-			'm_ij Tr(E_passive)',
-			'Static_DV Tr(m_ij)',
+			'c m_ij',
 			'm_ij Tr(m_ij)',
-			'Dorsal_Source m_ij',
-			'Dorsal_Source m_ij Tr(E_passive)',
-			'Dorsal_Source Static_DV',
-			'Dorsal_Source m_ij Tr(m_ij)',
+			'c m_ij Tr(m_ij)',
+			'm_ij Tr(E_passive)',
+			'c m_ij Tr(E_passive)',
+			#'E Tr(m_ij)',
+			#'c E Tr(m_ij)',
+			#'{m_ij, E}',
+			#'c {m_ij, E}',
 		]
 	return feature_names
 
@@ -111,10 +106,11 @@ def collect_mesh_data(h5f, key, tmin, tmax, feature_names=None):
 	Collect the raw data from a given h5f library and return X, X_dot, and the feature names
 	'''
 	data = h5f['X_tan'][key]
+	data = h5f['X_raw']
 	if feature_names is None:
 		feature_names = [fn for fn in data.keys() if data[fn].shape == data[key].shape]
-		feature_names = [fn for fn in feature_names if not 'm_ij m_ij' in fn]
 		feature_names = [fn for fn in feature_names if not '{m_ij, m_ij}' in fn]
+		feature_names = [fn for fn in feature_names if not 'E_full' in fn]
 
 	#Pass 1 - get the proper time range
 	for feature in feature_names:
@@ -128,12 +124,12 @@ def collect_mesh_data(h5f, key, tmin, tmax, feature_names=None):
 		X.append(data[feature][np.logical_and(t >= tmin, t <= tmax), ...])
 	X = np.stack(X, axis=-1)
 
-	t = h5f['X_dot_tan'][key].attrs['t']
-	X_dot = h5f['X_dot_tan'][key][np.logical_and(t >= tmin, t <= tmax), ...]
+	t = h5f['X_dot'][key].attrs['t']
+	X_dot = h5f['X_dot'][key][np.logical_and(t >= tmin, t <= tmax), ...]
 
 	#Keep only the mesh coordinates away from the poles
 	z = embryo_mesh.coordinates()[:, 2] * 0.2619 #In microns
-	zmax = 0.8 * np.ptp(z) / 2
+	zmax = 0.7 * np.ptp(z) / 2
 	mask = np.abs(z) <= zmax
 
 	X = X[..., mask, :]
@@ -157,7 +153,7 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 	Fit a SINDy model on data filled by a given key in an h5py file
 	Fit range goes from tmin to tmax, and is applied on a set keep of PCA components
 	'''
-	with tqdm(total=len(h5f.keys())+6) as pbar:
+	with tqdm(total=len(h5f.keys())+5) as pbar:
 		pbar.set_description('Processing arguments')
 		if overleaf_only:
 			pbar.set_postfix(status='Using only overleaf-allowed terms')
@@ -254,24 +250,5 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 		)
 		sindy.fit(x=X, x_dot=X_dot, component_weight=component_weight)
 		
-		#Get test error for each element in ensemble
-		pbar.update()
-		pbar.set_description('Getting test errors')
-		if n_models > 1:
-			X, X_dot = test, test_dot
-			coef_ = sindy.optimizer.coef_
-			coef_list = sindy.optimizer.coef_list
-			mses = []
-			for i in range(len(coef_list)):
-				sindy.optimizer.coef_ = coef_list[i]
-				pred = sindy.model.predict(X).reshape(X_dot.shape)
-				mse = np.mean((pred - X_dot)**2, axis=(0, -1)) #MSE of each component
-				mses.append(mse)
-
-			sindy.coef_list_ = sindy.optimizer.coef_list
-			sindy.mses_list_ = mses
-
-			sindy.optimizer.coef_ = coef_
-
 		sindy.print(lhs=[f'D_t {key}'])
 		return sindy

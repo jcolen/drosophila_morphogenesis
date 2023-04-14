@@ -3,7 +3,7 @@ import numpy as np
 
 from ..forecasting.closed_loop import ClosedFlyLoop
 from ..forecasting.transforms import EmbryoSmoother
-from .transforms import InputProcessor
+from .transforms import InputProcessor, ActiveStrainDecomposition
 from .geometry_utils import embryo_mesh, TangentSpaceTransformer, MeshInterpolator
 from .fenics_utils import FenicsGradient
 
@@ -33,6 +33,7 @@ class ClosedLoopMesh(ClosedFlyLoop):
 									    dv_mode=self.dv_mode, 
 									    ap_mode=self.ap_mode).fit(X)
 
+		self.active    = ActiveStrainDecomposition().fit(X)
 		self.tangent   = TangentSpaceTransformer(mesh=self.mesh).fit(X)
 		self.interp    = MeshInterpolator(mesh=self.mesh).fit(X)
 		
@@ -105,7 +106,7 @@ class ClosedLoopMesh(ClosedFlyLoop):
 		ydot = self.inputs.inverse_transform(mdot, sdot)
 		return ydot
 	
-	def postprocess(self, f, nDV=54, nAP=46, dv_cut=3, ap_cut=3):
+	def postprocess(self, f, nDV=54, nAP=46, dv_cut=1, ap_cut=5):
 		#Project back to tangent space
 		f = self.tangent.inverse_transform(f)
 
