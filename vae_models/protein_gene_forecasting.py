@@ -27,6 +27,7 @@ if __name__ == '__main__':
 	model_kwargs['stage_dims'] = [[32,32],[64,64],[128,128],[256,256]]
 	model_kwargs['out_channels'] = 2
 	model_kwargs['output'] = 'vel'
+	model_kwargs['num_latent'] = 64
 
 	'''
 	Define datasets

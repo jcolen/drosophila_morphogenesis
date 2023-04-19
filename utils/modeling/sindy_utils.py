@@ -106,7 +106,6 @@ def collect_mesh_data(h5f, key, tmin, tmax, feature_names=None):
 	Collect the raw data from a given h5f library and return X, X_dot, and the feature names
 	'''
 	data = h5f['X_tan'][key]
-	data = h5f['X_raw']
 	if feature_names is None:
 		feature_names = [fn for fn in data.keys() if data[fn].shape == data[key].shape]
 		feature_names = [fn for fn in feature_names if not '{m_ij, m_ij}' in fn]
@@ -124,8 +123,8 @@ def collect_mesh_data(h5f, key, tmin, tmax, feature_names=None):
 		X.append(data[feature][np.logical_and(t >= tmin, t <= tmax), ...])
 	X = np.stack(X, axis=-1)
 
-	t = h5f['X_dot'][key].attrs['t']
-	X_dot = h5f['X_dot'][key][np.logical_and(t >= tmin, t <= tmax), ...]
+	t = h5f['X_dot_tan'][key].attrs['t']
+	X_dot = h5f['X_dot_tan'][key][np.logical_and(t >= tmin, t <= tmax), ...]
 
 	#Keep only the mesh coordinates away from the poles
 	z = embryo_mesh.coordinates()[:, 2] * 0.2619 #In microns
@@ -145,7 +144,7 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 					threshold=1e-1, 
 					alpha=1e-1, 
 					n_models=5,
-					n_candidates_to_drop=5,
+					n_candidates_to_drop=0,
 					subset_fraction=0.2,
 					overleaf_only=False,
 					collect_function=collect_decomposed_data):
@@ -183,8 +182,6 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 		X = np.concatenate(X, axis=0)
 		X_dot = np.concatenate(X_dot, axis=0)
 
-		print(X.shape, X_dot.shape)
-
 		#Shift material derivative terms to LHS
 		pbar.update()
 		pbar.set_description('Material Derivative to LHS')
@@ -215,6 +212,30 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 		pbar.update()
 		pbar.set_description('Building optimizer')
 		optimizer = ps.STLSQ(threshold=threshold, alpha=alpha, normalize_columns=True)
+		'''
+		constraint_lhs = []
+		constraint_rhs = []
+
+		#Material derivative
+		for feature in [f'v dot grad {key}', f'[O, {key}]']:
+			constraint = np.zeros(X.shape[-1])
+			idx = feature_names.index(feature)
+			constraint[idx] = 1
+			constraint_lhs.append(constraint)
+			constraint_rhs.append(-1)
+
+		constraint_lhs = np.stack(constraint_lhs)
+		constraint_rhs = np.stack(constraint_rhs)
+
+		optimizer = ps.ConstrainedSR3(threshold=threshold, 
+									  nu=alpha,
+									  thresholder='L1',
+									  max_iter=100,
+									  constraint_lhs=constraint_lhs,
+									  constraint_rhs=constraint_rhs,
+									  normalize_columns=False)
+		'''
+		
 		if n_models > 1:
 			pbar.set_description('Building ensemble optimizer')
 			if n_candidates_to_drop == 0:

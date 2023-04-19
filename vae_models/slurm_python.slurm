@@ -7,7 +7,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --account=pi-vitelli
 #SBATCH --exclude=midway3-0294
-#SBATCH --mem=64G
+#SBATCH --mem=48G
 #SBATCH --ntasks=4
 
 echo "Starting"

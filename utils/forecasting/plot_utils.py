@@ -192,14 +192,16 @@ def comparison_plot(t, *fields,
 
 		if n_channels == 4:
 			res = mean_norm_residual(z0[mask], z[mask]).mean(axis=(1, 2))
+			ax[-1, -1].plot(t, res, color=color, label=field)
+			labelcolor=color
 		else:
+			pass
 			res = residual(z0[mask], z[mask]).mean(axis=(1, 2))
-		ax[-1, -1].plot(t, res, color=color, label=field)
 
 		if n_channels == 2:
 			znorm = znorm.mean(axis=(1, 2))
 			ax2 = ax[-1, -1].twinx()
-			ax2.plot(t, znorm, color='grey')
+			ax2.plot(t, znorm, color='black')
 			ax2.set_yticklabels([])
 			ax2.set_ylabel('Mean flow\n($\\mu$m / min)', labelpad=0)
 
@@ -216,7 +218,7 @@ def comparison_plot(t, *fields,
 			axis.invert_xaxis()
 			axis.axis('off')
 
-	ax[-1, -1].set_ylabel('Error Rate', labelpad=0)
+	ax[-1, -1].set_ylabel('Error Rate', labelpad=0, color=labelcolor)
 	ax[-1, -1].set(ylim=[-0.05, 1.05])
 	
 	norm = Normalize(vmin=-20, vmax=np.max(t))

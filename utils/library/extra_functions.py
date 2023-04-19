@@ -1,6 +1,7 @@
 from itertools import product, combinations
 import numpy as np
 from scipy.interpolate import interp1d
+from ..geometry.geometry_utils import TangentSpaceTransformer
 
 def is_tensor(x):
 	if len(x.shape) < 3:
@@ -37,7 +38,7 @@ def combine_attrs(x1, x2):
 
 	return combined_attrs, x1[t1_mask, ...], x2[t2_mask, ...]
 
-def symmetric_tensor_couple(data, keys=['m_ij', 'E']):
+def symmetric_tensor_couple(data, keys=['m_ij', 'E'], max_space_order=1):
 	'''
 	Generate the three symmetric tensor couplings of two tensor fields
 	A Tr(B), B Tr(A), and {A.B + B.A}
@@ -48,6 +49,8 @@ def symmetric_tensor_couple(data, keys=['m_ij', 'E']):
 		x2 = raw[key2]
 
 		combined_attrs, x1, x2 = combine_attrs(x1, x2)
+		if combined_attrs['space'] > max_space_order:
+			continue
 
 		feat = f'{key1} Tr({key2})'
 		if feat not in raw:
@@ -129,23 +132,6 @@ def active_strain_decomposition_mesh(data, key='m_ij'):
 	raw['E_passive'] = E_passive
 	raw['E_passive'].attrs.update(attrs)
 
-def scalar_tensor_couple(data, scalars, tensors):
-	'''
-	Order-1 couplings between a scalar and tensors
-	Without adding gradients, the only thing we can really do is multiply scalar by the trace
-	'''
-	raw = data['X_raw']
-	for key1, key2 in product(scalars, tensors):
-		x1 = raw[key1]
-		x2 = raw[key2]
-
-		combined_attrs, x1, x2 = combine_attrs(x1, x2)
-
-		feat = f'{key1} Tr({key2})'
-		if feat not in raw:
-			raw[feat] = np.einsum('b...,bkk...->b...', x1, x2)
-		raw[feat].attrs.update(combined_attrs)
-
 def multiply_tensor_by_scalar(data, tensors, scalars):
 	'''
 	Order-1 couplings between scalars and tensors
@@ -180,16 +166,37 @@ def add_static_sources(data, couple='m_ij'):
 	if not couple in raw:
 		raise ValueError(f'{couple} not in X_raw')
 	
-	x = np.zeros_like(raw[couple])
-	x[:, 0, 0, ...] = 1
+	dv = np.zeros_like(raw[couple])
+	dv[:, 0, 0, ...] = 1
 	if not 'Static_DV' in raw:
-		raw['Static_DV'] = x
+		raw['Static_DV'] = dv
 	raw['Static_DV'].attrs.update({'space': 0, 't': raw[couple].attrs['t']})
 
-	raw[f'Static_DV Tr({couple})'] = np.einsum('bij...,bkk...->bij...', 
-											   raw['Static_DV'], raw[couple])
-	raw[f'Static_DV Tr({couple})'].attrs.update(
-		combine_attrs(raw['Static_DV'], raw[couple])[0])
+	#Add a coupling to the key
+	key = f'Static_DV Tr({couple})'
+	raw[key] = np.einsum('bij...,bkk...->bij...', dv, raw[couple])
+	raw[key].attrs.update(raw[couple].attrs)
+
+def add_static_sources_mesh(data, couple='m_ij'):
+	'''
+	Add a static DV and AP
+	'''
+	raw = data['X_raw']
+	if not couple in raw:
+		raise ValueError(f'{couple} not in X_raw')
+
+	dv = np.zeros([2, 2, raw[couple].shape[-1]])
+	dv[0, 0] = 1
+	dv = TangentSpaceTransformer().fit_transform(dv)
+
+	#raw['Static_DV'] = np.zeros_like(raw[couple])
+	#raw['Static_DV'][:] = dv
+	#raw['Static_DV'].attrs.update({'space': 0, 't': raw[couple].attrs['t']})
+
+	#Add a coupling to the key
+	key = f'Static_DV Tr({couple})'
+	raw[key] = np.einsum('ij...,bkk...->bij...', dv, raw[couple])
+	raw[key].attrs.update(raw[couple].attrs)
 
 def material_derivative_terms(data, key='m_ij'):
 	'''
@@ -220,15 +227,6 @@ def material_derivative_terms(data, key='m_ij'):
 					  np.einsum('bik...,bkj...->bij...', x, O))
 		raw[feat].attrs.update({key: 1, 'v': 1, 'space': 1})
 		raw[feat].attrs['t'] = x.attrs['t']
-	
-def remove_terms(data, max_space_order=1):
-	raw = data['X_raw']
-	for key in raw:
-		if raw[key].attrs['space'] > max_space_order:
-			del raw[key]
-			
-	if 'O' in raw:
-		del raw['O']
-		
-	if 'vv' in raw:
-		del raw['vv']
+		for f in raw: #Remove any Omega terms
+			if 'O' in f and not f == feat:
+				del raw[f]

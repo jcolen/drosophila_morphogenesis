@@ -7,78 +7,94 @@ import numpy as np
 import pandas as pd
 import torch
 
-from scipy.ndimage import gaussian_filter
+from scipy.ndimage import gaussian_filter, gaussian_filter1d
 from tqdm import tqdm
 
 atlas_dir = '/project/vitelli/jonathan/REDO_fruitfly/src/Public'
 
-class Reshape2DField():
+class BaseTransformer():
+	'''
+	Base transformer class
+	All transformations apply to the 'value' entry in the sample dict
+	or the the sample itself if it's not a dict
+	'''
+	def transform(self, X):
+		raise NotImpelentedError
+
+	def __call__(self, sample):
+		if isinstance(sample, dict):
+			sample['value'] = self.transform(sample['value'])
+		else:
+			sample = self.transform(sample)
+
+		return sample
+
+class Reshape2DField(BaseTransformer):
 	'''
 	Reshape field into [C, H, W]
 	'''
-	def __call__(self, sample):
-		if isinstance(sample, dict):
-			sample['value'] = sample['value'].reshape([-1, *sample['value'].shape[-2:]])
-			return sample
-		
-		return sample.reshape([-1, *sample.shape[-2:]])
+	def transform(self, X):
+		return X.reshape([-1, *X.shape[-2:]])
 
-class ApplyVFAPMask():
-	'''
-	Apply a mask to the data by cropping the edges
-	'''
-	def __init__(self, dv0=10, dv1=-10, ap0=10, ap1=-10):
-		self.dv0 = dv0
-		self.dv1 = dv1
-		self.ap0 = ap0
-		self.ap1 = ap1
-
-	def __call__(self, sample):
-		if isinstance(sample, dict):
-			sample['value'] = sample['value'].copy()
-			sample['value'][..., :self.dv0, :] = 0
-			sample['value'][..., self.dv1:, :] = 0
-			sample['value'][..., :self.ap0] = 0
-			sample['value'][..., self.ap1:] = 0
-			return sample
-
-		sample = sample.copy()
-		sample[..., :self.dv0, :] = 0
-		sample[..., self.dv1:, :] = 0
-		sample[..., :self.ap0] = 0
-		sample[..., self.ap1:] = 0
-		return sample
-		
-
-class Smooth2D():
+class Smooth2D(BaseTransformer):
 	'''
 	Smooth field with a gaussian filter over space
+	Stack everything along channel axis
 	'''
 	def __init__(self, sigma=3):
 		self.sigma = sigma
 
-	def __call__(self, sample):
-		'''
-		sample['value'] is a [C, Y, X] field
-		'''
-		if isinstance(sample, dict):
-			sample['value'] = np.stack([gaussian_filter(sample['value'][c], sigma=self.sigma) \
-				for c in range(sample['value'].shape[0])], axis=0)
-			return sample
-		
-		return np.stack([gaussian_filter(sample[c], sigma=self.sigma) \
-			for c in range(sample.shape[0])], axis=0)
+	def transform(self, X):
+		if len(X.shape) == 2:
+			X = X[None]
+		X = gaussian_filter(X, sigma=(0, self.sigma, self.sigma))
+		#X = np.stack([gaussian_filter(X[c], sigma=self.sigma) for c in range(X.shape[0])])
+		return X
 
-class ToTensor():
+class DorsalVentralSmooth(BaseTransformer):
+	'''
+	Smooth along the DV direction with periodic BCs
+	'''
+	def __init__(self, sigma=1):
+		self.sigma = sigma
+
+	def transform(self, X):
+		X = gaussian_filter1d(X, sigma=self.sigma, mode='wrap', axis=-2)
+		return X
+
+class LeftRightSymmetrize(BaseTransformer):
+	'''
+	Left right symmetrize by flipping the DV axis
+	'''
+	def transform(self, X):
+		X_flip = X[:, ::-1, :].copy()
+		if X.shape[0] == 2:
+			X_flip[0] *= -1
+		elif X.shape[0] == 4:
+			X_flip[1:3] *= -1
+
+		return 0.5 * (X + X_flip)
+
+class AnteriorPosteriorMask(BaseTransformer):
+	'''
+	Zero out field at the anterior and posterior poles
+	'''
+	def __init__(self, anterior=10, posterior=10):
+		self.anterior = anterior
+		self.posterior = posterior
+	
+	def transform(self, X):
+		X[..., :self.anterior] = 0.
+		if self.posterior > 0:
+			X[..., -self.posterior:] = 0.
+		return X
+
+class ToTensor(BaseTransformer):
 	'''
 	Convert field to torch Tensor
 	'''
-	def __call__(self, sample):
-		if isinstance(sample, dict):
-			sample['value'] = torch.tensor(sample['value'], dtype=torch.float32)
-			return sample
-		
-		return torch.tensor(sample, dtype=torch.float32)
+	def transform(self, X):
+		return torch.tensor(X, dtype=torch.float32)
 
 class AtlasDataset(torch.utils.data.Dataset):
 	'''
@@ -256,9 +272,10 @@ class TrajectoryDataset(JointDataset):
 	'''
 	Return a time sequence of multiple fields
 	'''
-	def __init__(self, *args, seq_sigma=3, **kwargs):
+	def __init__(self, *args, seq_sigma=3, transform=None,  **kwargs):
 		super().__init__(*args, **kwargs)
 		self.seq_sigma = seq_sigma
+		self.transform = transform
 
 		df = pd.DataFrame()
 		for eId in self.df.embryoID.unique():
@@ -297,13 +314,15 @@ class TrajectoryDataset(JointDataset):
 	
 	def __getitem__(self, idx):
 		row = self.df[self.df.sequence_index == idx].iloc[0]
+
+		#Randomly sample a sequence length
 		seq_len = 2 + np.rint(np.abs(np.random.normal(scale=self.seq_sigma)))
+
+		#Sequence length is at most 5 sigma and also at most the max_len for the row
 		seq_len = min(int(seq_len), row.max_len)
 		seq_len = min(seq_len, 5*self.seq_sigma)
 
-		eId = row.embryoID
-		times = np.arange(row.time, row.time+seq_len).astype(int)
-
+		#These are the indices that we want the superclass to fetch
 		merged_idxs = np.arange(row.merged_index,
 								row.merged_index+seq_len).astype(int)
 
@@ -312,13 +331,16 @@ class TrajectoryDataset(JointDataset):
 		for merged_index in merged_idxs:
 			try:
 				si = super().__getitem__(merged_index)
-			except Exception:
-				print(f'Error fetching {idx} - merged indices: ', merged_index)
+			except Exception as e:
+				print(f'Error fetching {idx} - merged index: {merged_index}')
+				print(f'Error message: {e}')
+				print(f'Attempting to fetch from embryo {row.embryoID}')
+				print(f'Trying to get a sequence of length {seq_len}')
+				print('Merged indices: ', merged_idxs)
+				print('Times: ', np.arange(row.time, row.time+seq_len))
 				print(row)
-				print(seq_len)
-				print(merged_idxs)
-				print(eId, times)
 				return None
+
 			for key in si:
 				if not key in sample:
 					sample[key] = []
@@ -326,7 +348,7 @@ class TrajectoryDataset(JointDataset):
 
 		for key in sample:
 			if torch.is_tensor(sample[key][0]):
-				sample[key] = torch.stack(sample[key], dim=0)
+				sample[key] = torch.stack(sample[key])
 			elif isinstance(sample[key][0], np.ndarray):
 				sample[key] = np.stack(sample[key])
 			else:
@@ -338,6 +360,9 @@ class TrajectoryDataset(JointDataset):
 		sample['train_mask'] = self.get_mask(row.train_mask, sample[self.live_key].shape[-2:])
 		sample['val_mask'] = self.get_mask(row.val_mask, sample[self.live_key].shape[-2:])
 				
+		if self.transform is not None:
+			sample = self.transform(sample)
+
 		return sample
 
 	def collate_fn(self, batch0):
@@ -351,92 +376,3 @@ class TrajectoryDataset(JointDataset):
 				batch[key] = torch.nn.utils.rnn.pad_sequence(batch[key], batch_first=True, padding_value=0)
 
 		return batch
-
-class SequenceDataset(JointDataset):
-	'''
-	Trajectory dataset but with a sequence of fixed length
-	'''
-	def __init__(self, *args, max_len=3, **kwargs):
-		super().__init__(*args, **kwargs)
-		self.max_len = max_len
-
-		df = pd.DataFrame()
-		for eId in self.df.embryoID.unique():
-			sub = self.df[self.df.embryoID == eId].copy()
-			sub['max_len'] = np.max(sub.eIdx) - sub.eIdx
-			df = df.append(sub, ignore_index=True)
-
-		#Re-compute merged index
-		mask = (df.max_len >= max_len) & (df.key == self.live_key)
-		df.loc[mask, 'sequence_index'] = df[mask].groupby(['embryoID', 'time']).ngroup()
-		df.loc[~mask, 'sequence_index'] = -1
-
-		df['train_mask'] = 'all'
-		df['val_mask'] = 'all'
-		df.sequence_index = df.sequence_index.astype(int)
-		self.df = df
-
-		self.collate_fn = None #Use default collate_fn
-
-	def get_mask(self, key, size):
-		mask = torch.zeros(size, dtype=bool)
-		if key == 'all':
-			mask[...] = 1
-		elif key == 'left':
-			mask[:size[0]//2] = 1
-		elif key == 'right':
-			mask[size[0]//2:] = 1
-		elif key == 'anterior':
-			mask[:, :size[1]//2] = 1
-		elif key == 'posterior':
-			mask[:, size[1]//2:] = 1
-
-		return mask
-
-
-	def __len__(self):
-		return self.df.sequence_index.max()+1
-	
-	def __getitem__(self, idx):
-		row = self.df[self.df.sequence_index == idx].iloc[0]
-		seq_len = self.max_len
-
-		eId = row.embryoID
-		times = np.arange(row.time, row.time+seq_len).astype(int)
-
-		merged_idxs = np.arange(row.merged_index,
-								row.merged_index+seq_len).astype(int)
-
-		sample = {}
-
-		for merged_index in merged_idxs:
-			try:
-				si = super().__getitem__(merged_index)
-			except Exception:
-				print(f'Error fetching {idx} - merged indices: ', merged_index)
-				print(row)
-				print(seq_len)
-				print(merged_idxs)
-				print(eId, times)
-				return None
-			for key in si:
-				if not key in sample:
-					sample[key] = []
-				sample[key].append(si[key])
-
-		for key in sample:
-			if torch.is_tensor(sample[key][0]):
-				sample[key] = torch.stack(sample[key], dim=0)
-			elif isinstance(sample[key][0], np.ndarray):
-				sample[key] = np.stack(sample[key])
-			else:
-				try:
-					sample[key] = torch.tensor(sample[key])
-				except Exception:
-					pass
-
-		sample['train_mask'] = self.get_mask(row.train_mask, sample[self.live_key].shape[-2:])
-		sample['val_mask'] = self.get_mask(row.val_mask, sample[self.live_key].shape[-2:])
-		sample['lengths'] = self.max_len
-				
-		return sample
