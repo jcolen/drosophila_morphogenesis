@@ -151,13 +151,14 @@ def comparison_plot(t, *fields,
 			jj = dt * j
 			if i == 0:
 				ax[i, j].set_title(f't = {t[jj]:.0f}')
-			
+
 			color = cmap((t[jj] + 20) / (t.max() + 20))	
 
 			if n_channels == 1:
 				color_2D(ax[i, j], z[jj], alpha=alpha, **kwargs)
 				color_2D(ax[i, j], z0[jj], alpha=alpha0, **kwargs)
 			elif n_channels == 2:
+				#vwargs['scale'] = 10 if t[jj] < 5 else 50
 				ax[i, j].quiver(X[bot][slc], Y[bot][slc],
 								z0[jj, 1][bot][slc], z0[jj, 0][bot][slc],
 								color='grey', **vwargs)
@@ -167,8 +168,8 @@ def comparison_plot(t, *fields,
 				ax[i, j].set(xticks=[], yticks=[])
 			elif n_channels == 4:
 				kwargs['both'] = t[jj] < 0
-				plot_tensor2D(ax[i, j], z[jj], alpha=alpha, **kwargs)
-				plot_tensor2D(ax[i, j], z0[jj], alpha=alpha0, **kwargs)
+				plot_tensor2D(ax[i, j], z[jj] * alpha, alpha=alpha, **kwargs)
+				plot_tensor2D(ax[i, j], z0[jj] * np.sign(alpha0), alpha=alpha0, **kwargs)
 
 			ax[i, j].set(xlim=xlim, ylim=ylim)
 			
@@ -200,8 +201,18 @@ def comparison_plot(t, *fields,
 
 		if n_channels == 2:
 			znorm = znorm.mean(axis=(1, 2))
+			z0norm = np.linalg.norm(
+				z0.reshape([z0.shape[0], -1, *z0.shape[-2:]])[..., :-20], axis=1)
+			znorm = np.linalg.norm(
+				z.reshape([z.shape[0], -1, *z.shape[-2:]])[..., :-20], axis=1)
 			ax2 = ax[-1, -1].twinx()
-			ax2.plot(t, znorm, color='black')
+			ax2.plot(t, z0norm.mean(axis=(-1, -2)), color='black')
+			
+			ax3 = ax2.twinx()
+			znorm = np.linalg.norm(
+				z.reshape([z.shape[0], -1, *z.shape[-2:]])[..., :-20], axis=1)
+			ax3.plot(t, znorm.mean(axis=(-1, -2)), color='grey')
+			ax3.set_yticklabels([])
 			ax2.set_yticklabels([])
 			ax2.set_ylabel('Mean flow\n($\\mu$m / min)', labelpad=0)
 

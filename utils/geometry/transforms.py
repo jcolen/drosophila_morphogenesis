@@ -58,8 +58,10 @@ class LeftRightSymmetrize(BaseEstimator, TransformerMixin):
 		r_verts[..., 1] *= -1 #Flip the y-coordinate in 3D
 
 		tree = KDTree(l_verts)
-		_, ind = tree.querty(r_verts, k=1) #Find nearest neighbor in flipped system
+		_, ind = tree.query(r_verts, k=1) #Find nearest neighbor in flipped system
 		self.ind_ = ind.squeeze()
+
+		return self
 
 	def transform(self, X):
 		reflected = X[..., self.ind_]

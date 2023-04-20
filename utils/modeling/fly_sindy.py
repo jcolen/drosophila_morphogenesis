@@ -7,7 +7,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.base import TransformerMixin
 
 from pysindy.pysindy import SINDy
-from pysindy.optimizers import SINDyOptimizer
+from pysindy.optimizers import SINDyOptimizer, EnsembleOptimizer
 from pysindy.feature_library import IdentityLibrary
 
 class ComponentConcatter(TransformerMixin):
@@ -58,8 +58,15 @@ class FlySINDy(SINDy):
 	def __init__(self,
 				 optimizer,
 				 feature_names,
+				 n_models=1,
+				 n_candidates_to_drop=0,
+				 subset_fraction=None,
 				 material_derivative=True):
 		self.material_derivative = material_derivative
+		self.n_models = n_models
+		self.n_candidates_to_drop = n_candidates_to_drop
+		self.subset_fraction = subset_fraction
+
 		super().__init__(
 			optimizer=optimizer, 
 			feature_names=feature_names,
@@ -75,6 +82,32 @@ class FlySINDy(SINDy):
 		if hasattr(self.optimizer, "unbias"):
 			unbias = self.optimizer.unbias
 
+		#Build ensemble optimizer as necessary
+		if self.n_models > 1:
+			if self.n_candidates_to_drop == 0:
+				n_candidates_to_drop = None
+				library_ensemble = False
+			else:
+				n_candidates_to_drop = self.n_candidates_to_drop
+				library_ensemble = True
+
+			if self.subset_fraction is None:
+				subset_fraction = 1 / self.n_models
+			else:
+				subset_fraction = self.subset_fraction
+
+			n_subset = int(np.round(x.shape[0] * subset_fraction))
+			if component_weight is None:
+				n_subset *= int(np.round(x.shape[1] * subset_fraction))
+
+			self.optimizer = EnsembleOptimizer(
+				opt=self.optimizer,
+				bagging=True,
+				library_ensemble=library_ensemble,
+				n_models=self.n_models,
+				n_subset=n_subset,
+				n_candidates_to_drop=n_candidates_to_drop)
+				
 		optimizer = SINDyOptimizer(self.optimizer, unbias=unbias)
 		steps = [
 			("features", self.feature_library),

@@ -106,7 +106,7 @@ class ClosedLoopMesh(ClosedFlyLoop):
 		ydot = self.inputs.inverse_transform(mdot, sdot)
 		return ydot
 	
-	def postprocess(self, f, nDV=54, nAP=46, dv_cut=1, ap_cut=5):
+	def postprocess(self, f, nDV=54, nAP=46, dv_cut=1, ap_cut=1):
 		#Project back to tangent space
 		f = self.tangent.inverse_transform(f)
 
@@ -114,7 +114,8 @@ class ClosedLoopMesh(ClosedFlyLoop):
 		f = self.interp.inverse_transform(f, nDV=nDV, nAP=nAP)
 
 		#Cut off poles
-		f = f[..., dv_cut:-dv_cut, ap_cut:-ap_cut]
+		#f = f[..., dv_cut:-dv_cut, ap_cut:-ap_cut]
+		f = f[..., dv_cut:-dv_cut, :]
 		
 		#Smooth
 		f = self.smoother.transform(f)

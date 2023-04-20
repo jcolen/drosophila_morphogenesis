@@ -8,23 +8,20 @@ from sklearn.model_selection import train_test_split
 from .fly_sindy import FlySINDy
 from ..geometry.geometry_utils import embryo_mesh
 
-def overleaf_feature_names(key):
-	if key == 'm_ij':
-		feature_names = [
-			'v dot grad m_ij',
-			'[O, m_ij]', 
-			'm_ij',
-			'c m_ij',
-			'm_ij Tr(m_ij)',
-			'c m_ij Tr(m_ij)',
-			'm_ij Tr(E_passive)',
-			'c m_ij Tr(E_passive)',
-			#'E Tr(m_ij)',
-			#'c E Tr(m_ij)',
-			#'{m_ij, E}',
-			#'c {m_ij, E}',
-		]
-	return feature_names
+overleaf_feature_names = [
+	'v dot grad m_ij',
+	'[O, m_ij]', 
+	'm_ij',
+	'c m_ij',
+	'm_ij Tr(m_ij)',
+	'c m_ij Tr(m_ij)',
+	'm_ij Tr(E_passive)',
+	'c m_ij Tr(E_passive)',
+	#'E Tr(m_ij)',
+	#'c E Tr(m_ij)',
+	#'{m_ij, E}',
+	#'c {m_ij, E}',
+]
 
 def collect_decomposed_data(h5f, key, tmin, tmax, feature_names=None):
 	'''
@@ -105,12 +102,21 @@ def collect_mesh_data(h5f, key, tmin, tmax, feature_names=None):
 	'''
 	Collect the raw data from a given h5f library and return X, X_dot, and the feature names
 	'''
-	data = h5f['X_tan'][key]
+	data = h5f['X_raw']
 	if feature_names is None:
-		feature_names = [fn for fn in data.keys() if data[fn].shape == data[key].shape]
-		feature_names = [fn for fn in feature_names if not '{m_ij, m_ij}' in fn]
-		feature_names = [fn for fn in feature_names if not 'E_full' in fn]
+		feature_names = []
+		for fn in data.keys():
+			if data[fn].shape != data[key].shape:
+				continue
+			#if 'E_full' in fn: #Use active/passive decomposition
+			#	continue
+			#if 'E_active' in fn: 
+			#	continue
+			#if key in data[fn].attrs and data[fn].attrs[key] > 2:
+			#	continue
+			feature_names.append(fn)
 
+	data = h5f['X_tan'][key]
 	#Pass 1 - get the proper time range
 	for feature in feature_names:
 		tmin = max(tmin, np.min(data[feature].attrs['t']))
@@ -128,7 +134,7 @@ def collect_mesh_data(h5f, key, tmin, tmax, feature_names=None):
 
 	#Keep only the mesh coordinates away from the poles
 	z = embryo_mesh.coordinates()[:, 2] * 0.2619 #In microns
-	zmax = 0.7 * np.ptp(z) / 2
+	zmax = 0.9 * np.ptp(z) / 2
 	mask = np.abs(z) <= zmax
 
 	X = X[..., mask, :]
@@ -139,37 +145,13 @@ def collect_mesh_data(h5f, key, tmin, tmax, feature_names=None):
 
 	return X, X_dot, feature_names
 
-def fit_sindy_model(h5f, key, tmin, tmax,
-					component_weight=None,
-					threshold=1e-1, 
-					alpha=1e-1, 
-					n_models=5,
-					n_candidates_to_drop=0,
-					subset_fraction=0.2,
-					overleaf_only=False,
-					collect_function=collect_decomposed_data):
-	'''
-	Fit a SINDy model on data filled by a given key in an h5py file
-	Fit range goes from tmin to tmax, and is applied on a set keep of PCA components
-	'''
-	with tqdm(total=len(h5f.keys())+5) as pbar:
-		pbar.set_description('Processing arguments')
-		if overleaf_only:
-			pbar.set_postfix(status='Using only overleaf-allowed terms')
-			feature_names = overleaf_feature_names(key)
-		else:
-			pbar.set_postfix(status='Using all terms')
-			feature_names = None
+def collect_data(h5f, key, tmin, tmax, 
+				 collect_function=collect_mesh_data, 
+				 feature_names=None):
+	X, X_dot = [], []
 
-		if collect_function == collect_raw_data:
-			pbar.set_postfix(status='Setting component weight to None')
-			component_weight = None
-		sleep(0.2)
-
-		#Collect data
-		pbar.update()
+	with tqdm(total=len(h5f.keys())) as pbar:
 		pbar.set_description('Collecting data')
-		X, X_dot = [], []
 		for eId in list(h5f.keys()):
 			pbar.set_postfix(embryo=eId)
 			pbar.update()
@@ -179,97 +161,54 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 			X.append(x)
 			X_dot.append(x_dot)
 			feature_names = fn
-		X = np.concatenate(X, axis=0)
-		X_dot = np.concatenate(X_dot, axis=0)
+	
+	X = np.concatenate(X, axis=0)
+	X_dot = np.concatenate(X_dot, axis=0)
 
-		#Shift material derivative terms to LHS
-		pbar.update()
-		pbar.set_description('Material Derivative to LHS')
-		for feat in [f'v dot grad {key}', f'[O, {key}]']:
-			pbar.set_postfix(feature=feat)
-			if feat in feature_names:
-				loc = feature_names.index(feat)
-				X_dot += X[..., loc:loc+1]
-				X = np.delete(X, loc, axis=-1)
-				feature_names.remove(feat)
-			to_remove = []
-			for i in range(len(feature_names)):
-				if feat in feature_names[i]:
-					X = np.delete(X, i, axis=-1)
-					to_remove.append(i)
-			feature_names = [feature_names[i] for i in range(len(feature_names)) if not i in to_remove]
-			sleep(0.2)
+	return X, X_dot, feature_names
 
-		#Train test split
-		pbar.update()
-		pbar.set_description('Applying train/test split')
-		if len(X) > 1:
-			X, test, X_dot, test_dot = train_test_split(X, X_dot, test_size=0.2)
-			pbar.set_postfix(train_size=X.shape[0], test_size=test.shape[0])
-			sleep(0.2)
-
-		#Build optimizer (with ensembling)
-		pbar.update()
-		pbar.set_description('Building optimizer')
-		optimizer = ps.STLSQ(threshold=threshold, alpha=alpha, normalize_columns=True)
-		'''
-		constraint_lhs = []
-		constraint_rhs = []
-
-		#Material derivative
-		for feature in [f'v dot grad {key}', f'[O, {key}]']:
-			constraint = np.zeros(X.shape[-1])
-			idx = feature_names.index(feature)
-			constraint[idx] = 1
-			constraint_lhs.append(constraint)
-			constraint_rhs.append(-1)
-
-		constraint_lhs = np.stack(constraint_lhs)
-		constraint_rhs = np.stack(constraint_rhs)
-
-		optimizer = ps.ConstrainedSR3(threshold=threshold, 
-									  nu=alpha,
-									  thresholder='L1',
-									  max_iter=100,
-									  constraint_lhs=constraint_lhs,
-									  constraint_rhs=constraint_rhs,
-									  normalize_columns=False)
-		'''
+def shift_material_derivative(X, X_dot, feature_names, key='m_ij'):
+	for feat in [f'v dot grad {key}', f'[O, {key}]']:
+		if feat in feature_names:
+			loc = feature_names.index(feat)
+			X_dot += X[..., loc:loc+1]
+			X = np.delete(X, loc, axis=-1)
+			feature_names.remove(feat)
+		to_remove = []
+		for i in range(len(feature_names)):
+			if feat in feature_names[i]:
+				X = np.delete(X, i, axis=-1)
+				to_remove.append(i)
+		feature_names = [feature_names[i] for i in range(len(feature_names)) if not i in to_remove]
 		
-		if n_models > 1:
-			pbar.set_description('Building ensemble optimizer')
-			if n_candidates_to_drop == 0:
-				n_candidates_to_drop = None
-			if subset_fraction is None:
-				subset_fraction = 1
+	return X, X_dot, feature_names
 
-			n_subset = int(np.round(X.shape[0] * subset_fraction))
-			if component_weight is None:
-				n_subset *= int(np.round(X.shape[1] * subset_fraction))
-
-			n_candidates_to_drop = None if n_candidates_to_drop == 0 else n_candidates_to_drop
-			
-			pbar.set_postfix(n_models=n_models, n_subset=n_subset, n_drop=n_candidates_to_drop)
-
-			optimizer = ps.EnsembleOptimizer(
-				opt=optimizer,
-				bagging=True,
-				library_ensemble=n_candidates_to_drop is not None,
-				n_models=n_models,
-				n_subset=n_subset,
-				n_candidates_to_drop=n_candidates_to_drop)
-		sleep(0.2)
-
-		#Train model
-		pbar.update()
-		pbar.set_description('Training model')
-		pbar.set_postfix(threshold=threshold, alpha=alpha)
-
-		sindy = FlySINDy(
-			optimizer=optimizer,
-			feature_names=feature_names,
-		)
-		sindy.fit(x=X, x_dot=X_dot, component_weight=component_weight)
-		
-		sindy.print(lhs=[f'D_t {key}'])
-		return sindy
+def fit_sindy_model(h5f, key, tmin, tmax,
+					optimizer=ps.STLSQ(),
+					component_weight=None,
+					n_models=5,
+					n_candidates_to_drop=0,
+					subset_fraction=0.2,
+					feature_names=None,
+					collect_function=collect_mesh_data):
+	'''
+	Fit a SINDy model on data filled by a given key in an h5py file
+	Fit range goes from tmin to tmax, and is applied on a set keep of PCA components
+	'''
+	#Collect data
+	X, X_dot, feature_names = collect_data(h5f, key, tmin, tmax, 
+										   collect_function, feature_names)
+	X, X_dot, feature_names = shift_material_derivative(X, X_dot, feature_names, key=key)
+	
+	#Train model
+	sindy = FlySINDy(
+		optimizer=optimizer,
+		feature_names=feature_names,
+		n_models=n_models,
+		n_candidates_to_drop=n_candidates_to_drop,
+		subset_fraction=subset_fraction,
+	)
+	sindy.fit(x=X, x_dot=X_dot, component_weight=component_weight)
+	
+	sindy.print(lhs=[f'D_t {key}'])
+	return sindy

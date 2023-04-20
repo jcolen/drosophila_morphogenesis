@@ -38,6 +38,42 @@ def combine_attrs(x1, x2):
 
 	return combined_attrs, x1[t1_mask, ...], x2[t2_mask, ...]
 
+def symmetric_tensor_powers(data, key='m_ij', max_order=3):
+	raw = data['X_raw']
+	x = raw[key]
+	trx = np.einsum('bij...->b...', x)[:, None, None]
+	attrs = dict(x.attrs).copy()
+	
+	if max_order < 2: 
+		return
+	
+	attrs[key] = 2
+
+	#feat = f'{key} Tr({key})'
+	#raw[feat] = x * trx
+	#raw[feat].attrs.update(attrs)
+
+	feat = f'{key}^2'
+	raw[feat] = np.einsum('bik...,bkj...->bij...', x, x)
+	raw[feat].attrs.update(attrs)
+
+	if max_order < 3:
+		return
+
+	attrs[key] = 3
+
+	#feat = f'{key} Tr({key})^2'
+	#raw[feat] = x * trx * trx
+	#raw[feat].attrs.update(attrs)
+
+	#feat = f'{key}^2 Tr({key})'
+	#raw[feat] = np.einsum('bik...,bkj...->bij...', x, x) * trx
+	#raw[feat].attrs.update(attrs)
+
+	feat = f'{key}^3'
+	raw[feat] = np.einsum('bik...,bkl...,blj...->bij...', x, x, x)
+	raw[feat].attrs.update(attrs)
+
 def symmetric_tensor_couple(data, keys=['m_ij', 'E'], max_space_order=1):
 	'''
 	Generate the three symmetric tensor couplings of two tensor fields
@@ -53,20 +89,16 @@ def symmetric_tensor_couple(data, keys=['m_ij', 'E'], max_space_order=1):
 			continue
 
 		feat = f'{key1} Tr({key2})'
-		if feat not in raw:
-			raw[feat] = np.einsum('bij...,bkk...->bij...', x1, x2)
-
+		raw[feat] = np.einsum('bij...,bkk...->bij...', x1, x2)
 		raw[feat].attrs.update(combined_attrs)
 
 		feat = f'{key2} Tr({key1})'
-		if feat not in raw:
-			raw[feat] = np.einsum('bij...,bkk...->bij...', x2, x1)
+		raw[feat] = np.einsum('bij...,bkk...->bij...', x2, x1)
 		raw[feat].attrs.update(combined_attrs)
 
 		feat = f'{{{key1}, {key2}}}'
-		if feat not in raw:
-			y = np.einsum('bik...,bkj...->bij...', x1, x2) + np.einsum('bik...,bkj...->bij...', x2, x1)
-			raw[feat] = y
+		raw[feat] = np.einsum('bik...,bkj...->bij...', x1, x2) + \
+					np.einsum('bik...,bkj...->bij...', x2, x1)
 		raw[feat].attrs.update(combined_attrs)
 		
 def active_strain_decomposition(data, key='m_ij'):
