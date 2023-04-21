@@ -56,8 +56,10 @@ class FlySINDy(SINDy):
 			the ability to differentiate and transform the initial condition
 	'''
 	def __init__(self,
-				 optimizer,
-				 feature_names,
+				 optimizer=None,
+				 feature_names=None,
+				 feature_library=IdentityLibrary(),
+				 lhs=['m_ij'],
 				 n_models=1,
 				 n_candidates_to_drop=0,
 				 subset_fraction=None,
@@ -66,12 +68,68 @@ class FlySINDy(SINDy):
 		self.n_models = n_models
 		self.n_candidates_to_drop = n_candidates_to_drop
 		self.subset_fraction = subset_fraction
+		self.lhs = lhs
+
+		if self.subset_fraction is None:
+			self.subset_fraction = 1 / self.n_models
+
+		if self.n_candidates_to_drop == 0:
+			self.n_candidates_to_drop = None
+			self.library_ensemble = False
+		else:
+			self.library_ensemble = True
 
 		super().__init__(
 			optimizer=optimizer, 
-			feature_names=feature_names,
-			feature_library=IdentityLibrary(),
+			feature_names=feature_names.copy(),
+			feature_library=feature_library,
 		)
+	
+	def build_ensemble_optimizer(self, x, component_weight=None):
+		#print(f'Building ensemble optimizer with {self.n_models} models')
+		n_subset = int(np.round(x.shape[0] * self.subset_fraction))
+		if component_weight is None:
+			n_subset *= x.shape[1]
+
+		optimizer = EnsembleOptimizer(
+			opt=self.optimizer,
+			bagging=True,
+			library_ensemble=self.library_ensemble,
+			n_models=self.n_models,
+			n_subset=n_subset,
+			n_candidates_to_drop=self.n_candidates_to_drop)
+
+		return optimizer
+
+	def shift_material_derivative(self, X, X_dot):
+		for i, key in enumerate(self.lhs):
+			for feat in [f'v dot grad {key}', f'[O, {key}]']:
+				if feat in self.feature_names:
+					loc = self.feature_names.index(feat)
+					X_dot += X[..., loc:loc+1]
+					X = np.delete(X, loc, axis=-1)
+					self.feature_names.remove(feat)
+				to_remove = []
+				for i in range(len(self.feature_names)):
+					if feat in self.feature_names[i]:
+						X = np.delete(X, i, axis=-1)
+						to_remove.append(i)
+				self.feature_names = [self.feature_names[i] for i in range(len(self.feature_names)) if not i in to_remove]
+				
+			return X, X_dot
+
+	def construct_sample_weight(self, x, x_dot, steps, component_weight=None):
+		if component_weight is not None:
+			mask = component_weight > 0
+			x = x[:, mask]
+			x_dot = x_dot[:, mask]
+			sample_weight = steps[1][1].transform_component_weights(
+				x, component_weight[mask])
+		else:
+			sample_weight=None
+
+		return sample_weight
+		
 
 	def fit(self,
 			x,
@@ -82,31 +140,12 @@ class FlySINDy(SINDy):
 		if hasattr(self.optimizer, "unbias"):
 			unbias = self.optimizer.unbias
 
-		#Build ensemble optimizer as necessary
+		if self.material_derivative:
+			x, x_dot = self.shift_material_derivative(x, x_dot)
+
 		if self.n_models > 1:
-			if self.n_candidates_to_drop == 0:
-				n_candidates_to_drop = None
-				library_ensemble = False
-			else:
-				n_candidates_to_drop = self.n_candidates_to_drop
-				library_ensemble = True
+			self.optimizer = self.build_ensemble_optimizer(x, component_weight)
 
-			if self.subset_fraction is None:
-				subset_fraction = 1 / self.n_models
-			else:
-				subset_fraction = self.subset_fraction
-
-			n_subset = int(np.round(x.shape[0] * subset_fraction))
-			if component_weight is None:
-				n_subset *= int(np.round(x.shape[1] * subset_fraction))
-
-			self.optimizer = EnsembleOptimizer(
-				opt=self.optimizer,
-				bagging=True,
-				library_ensemble=library_ensemble,
-				n_models=self.n_models,
-				n_subset=n_subset,
-				n_candidates_to_drop=n_candidates_to_drop)
 				
 		optimizer = SINDyOptimizer(self.optimizer, unbias=unbias)
 		steps = [
@@ -115,15 +154,7 @@ class FlySINDy(SINDy):
 			("model", optimizer),
 		]
 
-		if component_weight is not None:
-			mask = component_weight > 0
-			x = x[:, mask]
-			x_dot = x_dot[:, mask]
-			sample_weight = steps[1][1].transform_component_weights(
-				x, component_weight[mask])
-		else:
-			sample_weight=None
-
+		sample_weight = self.construct_sample_weight(x, x_dot, steps, component_weight)
 		x_dot = steps[1][1].transform(x_dot)
 		steps[-1][1].ridge_kw = dict(sample_weight=sample_weight)
 
@@ -138,6 +169,5 @@ class FlySINDy(SINDy):
 		self.n_features_in_ = self.model.steps[0][1].n_features_in_
 		self.n_output_features_ = self.model.steps[0][1].n_output_features_
 		self.n_control_features_ = 0
-		self.material_derivative_ = self.material_derivative
 
 		return self

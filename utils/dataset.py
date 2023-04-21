@@ -96,6 +96,49 @@ class ToTensor(BaseTransformer):
 	def transform(self, X):
 		return torch.tensor(X, dtype=torch.float32)
 
+def load_label_dataframe(path, drop_time=False, ensemble=False, tmin=None, tmax=None):
+	'''
+	Load dataframes and apply morphodynamic offsets
+	'''
+	try:
+		df = pd.read_csv(os.path.join(path, 'dynamic_index.csv'))
+	except FileNotFoundError:
+		print('Dynamic index not found, loading static index')
+		df = pd.read_csv(os.path.join(path, 'static_index.csv'))
+
+	df = df.drop('tiff', axis=1)
+
+	if drop_time:
+		df.time = df.eIdx
+	else:
+		df = df.dropna(axis=0) #Drop unlabeled timepoints
+
+
+	morpho = os.path.join(path, 'morphodynamic_offsets.csv')
+	try:
+		morpho = pd.read_csv(morpho, index_col='embryoID')
+		for eId in df.embryoID.unique():
+			df.loc[df.embryoID == eId, 'time'] -= morpho.loc[eId, 'offset']
+	except FileNotFoundError:
+		print('No morphodynamic offsets found')
+
+	
+	if ensemble and os.path.exists(os.path.join(path, 'ensemble')):
+		t = np.load(os.path.join(path, 'ensemble', 't.npy'))
+		df = df.append(pd.DataFrame({
+			'folder': os.path.join(path, 'ensemble'),
+			'embryoID': 'ensemble',
+			'time': t,
+			'eIdx': np.arange(len(t), dtype=int)
+			}), ignore_index=True)
+
+	if tmin is not None:
+		df = df[df.time >= tmin].reset_index(drop=True)
+	if tmax is not None:
+		df = df[df.time <= tmax].reset_index(drop=True)
+
+	return df
+
 class AtlasDataset(torch.utils.data.Dataset):
 	'''
 	AtlasDataset is a wrapper around the dynamic Atlas

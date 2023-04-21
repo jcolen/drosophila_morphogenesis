@@ -28,28 +28,27 @@ class ClosedLoopMesh(ClosedFlyLoop):
 		
 	def fit(self, X, y0=None):
 		self.inputs    = InputProcessor(self.mesh).fit(X)
-		self.gradient  = FenicsGradient(self.mesh).fit(X)
 		self.smoother  = EmbryoSmoother(sigma=self.sigma, 
 									    dv_mode=self.dv_mode, 
 									    ap_mode=self.ap_mode).fit(X)
 
 		self.active    = ActiveStrainDecomposition().fit(X)
 		self.tangent   = TangentSpaceTransformer(mesh=self.mesh).fit(X)
+		self.gradient  = FenicsGradient(self.mesh, self.tangent).fit(X)
 		self.interp    = MeshInterpolator(mesh=self.mesh).fit(X)
 		
 		gamma_dv = np.zeros([2, 2, *self.inputs.data_shape_])
 		gamma_dv[0, 0, ...] = 1.
-		self.gamma_dv_ = self.tangent.transform(gamma_dv)
 		
 		if torch.is_tensor(X):
 			self.mode_ = 'torch'
 			self.einsum_ = torch.einsum
-			self.gamma_dv_ = torch.nn.Parameter(
-				torch.from_numpy(self.gamma_dv_),
-				requires_grad=False)
+			self.gamma_dv_ = self.tangent.transform(torch.from_numpy(gamma_dv))
+			self.gamma_dv_ = torch.nn.Parameter(self.gamma_dv_, requires_grad=False)
 		else:
 			self.mode_ = 'numpy'
 			self.einsum_ = np.einsum
+			self.gamma_dv_ = self.tangent.transform(gamma_dv)
 		
 	def get_velocity(self, t, y):
 		v = self.v_model(t, y)
@@ -69,15 +68,17 @@ class ClosedLoopMesh(ClosedFlyLoop):
 	def forward(self, t, y):
 		#Get myosin and source
 		m, s = self.inputs.transform(y)
-		
+
 		#Compute flow from myosin/cadherin
 		v = self.get_velocity(t, y).squeeze()
-		
+		s = v[0:1].squeeze()
+		v = v[1:3]
+
 		#Gradients are computed in tangent space and projected to 3D
 		d1_m = self.gradient(m)
 		d1_s = self.gradient(s)
 		d1_v = self.gradient(v)
-		
+
 		#Project fields themselves to 3D
 		s = self.tangent.transform(s)
 		v = self.tangent.transform(v)
@@ -95,7 +96,7 @@ class ClosedLoopMesh(ClosedFlyLoop):
 		lhs -= self.einsum_('ikv,kjv->ijv', m, O)
 		
 		#Myosin dynamics - right hand side
-		rhs  = self.rhs(m, s, v, E)
+		rhs  = self.rhs(m, s, v, E, O)
 
 		mdot = -lhs + rhs
 		

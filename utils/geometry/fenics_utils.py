@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from torch.nn import Parameter, ParameterList
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted, NotFittedError
@@ -133,33 +134,59 @@ class FenicsGradient(BaseEstimator, TransformerMixin, torch.nn.Module):
 		except NotFittedError:
 			self.tangent.fit(X)
 
+		if torch.is_tensor(X):
+			self.mode = 'torch'
+			convert = lambda x: Parameter(torch.from_numpy(x.todense()).to_sparse(), requires_grad=False)
+			self.A_sca_ = convert(self.A_sca_)
+			self.A_vec_ = convert(self.A_vec_)
+			self.grad_sca_ = ParameterList([convert(gs) for gs in self.grad_sca_])
+			self.grad_vec_ = ParameterList([convert(gs) for gs in self.grad_vec_])
+		else:
+			self.mode = 'numpy'
+
 		return self
 
 	def grad_scalar(self, X):
-		grad = np.zeros([X.shape[-1], 3])
+		if self.mode == 'numpy':
+			grad = np.zeros([X.shape[-1], 3])
+		else:
+			grad = torch.zeros([X.shape[-1], 3], dtype=X.dtype, device=X.device)
+
 		for i in range(3):
-			L = self.grad_sca_[i].dot(X.flatten())
-			d = self.A_sca_.dot(L)
+			L = self.grad_sca_[i] @ X.flatten()
+			d = self.A_sca_ @ L
 			grad[..., i] = d
 		return grad
 
 	def grad_vector(self, X):
-		grad = np.zeros([3, X.shape[-1], 3])
+		if self.mode == 'numpy':
+			grad = np.zeros([3, X.shape[-1], 3])
+		else:
+			grad = torch.zeros([3, X.shape[-1], 3], dtype=X.dtype, device=X.device)
+
 		for i in range(3):
-			L = self.grad_vec_[i].dot(X.flatten())
-			d = self.A_vec_.dot(L)
+			L = self.grad_vec_[i] @ X.flatten()
+			d = self.A_vec_ @ L
 			grad[..., i] = self.tangent.transform(d)
 		return grad
 
 	def grad_tensor(self, X):
-		grad = np.zeros([3, 3, X.shape[-1], 3])
-		d_i = np.zeros([*X.shape])
+		if self.mode == 'numpy':
+			grad = np.zeros([3, 3, X.shape[-1], 3])
+			d_i = np.zeros([*X.shape])
+		else:
+			grad = torch.zeros([3, 3, X.shape[-1], 3], dtype=X.dtype, device=X.device)
+			d_i = torch.zeros([*X.shape], dtype=X.dtype, device=X.device)
+
 		for i in range(3):
 			for j in range(2):
-				L = self.grad_vec_[i].dot(X[j].flatten())
-				d = self.A_vec_.dot(L)
+				L = self.grad_vec_[i] @ X[j].flatten()
+				d = self.A_vec_ @ L
 				d_i[j] = d.reshape(X[j].shape)
-			d_i = 0.5 * (d_i + d_i.transpose(1, 0, 2))
+			if self.mode == 'numpy': 
+				d_i = 0.5 * (d_i + d_i.transpose(1, 0, 2))
+			else:
+				d_i = 0.5 * (d_i + d_i.permute(1, 0, 2))
 			grad[..., i] = self.tangent.transform(d_i)
 		return grad
 

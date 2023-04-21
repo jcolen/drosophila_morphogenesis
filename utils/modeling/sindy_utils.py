@@ -13,14 +13,14 @@ overleaf_feature_names = [
 	'[O, m_ij]', 
 	'm_ij',
 	'c m_ij',
-	'm_ij Tr(m_ij)',
-	'c m_ij Tr(m_ij)',
-	'm_ij Tr(E_passive)',
-	'c m_ij Tr(E_passive)',
-	#'E Tr(m_ij)',
-	#'c E Tr(m_ij)',
-	#'{m_ij, E}',
-	#'c {m_ij, E}',
+	#'m_ij Tr(m_ij)',
+	#'c m_ij Tr(m_ij)',
+	'm_ij Tr(m_ij)^2',
+	'c m_ij Tr(m_ij)^2',
+	'm_ij Tr(E_full)',
+	'c m_ij Tr(E_full)',
+	'Static_DV Tr(m_ij)',
+	'c Static_DV Tr(m_ij)',
 ]
 
 def collect_decomposed_data(h5f, key, tmin, tmax, feature_names=None):
@@ -110,13 +110,24 @@ def collect_mesh_data(h5f, key, tmin, tmax, feature_names=None):
 				continue
 			#if 'E_full' in fn: #Use active/passive decomposition
 			#	continue
-			#if 'E_active' in fn: 
-			#	continue
+			if 'E_active' in fn or 'E_passive' in fn: 
+				continue
 			#if key in data[fn].attrs and data[fn].attrs[key] > 2:
 			#	continue
 			feature_names.append(fn)
+		ordered = []
+		for fn in feature_names:
+			if fn in ordered or fn[0] == 'c':
+				continue
+			ordered.append(fn)
+			if f'c {fn}' in feature_names:
+				ordered.append(f'c {fn}')
+			
+		feature_names = ordered
 
-	data = h5f['X_tan'][key]
+	key1, key2 = f'X_raw', f'X_dot/{key}'
+	#key1, key2 = f'X_tan/{key}', f'X_dot_tan/{key}'
+	data = h5f[key1]
 	#Pass 1 - get the proper time range
 	for feature in feature_names:
 		tmin = max(tmin, np.min(data[feature].attrs['t']))
@@ -129,20 +140,20 @@ def collect_mesh_data(h5f, key, tmin, tmax, feature_names=None):
 		X.append(data[feature][np.logical_and(t >= tmin, t <= tmax), ...])
 	X = np.stack(X, axis=-1)
 
-	t = h5f['X_dot_tan'][key].attrs['t']
-	X_dot = h5f['X_dot_tan'][key][np.logical_and(t >= tmin, t <= tmax), ...]
+	t = h5f[key2].attrs['t']
+	X_dot = h5f[key2][np.logical_and(t >= tmin, t <= tmax), ...]
 
 	#Keep only the mesh coordinates away from the poles
+	'''
 	z = embryo_mesh.coordinates()[:, 2] * 0.2619 #In microns
 	zmax = 0.9 * np.ptp(z) / 2
 	mask = np.abs(z) <= zmax
 
 	X = X[..., mask, :]
 	X_dot = X_dot[..., mask, :]
-	
+	'''	
 	X = X.reshape([X.shape[0], -1, X.shape[-1]])
 	X_dot = X_dot.reshape([X.shape[0], -1, 1])
-
 	return X, X_dot, feature_names
 
 def collect_data(h5f, key, tmin, tmax, 
@@ -167,22 +178,6 @@ def collect_data(h5f, key, tmin, tmax,
 
 	return X, X_dot, feature_names
 
-def shift_material_derivative(X, X_dot, feature_names, key='m_ij'):
-	for feat in [f'v dot grad {key}', f'[O, {key}]']:
-		if feat in feature_names:
-			loc = feature_names.index(feat)
-			X_dot += X[..., loc:loc+1]
-			X = np.delete(X, loc, axis=-1)
-			feature_names.remove(feat)
-		to_remove = []
-		for i in range(len(feature_names)):
-			if feat in feature_names[i]:
-				X = np.delete(X, i, axis=-1)
-				to_remove.append(i)
-		feature_names = [feature_names[i] for i in range(len(feature_names)) if not i in to_remove]
-		
-	return X, X_dot, feature_names
-
 def fit_sindy_model(h5f, key, tmin, tmax,
 					optimizer=ps.STLSQ(),
 					component_weight=None,
@@ -198,7 +193,6 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 	#Collect data
 	X, X_dot, feature_names = collect_data(h5f, key, tmin, tmax, 
 										   collect_function, feature_names)
-	X, X_dot, feature_names = shift_material_derivative(X, X_dot, feature_names, key=key)
 	
 	#Train model
 	sindy = FlySINDy(
@@ -207,6 +201,7 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 		n_models=n_models,
 		n_candidates_to_drop=n_candidates_to_drop,
 		subset_fraction=subset_fraction,
+		material_derivative=True,
 	)
 	sindy.fit(x=X, x_dot=X_dot, component_weight=component_weight)
 	

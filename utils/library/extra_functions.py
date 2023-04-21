@@ -49,9 +49,9 @@ def symmetric_tensor_powers(data, key='m_ij', max_order=3):
 	
 	attrs[key] = 2
 
-	#feat = f'{key} Tr({key})'
-	#raw[feat] = x * trx
-	#raw[feat].attrs.update(attrs)
+	feat = f'{key} Tr({key})'
+	raw[feat] = x * trx
+	raw[feat].attrs.update(attrs)
 
 	feat = f'{key}^2'
 	raw[feat] = np.einsum('bik...,bkj...->bij...', x, x)
@@ -62,9 +62,9 @@ def symmetric_tensor_powers(data, key='m_ij', max_order=3):
 
 	attrs[key] = 3
 
-	#feat = f'{key} Tr({key})^2'
-	#raw[feat] = x * trx * trx
-	#raw[feat].attrs.update(attrs)
+	feat = f'{key} Tr({key})^2'
+	raw[feat] = x * trx * trx
+	raw[feat].attrs.update(attrs)
 
 	#feat = f'{key}^2 Tr({key})'
 	#raw[feat] = np.einsum('bik...,bkj...->bij...', x, x) * trx
@@ -221,9 +221,9 @@ def add_static_sources_mesh(data, couple='m_ij'):
 	dv[0, 0] = 1
 	dv = TangentSpaceTransformer().fit_transform(dv)
 
-	#raw['Static_DV'] = np.zeros_like(raw[couple])
-	#raw['Static_DV'][:] = dv
-	#raw['Static_DV'].attrs.update({'space': 0, 't': raw[couple].attrs['t']})
+	raw['Static_DV'] = np.zeros_like(raw[couple])
+	raw['Static_DV'][:] = dv
+	raw['Static_DV'].attrs.update({'space': 0, 't': raw[couple].attrs['t']})
 
 	#Add a coupling to the key
 	key = f'Static_DV Tr({couple})'
