@@ -100,15 +100,19 @@ def take_time_derivatives(data,
 				continue
 			
 			pbar.set_description('Time derivative')
-			smoother_kws = {'window_length': window_length}
-			
-			diffT = ps.SmoothedFiniteDifference(d=1, axis=0, smoother_kws=smoother_kws)
+			if window_length > 4:
+				smoother_kws = {'window_length': window_length}
+				diffT = ps.SmoothedFiniteDifference(d=1, axis=0, smoother_kws=smoother_kws)
+			else:
+				diffT = ps.FiniteDifference(d=1, axis=0)
 			x = data['fields'][key]
-			dot = diffT._differentiate(x, x.attrs['t'])[..., None]
+
+			dot = diffT._differentiate(x[()], x.attrs['t'])[..., None]
 			
 			ds = X_dot.require_dataset(key, shape=dot.shape, dtype=dot.dtype)
 			ds[:] = dot
-			ds.attrs.update(smoother_kws)
+			if isinstance(diffT, ps.SmoothedFiniteDifference):
+				ds.attrs.update(smoother_kws)
 			ds.attrs['t'] = x.attrs['t']
 
 			pbar.update()

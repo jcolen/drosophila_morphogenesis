@@ -161,6 +161,8 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 			print('Using torchdiffeq solver')
 			with torch.no_grad():
 				self.to(y0.device)
+				if not torch.is_tensor(t):
+					t = torch.DoubleTensor(t).to(y0.device)
 				y = odeint(self, y0, t, method='rk4')
 				v = self.get_velocity(t, y).cpu().numpy()
 				y = y.cpu().numpy()

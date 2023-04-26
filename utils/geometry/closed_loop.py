@@ -5,7 +5,7 @@ from ..forecasting.closed_loop import ClosedFlyLoop
 from ..forecasting.transforms import EmbryoSmoother
 from .transforms import InputProcessor, ActiveStrainDecomposition
 from .geometry_utils import embryo_mesh, TangentSpaceTransformer, MeshInterpolator
-from .fenics_utils import FenicsGradient
+from .fenics_utils import FenicsGradient, FenicsSmoother
 
 
 class ClosedLoopMesh(ClosedFlyLoop):
@@ -116,7 +116,7 @@ class ClosedLoopMesh(ClosedFlyLoop):
 
 		#Cut off poles
 		#f = f[..., dv_cut:-dv_cut, ap_cut:-ap_cut]
-		f = f[..., dv_cut:-dv_cut, :]
+		f = f[..., dv_cut:-dv_cut, ap_cut:-ap_cut]
 		
 		#Smooth
 		f = self.smoother.transform(f)

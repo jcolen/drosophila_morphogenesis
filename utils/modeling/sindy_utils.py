@@ -13,10 +13,10 @@ overleaf_feature_names = [
 	'[O, m_ij]', 
 	'm_ij',
 	'c m_ij',
-	#'m_ij Tr(m_ij)',
-	#'c m_ij Tr(m_ij)',
-	'm_ij Tr(m_ij)^2',
-	'c m_ij Tr(m_ij)^2',
+	'm_ij Tr(m_ij)',
+	'c m_ij Tr(m_ij)',
+	#'m_ij Tr(m_ij)^2',
+	#'c m_ij Tr(m_ij)^2',
 	'm_ij Tr(E_full)',
 	'c m_ij Tr(E_full)',
 	'Static_DV Tr(m_ij)',
@@ -126,7 +126,7 @@ def collect_mesh_data(h5f, key, tmin, tmax, feature_names=None):
 		feature_names = ordered
 
 	key1, key2 = f'X_raw', f'X_dot/{key}'
-	#key1, key2 = f'X_tan/{key}', f'X_dot_tan/{key}'
+	key1, key2 = f'X_tan/{key}', f'X_dot_tan/{key}'
 	data = h5f[key1]
 	#Pass 1 - get the proper time range
 	for feature in feature_names:
@@ -144,14 +144,13 @@ def collect_mesh_data(h5f, key, tmin, tmax, feature_names=None):
 	X_dot = h5f[key2][np.logical_and(t >= tmin, t <= tmax), ...]
 
 	#Keep only the mesh coordinates away from the poles
-	'''
 	z = embryo_mesh.coordinates()[:, 2] * 0.2619 #In microns
 	zmax = 0.9 * np.ptp(z) / 2
 	mask = np.abs(z) <= zmax
 
 	X = X[..., mask, :]
 	X_dot = X_dot[..., mask, :]
-	'''	
+	
 	X = X.reshape([X.shape[0], -1, X.shape[-1]])
 	X_dot = X_dot.reshape([X.shape[0], -1, 1])
 	return X, X_dot, feature_names

@@ -8,14 +8,12 @@ from tqdm import tqdm
 basedir = '/project/vitelli/jonathan/REDO_fruitfly/'
 sys.path.insert(0, os.path.join(basedir, 'src'))
 
-from utils.translation_utils import *
-from utils.decomposition_utils import *
-from utils.plot_utils import *
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.autograd as autograd
+
+from scipy.ndimage import gaussian_filter
 
 def to_param(x, **kwargs):
 	if isinstance(x, np.ndarray):
@@ -42,7 +40,7 @@ class ClosedLoopPINN(nn.Module):
 	'''
 	def __init__(self,
 				 t_train, y_train, x_train,
-				 sqh_train, vel_train,
+				 sqh_train, cad_train, vel_train,
 				 lower_bound, 
 				 upper_bound,
 				 hidden_width=100,
@@ -57,7 +55,7 @@ class ClosedLoopPINN(nn.Module):
 		self.n_hidden_layers = n_hidden_layers
 		self.hidden_width = hidden_width
 		act = Sin
-		layers = [3,] + ([hidden_width,] * n_hidden_layers) + [8,]
+		layers = [3,] + ([hidden_width,] * n_hidden_layers) + [7,]
 		lst = []
 		for i in range(len(layers)-2):
 			lst.append(nn.Linear(layers[i], layers[i+1]))
@@ -77,6 +75,7 @@ class ClosedLoopPINN(nn.Module):
 		self.x_train = to_param(x_train, requires_grad=True)
 		
 		self.sqh_train = to_param(sqh_train, requires_grad=False)
+		self.cad_train = to_param(cad_train, requires_grad=False)
 		self.vel_train = to_param(vel_train, requires_grad=False)
 			
 		self.lb = to_param(lower_bound, requires_grad=False)
@@ -110,11 +109,8 @@ class ClosedLoopPINN(nn.Module):
 		scvdp = self.model(H)
 		sqh = scvdp[:, 0:4].reshape([scvdp.shape[0], 2, 2])
 		vel = scvdp[:, 4:6]
-		#dor = 0.5*(torch.tanh(scvdp[:, 6:7].squeeze()) + 1) #range [0, 1]
-		dor = scvdp[:, 6:7].exp().squeeze()
-		#dor = dor - dor.min() #Source has a minimum of zero
-		pre = scvdp[:, 7:8].squeeze()
-		return sqh, vel, dor, pre 
+		cad = scvdp[:, 6:7].exp().squeeze() #Cadherin is positive
+		return sqh, vel, cad
 	
 	def gradient(self, x, *y):
 		x0 = x.view([x.shape[0], -1])
@@ -131,39 +127,18 @@ class ClosedLoopPINN(nn.Module):
 	def training_step(self, step_size=5000):  
 		idx = np.random.choice(self.t_train.shape[0], step_size, replace=False)
 		t, y, x = self.t_train[idx], self.y_train[idx], self.x_train[idx]
-		sqh, vel, dor, pre = self(t, y, x)
+		sqh, vel, cad = self(t, y, x)
 		
 		dt_sqh = self.gradient(sqh, t)
 		grad_sqh = self.gradient(sqh, y, x)
-		
-		dt_dor = self.gradient(dor, t)
-		grad_dor = self.gradient(dor, y, x)
-		
-		grad_p = self.gradient(pre, y, x)
 		grad_v = self.gradient(vel, y, x)
-		lapl_v = self.gradient(grad_v[..., 0], y) + \
-				 self.gradient(grad_v[..., 1], x)
 		
-		stokes_loss = self.vel_coefs[0].exp() * lapl_v - grad_p + self.vel_coefs[1].tanh() * torch.einsum('bijj->bi', grad_sqh)
-		dor_dyn = dt_dor + torch.einsum('bj,bj->b', vel, grad_dor) #advection
-	
 		'''
 		Active/Passive strain decomposition
 		'''			  
 		O = -0.5 * (torch.einsum('bij->bij', grad_v) - torch.einsum('bji->bij', grad_v))
 		E = 0.5 *  (torch.einsum('bij->bij', grad_v) + torch.einsum('bji->bij', grad_v))
-		
-		deviatoric = sqh - 0.5 * torch.einsum('bkk,ij->bij', sqh, torch.eye(2, device=sqh.device))
-		deviatoric[deviatoric == 0] += 1e-5
-		sqh_0 = torch.linalg.norm(sqh, dim=(1, 2)).mean()
-		dev_mag = torch.linalg.norm(deviatoric, dim=(1, 2), keepdims=True)
-		devE = torch.einsum('bkl,bkl->b', deviatoric, E)[:, None, None]
-			
-		E_active = E - torch.sign(devE) * devE * deviatoric / dev_mag**2
-		E_active = 0.5 * E_active * dev_mag / sqh_0 
-		E_passive = E - E_active		
-
-		mE = torch.einsum('bkk,bij->bij', E_passive, sqh)
+		mE = torch.einsum('bkk,bij->bij', E, sqh)
 		
 		trm = torch.einsum('bkk->b', sqh)[:, None, None]
 		
@@ -171,25 +146,26 @@ class ClosedLoopPINN(nn.Module):
 		sqh_dyn += torch.einsum('bik,bkj->bij', O, sqh) #co-rotation
 		sqh_dyn += -torch.einsum('bik,bkj->bij', sqh, O) #co-rotation
 
-		dors = dor[:, None, None]
+		cadh = cad[:, None, None]
 		coefs = torch.exp(self.sqh_coefs)
-		sqh_dyn -= -(coefs[0] - coefs[1] * dors) * sqh
-		sqh_dyn -=  (coefs[2] - coefs[3] * dors) * mE
-		sqh_dyn -=  (coefs[4] - coefs[5] * dors) * trm * self.gamma_dv
-		sqh_dyn -=  (coefs[6] - coefs[7] * dors) * trm * sqh
+		sqh_dyn -= -(coefs[0] - coefs[1] * cadh) * sqh
+		sqh_dyn -=  (coefs[2] - coefs[3].log() * cadh) * mE #Not sure if modulation is positive or negative
+		sqh_dyn -=  (coefs[4] - coefs[5] * cadh) * trm * self.gamma_dv
+		sqh_dyn -=  (coefs[6] - coefs[7] * cadh) * trm * sqh
 					 
 		sqh_loss = (sqh - self.sqh_train[idx]).pow(2).sum()
+		cad_loss = (cad - self.cad_train[idx]).pow(2).sum()
 		vel_loss = (vel - self.vel_train[idx]).pow(2).sum()
 
 		sqh_scale = self.sqh_train[idx].pow(2).sum().item() / step_size
+		cad_scale = self.cad_train[idx].pow(2).sum().item() / step_size
 		vel_scale = self.vel_train[idx].pow(2).sum().item() / step_size
 		
 		#Scale MSE losses by magnitudes
 		mse = sqh_loss / sqh_scale + \
+			  cad_loss / cad_scale + \
 			  vel_loss / vel_scale
-		phys = stokes_loss.pow(2).sum() / vel_scale + \
-			   dor_dyn.pow(2).sum() * self.dorsal_weight + \
-			   sqh_dyn.pow(2).sum() / sqh_scale
+		phys = sqh_dyn.pow(2).sum() / sqh_scale
 		   
 		return mse, phys
 	
@@ -206,11 +182,11 @@ class ClosedLoopPINN(nn.Module):
 			self.vel_coefs[0].exp().item(),
 			self.vel_coefs[1].tanh().item(),
 		)
-		outstr += '\tD_t m = -(%.3g - %.3g s) m + (%.3g - %.3g s){m, E_p} + (%.3g - %.3g s) Tr(m) Gamma^{DV} + (%.3g - %.3g s) Tr(m) m' % (
+		outstr += '\tD_t m = -(%.3g - %.3g s) m + (%.3g - %.3g s) m Tr(E) + (%.3g - %.3g s) Tr(m) Gamma^{DV} + (%.3g - %.3g s) Tr(m) m' % (
 			self.sqh_coefs[0].exp().item(),
 			self.sqh_coefs[1].exp().item(),
 			self.sqh_coefs[2].exp().item(),
-			self.sqh_coefs[3].exp().item(),
+			self.sqh_coefs[3].item(),
 			self.sqh_coefs[4].exp().item(),
 			self.sqh_coefs[5].exp().item(),
 			self.sqh_coefs[6].exp().item(),
@@ -272,14 +248,17 @@ if __name__=='__main__':
 	y = np.load(os.path.join(loaddir, 'DV_coordinates.npy'), mmap_mode='r')
 	x = np.load(os.path.join(loaddir, 'AP_coordinates.npy'), mmap_mode='r')
 
+	cad = np.load(os.path.join(atlas_dir, 'WT/ECad-GFP/ensemble/raw2D.npy'), mmap_mode='r')
+	cad = gaussian_filter(cad, sigma=(0, 7, 7))
+	cad = cad[mask]
 
-	sqh = sqh * 3e1
 	print('Data shapes')
 
 	sqh = sqh.transpose(0, 3, 4, 1, 2)
 	vel = vel.transpose(0, 2, 3, 1)
 
 	print('Sqh: ', sqh.shape)
+	print('Cad: ', cad.shape)
 	print('Vel: ', vel.shape)
 
 	nAP = x.shape[1]
@@ -303,11 +282,12 @@ if __name__=='__main__':
 	x = XX.flatten()[:, None]
 
 	sqh_train = sqh.reshape([-1, *sqh.shape[3:]])
+	cad_train = cad.reshape([-1, 1])
 	vel_train = vel.reshape([-1, *vel.shape[3:]])
 
 	print('Flattened shapes')
 	print(t.shape, y.shape, x.shape)
-	print(sqh_train.shape, vel_train.shape)
+	print(sqh_train.shape, cad_train.shape, vel_train.shape)
 
 	N_train = 100000
 	idx = np.random.choice(nAP*nDV*nTP, N_train, replace=False)
@@ -317,17 +297,18 @@ if __name__=='__main__':
 	t_train = t[idx, :]
 
 	sqh_train = sqh_train[idx, :]
+	cad_train = cad_train[idx, :]
 	vel_train = vel_train[idx, :]
 	print('Training shapes')
 	print(t_train.shape, y_train.shape, x_train.shape)
-	print(sqh_train.shape, vel_train.shape)
+	print(sqh_train.shape, cad_train.shape, vel_train.shape)
 	print('\nStarting to train', flush=True)
 	
 
 	device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 	model = ClosedLoopPINN(
 		t_train, y_train, x_train,
-		sqh_train, vel_train,
-		lower_bound, upper_bound, beta_0=1e1)
+		sqh_train, cad_train, vel_train,
+		lower_bound, upper_bound, beta_0=1e-1)
 	model.to(device)
 	model.train(0, int(1e6), inc_beta=int(2e5))

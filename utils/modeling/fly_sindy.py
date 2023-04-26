@@ -87,9 +87,11 @@ class FlySINDy(SINDy):
 	
 	def build_ensemble_optimizer(self, x, component_weight=None):
 		#print(f'Building ensemble optimizer with {self.n_models} models')
-		n_subset = int(np.round(x.shape[0] * self.subset_fraction))
+		n_subset = x.shape[0] * self.subset_fraction
 		if component_weight is None:
 			n_subset *= x.shape[1]
+
+		n_subset = int(np.round(n_subset))
 
 		optimizer = EnsembleOptimizer(
 			opt=self.optimizer,
@@ -146,7 +148,6 @@ class FlySINDy(SINDy):
 		if self.n_models > 1:
 			self.optimizer = self.build_ensemble_optimizer(x, component_weight)
 
-				
 		optimizer = SINDyOptimizer(self.optimizer, unbias=unbias)
 		steps = [
 			("features", self.feature_library),

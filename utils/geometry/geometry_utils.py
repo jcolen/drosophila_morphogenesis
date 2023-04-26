@@ -1,7 +1,9 @@
 import os
 import numpy as np
 import torch
-from torch.nn import Parameter
+from torch.nn import Parameter, ParameterList, ParameterDict, Module
+
+from string import ascii_lowercase
 
 from scipy.io import loadmat
 from scipy import sparse
@@ -44,32 +46,34 @@ class MeshInterpolator(BaseEstimator, TransformerMixin):
 	'''
 	Interpolates grid points to mesh vertices
 	Inverse transform interpolates mesh vertices to grid points
+
+	This transformer only operates in cpu mode
 	'''
 	def __init__(self, 
-				 mesh=embryo_mesh,
-				 z_emb=z_emb,
-				 phi_emb=phi_emb):
-		self.mesh = mesh
-		self.z_emb = z_emb
-		self.phi_emb = phi_emb
+				 mesh_name='embryo_coarse_noll'):
+		self.mesh_name = mesh_name
 
 	def fit(self, X, y0=None):
-		if torch.is_tensor(X):
-			self.mode = 'torch'
-		else:
-			self.mode = 'numpy'
+		mesh = Mesh(os.path.join(geo_dir, f'{self.mesh_name}.xml'))
+		tangent_space_data = loadmat(os.path.join(geo_dir, f'{self.mesh_name}.mat'))
 
-		self.n_vertices_ = self.mesh.coordinates().shape[0]	
+		self.z_emb = tangent_space_data['z'].squeeze()
+		self.phi_emb = tangent_space_data['ph'].squeeze()
+		self.n_vertices_ = mesh.coordinates().shape[0]	
+
 		return self
 
 	def transform(self, X):
 		header_shape = X.shape[:-2]
 		x0 = X.reshape([-1, *X.shape[-2:]])
 
-		#Interpolate to vertex points
-		if self.mode == 'torch':
-			x0 = x0.cpu().numpy()
+		if torch.is_tensor(X):
+			mode = 'torch'
+			x0 = x0.numpy()
+		else: 
+			mode = 'numpy'
 
+		#Interpolate to vertex points
 		Z_AP = np.linspace(self.z_emb.min(), 
 						   self.z_emb.max(), 
 						   X.shape[-1])
@@ -79,7 +83,7 @@ class MeshInterpolator(BaseEstimator, TransformerMixin):
 
 		x1 = []
 		for i in range(x0.shape[0]):
-			xi = RectBivariateSpline(Phi_DV, Z_AP, x0[i])(phi_emb, z_emb, grid=False)
+			xi = RectBivariateSpline(Phi_DV, Z_AP, x0[i])(self.phi_emb, self.z_emb, grid=False)
 			x1.append(xi)
 		x1 = np.stack(x1)
 
@@ -92,18 +96,21 @@ class MeshInterpolator(BaseEstimator, TransformerMixin):
 			x1 = x1.reshape([2, 2, -1])
 		else:
 			x1 = x1.squeeze()
-
-		if self.mode == 'torch':
-			x1 = torch.from_numpy(x1).to(X.device)
+		
+		if mode == 'torch':
+			x1 = torch.from_numpy(x1)
 
 		return x1
 
 	def inverse_transform(self, X, nDV=236, nAP=200):
 		x0 = X.reshape([-1, self.n_vertices_])
-
-		if self.mode == 'torch':
-			x0 = x0.cpu().numpy()
 		
+		if torch.is_tensor(X):
+			mode = 'torch'
+			x0 = x0.numpy()
+		else: 
+			mode = 'numpy'
+
 		#Interpolate to vertex points
 		Z_AP = np.linspace(self.z_emb.min(), 
 						   self.z_emb.max(), 
@@ -115,11 +122,11 @@ class MeshInterpolator(BaseEstimator, TransformerMixin):
 		x1 = []
 		for i in range(x0.shape[0]):
 			xi = griddata(
-				(phi_emb, z_emb), x0[i], 
+				(self.phi_emb, self.z_emb), x0[i], 
 				(Phi_DV[:, None], Z_AP[None, :])
 			)
 			xi_nearest = griddata(
-				(phi_emb, z_emb), x0[i], 
+				(self.phi_emb, self.z_emb), x0[i], 
 				(Phi_DV[:, None], Z_AP[None, :]),
 				method='nearest'
 			)
@@ -133,81 +140,100 @@ class MeshInterpolator(BaseEstimator, TransformerMixin):
 		elif x1.shape[0] == 4: #It's a tensor
 			x1[1:3] *= -1
 			x1 = x1.reshape([2, 2, nDV, nAP])
-
-		if self.mode == 'torch':
-			x1 = torch.from_numpy(x1).to(X.device)
+		
+		if mode == 'torch':
+			x1 = torch.from_numpy(x1)
 		
 		return x1
 
-class TangentSpaceTransformer(BaseEstimator, TransformerMixin, torch.nn.Module):
+class TangentSpaceTransformer(BaseEstimator, TransformerMixin, Module):
 	'''
-	Pulls quantities from the tangent space to 3D space
-	Inverse transform pushes quantities back to tangent space
+	Pushes quantities from the tangent space to 3D space
+	Inverse transform pulls quantities back to tangent space
 
 	Assumes all quantities are defined at the mesh vertices
+
+	For memory reasons, this transformer only operates in cpu mode
 	'''
 	def __init__(self, 
-				 mesh=embryo_mesh,
-				 e1=e1,
-				 e2=e2,
-				 N_vector=N_vector,
-				 N_tensor=N_tensor):
-		torch.nn.Module.__init__(self)
-		self.mesh = mesh
-		self.e1 = e1
-		self.e2 = e2
-		self.N_vector = N_vector
-		self.N_tensor = N_tensor
+				 mesh_name='embryo_coarse_noll'):
+		Module.__init__(self)
+		self.mesh_name = mesh_name
 
+	def build_N_matrix(self, order=1):
+		if order == 0:
+			N = sparse.identity(self.n_vertices_)
+		else:
+			E = [ [] for i in range(2**order) ]
+			for ij in range(3**order):
+				IJ = np.array(list(np.base_repr(ij, 3).zfill(order))).astype(int)
+
+				for ab in range(2**order):
+					AB = np.array(list(np.binary_repr(ab, width=order))).astype(int)
+					es = 1
+					for a, i in zip(AB, IJ):
+						es *= self.e[a][:, i]
+					E[ab].append(sparse.spdiags(es, 0, self.n_vertices_, self.n_vertices_))
+
+			N = sparse.vstack([sparse.hstack(Ei) for Ei in E])
+
+		if self.mode == 'torch':
+			N = torch.from_numpy(N.todense()).to_sparse()
+		
+		self.N[order] = N
+	
 	def fit(self, X, y0=None):
-		self.n_vertices_ = self.mesh.coordinates().shape[0]
+		mesh = Mesh(os.path.join(geo_dir, f'{self.mesh_name}.xml'))
+		tangent_space_data = loadmat(os.path.join(geo_dir, f'{self.mesh_name}.mat'))
+
+		self.n_vertices_ = mesh.coordinates().shape[0]
+		self.e = [tangent_space_data['e2'], tangent_space_data['e1']] #Use y-first convention
+		self.N = {}
+
 		if torch.is_tensor(X):
 			self.mode = 'torch'
-			self.einsum_ = torch.einsum
-			convert = lambda x: Parameter(torch.from_numpy(x.todense()).to_sparse(), requires_grad=False)
-
-			self.e1 = Parameter(torch.from_numpy(self.e1), requires_grad=False)
-			self.e2 = Parameter(torch.from_numpy(self.e2), requires_grad=False)
-			self.N_vector = convert(N_vector)
-			self.N_tensor = convert(N_tensor)
-			
+			self.transpose = torch.t
 		else:
 			self.mode = 'numpy'
-			self.einsum_ = np.einsum
+			self.transpose = np.transpose
+		
+		#Build transformation jacobians
+		for order in range(3):
+			self.build_N_matrix(order)
 
 		return self
 
 	def transform(self, X):
+		'''
+		Transforms from tangent space to 3D
+		'''
 		n_components = np.prod(X.shape) // self.n_vertices_
-		x0 = X.flatten()
+		order = int(np.log2(n_components))
+		if not order in self.N:
+			self.build_N_matrix(order)
 
-		if n_components == 2: #Transforms like a vector
-			x1	= self.einsum_('Vi,V->iV', self.e1, x0[:self.n_vertices_])
-			x1 += self.einsum_('Vi,V->iV', self.e2, x0[self.n_vertices_:])
-		elif n_components == 4: #Transforms like a tensor
-			x1	= self.einsum_('Vi,V,Vj->ijV', self.e1, x0[:self.n_vertices_], self.e1)
-			x1 += self.einsum_('Vi,V,Vj->ijV', self.e1, x0[self.n_vertices_:2*self.n_vertices_], self.e2)
-			x1 += self.einsum_('Vi,V,Vj->ijV', self.e2, x0[2*self.n_vertices_:3*self.n_vertices_], self.e1)
-			x1 += self.einsum_('Vi,V,Vj->ijV', self.e2, x0[3*self.n_vertices_:], self.e2)
+		x = self.transpose(self.N[order]) @ X.flatten()[:, None]
+		x = x.reshape([3,] * order + [self.n_vertices_,])
 
-		else: #Scalar
-			x1 = X
-
-		return x1
+		return x
 
 
 	def inverse_transform(self, X):
-		n_components = np.prod(X.shape) // self.n_vertices_
-		x0 = X.flatten()[:, None]
+		'''
+		Transforms from 3D to tangent space
 
-		if n_components == 3: #Vector
-			x = self.N_vector @ x0
-			x = x.reshape([2, self.n_vertices_])
-		elif n_components == 9: #Tensor
-			x = self.N_tensor @ x0
-			x = x.reshape([2, 2, self.n_vertices_])
-		else:
-			x = X
+		Note that the transformation operations do not commute
+		That is, inverse_transform(transform(X)) = X
+		However, transform(inverse_transform(X)) =/= X
+
+		Be aware of this when using repeated mesh interpolations
+		'''
+		n_components = np.prod(X.shape) // self.n_vertices_
+		order = int(np.log(n_components) / np.log(3))
+		if not order in self.N:
+			self.build_N_matrix(order)
+		x = self.N[order] @ X.flatten()[:, None]
+		x = x.reshape([2,] * order + [self.n_vertices_,])
 
 		return x
 	

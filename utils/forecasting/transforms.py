@@ -399,7 +399,7 @@ class CovariantEmbryoGradient(EmbryoGradient):
 	'''
 	def __init__(self,
 				 sigma=3,
-				 dv_mode='periodic',
+				 dv_mode='circular',
 				 ap_mode='edge'):
 		super().__init__(sigma=sigma, dv_mode=dv_mode, ap_mode=ap_mode)
 

@@ -1,89 +1,76 @@
+import os
 import numpy as np
 import torch
-from torch.nn import Parameter, ParameterList
+from torch.nn import Parameter, ParameterList, Module
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted, NotFittedError
 
+from fenics import Mesh
 from fenics import Function, FunctionSpace
-from fenics import FiniteElement, VectorElement
+from fenics import FiniteElement, VectorElement, TensorElement
 from fenics import dof_to_vertex_map, vertex_to_dof_map
 from fenics import TrialFunction, TestFunction
 from fenics import assemble
-from fenics import inner, dx
+from fenics import inner, grad, dx
 
 from scipy import sparse
 
-from .geometry_utils import basedir, N_vector, N_tensor, embryo_mesh
+from .geometry_utils import geo_dir, N_vector, N_tensor, embryo_mesh
 from .geometry_utils import TangentSpaceTransformer
 
-def interpolate_vertices_to_function(fun_3D, FS):
-	fun = Function(FS)
-	d2v = dof_to_vertex_map(FS)
-	fun.vector().set_local(fun_3D.T.flatten()[d2v])
-	return fun
-
-def convert_bilinear_dof(a, v2d, N=None):
-	a = np.array(a.array())
-	a = a[:, v2d]
-	a = a[v2d, :]
-	a = sparse.csr_matrix(a)
-	if N is not None:
-		a = N.dot(a.dot(N.T)) #Push A to tangent space
-	return a
-
-def convert_linear_dof(l, v2d, N=None):
-	l = np.array(l)
-	l = l[v2d].T
-	l = sparse.csr_matrix(l)
-	if N is not None:
-		l = N.dot(l.reshape([-1, 1])) #Push L to tangent space
-	return l
-
-def build_operator(expr, v2d, N):
+def build_operator(expr, v2d, N=None):
 	A = assemble(expr)
-	A = convert_bilinear_dof(A, v2d, N)
+	A = np.array(A.array())
+	A = sparse.csr_matrix(A)
+	A = A[:, v2d] #Reorder degrees of freedom
+	A = A[v2d, :]
+	if N is not None:
+		A = N @ (A @ N.T) #Push A to tangent space
 	return A
 
-def build_gradient_operators(fe, mesh=embryo_mesh):
+class FenicsGradient(BaseEstimator, TransformerMixin, Module):
 	'''
-	Returns an inverse assembled fenics operator and 
-	a series of gradient operators for computing gradients on a mesh
-
-	The general procedure is that for a field defined on the mesh 
-	tangent space, the gradient of that field in 3d is 
-	np.stack([
-		pull_from_tangent_space(
-			Ainv.dot(grad[i].dot(f)
-		) for i in range(3) ])
+	Compute gradients on an embryo mesh using fenics
 	'''
-	FS = FunctionSpace(mesh, fe)
-	num_vertices = mesh.coordinates().shape[0]
-	v2d = vertex_to_dof_map(FS).reshape([num_vertices, -1]).T.flatten()
+	def __init__(self, 
+				 mesh_name='embryo_coarse_noll',
+				 pixel_scale=0.2619):
+		Module.__init__(self)
+		self.mesh_name = mesh_name
+		self.pixel_scale = pixel_scale #microns per pixel
 
-	Nc = v2d.shape[0] // num_vertices
-
-	if Nc == 1:
-		N = None
-	elif Nc == 3:
-		N = N_vector
-	elif Nc == 9:
-		N = N_tensor
+	def build_gradient_operators(self, order, mesh, tangent):
+		'''
+		Returns the necessary assembed fenics operators for computing
+		gradient operations on the mesh. Often this will be memory intensive
+		'''
+		raise NotImplementedError
 	
-	u = TrialFunction(FS)
-	v = TestFunction(FS)
-	A = build_operator( inner(u, v) * dx, v2d, N)
-	Ainv = sparse.linalg.inv(A)
+	def fit(self, X, y0=None, tangent=None):
 
-	grad = [
-		build_operator( -inner(u, v.dx(0)) * dx, v2d, N),
-		build_operator( -inner(u, v.dx(1)) * dx, v2d, N),
-		build_operator( -inner(u, v.dx(2)) * dx, v2d, N),
-	]
+		if torch.is_tensor(X):
+			self.mode = 'torch'
+		else:
+			self.mode = 'numpy'
 
-	return Ainv, grad
+		self.ops = {}
+		mesh = Mesh(os.path.join(geo_dir, f'{self.mesh_name}.xml'))
+		if tangent is None:
+			tangent = TangentSpaceTransformer(mesh_name=self.mesh_name).fit(X)
 
-class FenicsGradient(BaseEstimator, TransformerMixin, torch.nn.Module):
+		print('Building mesh gradient operators')
+		for order in reversed(range(3)):
+			self.ops[order] = self.build_gradient_operators(order, mesh, tangent)
+
+		return self
+
+	def forward(self, x):
+		return self.transform(x)
+
+
+
+class FenicsGradient_v0(FenicsGradient):
 	'''
 	Compute gradients on an embryo mesh using fenics
 	The inputs live in the tangent space but are defined on the mesh
@@ -94,115 +81,153 @@ class FenicsGradient(BaseEstimator, TransformerMixin, torch.nn.Module):
 		rather than using a tensor or higher-order element operator,
 		to compute gradients in each direction
 	'''
-	def __init__(self, 
-				 mesh=embryo_mesh,
-				 tangent=TangentSpaceTransformer()):
-		torch.nn.Module.__init__(self)
-		self.mesh = mesh
+	def build_gradient_operators(self, order, mesh, tangent):
+		'''
+		Returns an inverse assembled fenics operator and 
+		a series of gradient operators for computing gradients on a mesh
+
+		The general procedure is that for a field defined on the mesh 
+		tangent space, the gradient of that field in 3d is 
+		np.stack([
+			pull_from_tangent_space(
+				Ainv.dot(grad[i].dot(f)
+			) for i in range(3) ])
+
+		For memory reasons, this transformer only operates in CPU mode
+		'''
 		self.tangent = tangent
-		self.pixel_scale = 0.2619 #microns per pixel
 
-	def fit(self, X, y0=None):
-		try:
-			self.A_sca_ = sparse.load_npz(f'{basedir}/utils/geometry/A_scalar.npz')
-			self.grad_sca_ = [sparse.load_npz(f'{basedir}/utils/geometry/grad_scalar_{i}.npz') \
-							  for i in range(3)]
-
-			self.A_vec_ = sparse.load_npz(f'{basedir}/utils/geometry/A_vector.npz')
-			self.grad_vec_ = [sparse.load_npz(f'{basedir}/utils/geometry/grad_vector_{i}.npz') \
-							  for i in range(3)]
-			print('Loaded mesh gradient operators')
-
-		except:
-			print('Building mesh gradient operators')
-			self.A_sca_, self.grad_sca_ = build_gradient_operators(
-				FiniteElement('CG', embryo_mesh.ufl_cell(), 1))
-			self.A_vec_, self.grad_vec_ = build_gradient_operators(
-				VectorElement('CG', embryo_mesh.ufl_cell(), 1))
-
-			print('Saving mesh gradient operators')
-			sparse.save_npz(f'{basedir}/utils/geometry/A_scalar.npz', self.A_sca_)
-			sparse.save_npz(f'{basedir}/utils/geometry/A_vector.npz', self.A_vec_)
-
-			for i in range(3):
-				sparse.save_npz(f'{basedir}/utils/geometry/grad_scalar_{i}.npz', self.grad_sca_[i])
-				sparse.save_npz(f'{basedir}/utils/geometry/grad_vector_{i}.npz', self.grad_vec_[i])
-			print('Done')
-
-		try: 
-			check_is_fitted(self.tangent)
-		except NotFittedError:
-			self.tangent.fit(X)
-
-		if torch.is_tensor(X):
-			self.mode = 'torch'
-			convert = lambda x: Parameter(torch.from_numpy(x.todense()).to_sparse(), requires_grad=False)
-			self.A_sca_ = convert(self.A_sca_)
-			self.A_vec_ = convert(self.A_vec_)
-			self.grad_sca_ = ParameterList([convert(gs) for gs in self.grad_sca_])
-			self.grad_vec_ = ParameterList([convert(gs) for gs in self.grad_vec_])
+		#Check if it exists in file
+		if order == 2:
+			fe = TensorElement('CG', mesh.ufl_cell(), 1)
+			key = 'tensor'
+		elif order == 1:
+			fe = VectorElement('CG', mesh.ufl_cell(), 1)
+			key = 'vector'
 		else:
-			self.mode = 'numpy'
+			fe = FiniteElement('CG', mesh.ufl_cell(), 1)
+			key = 'scalar'
 
-		return self
-
-	def grad_scalar(self, X):
-		if self.mode == 'numpy':
-			grad = np.zeros([X.shape[-1], 3])
+		fname = f'{geo_dir}/gradient_operators/{self.mesh_name}_v0_order_{order}.npz'
+		if os.path.exists(fname):
+			print(f'Loading order {order} from file')
+			grad = sparse.load_npz(fname)
 		else:
-			grad = torch.zeros([X.shape[-1], 3], dtype=X.dtype, device=X.device)
+			print(f'Building order {order} from scratch')
+			FS = FunctionSpace(mesh, fe)
+			num_vertices = mesh.coordinates().shape[0]
+			v2d = vertex_to_dof_map(FS).reshape([num_vertices, -1]).T.flatten()
+			
+			N = tangent.N[order]
+			NT = N.T
 
-		for i in range(3):
-			L = self.grad_sca_[i] @ X.flatten()
-			d = self.A_sca_ @ L
-			grad[..., i] = d
+			u = TrialFunction(FS)
+			v = TestFunction(FS)
+			A = build_operator( inner(u, v) * dx, v2d, N)
+			Ainv = sparse.linalg.inv(A)
+
+			grad = [
+				NT @ Ainv @ build_operator( -inner(u, v.dx(0)) * dx, v2d, N),
+				NT @ Ainv @ build_operator( -inner(u, v.dx(1)) * dx, v2d, N),
+				NT @ Ainv @ build_operator( -inner(u, v.dx(2)) * dx, v2d, N),
+			]
+			if not order+1 in tangent.N:
+				tangent.build_N_matrix(order+1)
+			N_out = tangent.N[order+1]
+			
+			grad = sparse.vstack(grad)
+			grad = N_out @ grad
+
+			sparse.save_npz(fname, grad)
+
+		if self.mode == 'torch':
+			grad = torch.from_numpy(grad[i].todense()).to_sparse()
+
 		return grad
-
-	def grad_vector(self, X):
-		if self.mode == 'numpy':
-			grad = np.zeros([3, X.shape[-1], 3])
-		else:
-			grad = torch.zeros([3, X.shape[-1], 3], dtype=X.dtype, device=X.device)
-
-		for i in range(3):
-			L = self.grad_vec_[i] @ X.flatten()
-			d = self.A_vec_ @ L
-			grad[..., i] = self.tangent.transform(d)
-		return grad
-
-	def grad_tensor(self, X):
-		if self.mode == 'numpy':
-			grad = np.zeros([3, 3, X.shape[-1], 3])
-			d_i = np.zeros([*X.shape])
-		else:
-			grad = torch.zeros([3, 3, X.shape[-1], 3], dtype=X.dtype, device=X.device)
-			d_i = torch.zeros([*X.shape], dtype=X.dtype, device=X.device)
-
-		for i in range(3):
-			for j in range(2):
-				L = self.grad_vec_[i] @ X[j].flatten()
-				d = self.A_vec_ @ L
-				d_i[j] = d.reshape(X[j].shape)
-			if self.mode == 'numpy': 
-				d_i = 0.5 * (d_i + d_i.transpose(1, 0, 2))
-			else:
-				d_i = 0.5 * (d_i + d_i.permute(1, 0, 2))
-			grad[..., i] = self.tangent.transform(d_i)
-		return grad
-
+	
 	def transform(self, X):
 		n_components = np.prod(X.shape[:-1])
+		order = int(np.log2(n_components))
 
-		if n_components == 1:
-			grad = self.grad_scalar(X)
-		elif n_components == 2:
-			grad = self.grad_vector(X)
-		elif n_components == 4:
-			grad = self.grad_tensor(X)
+		grad = self.ops[order] @ X.flatten()
+		grad = grad.reshape([2, *X.shape])
+
+		if self.mode == 'numpy':
+			grad = np.moveaxis(grad, 0, -1)
+		else:
+			grad = torch.moveaxis(grad, 0, -1)
 
 		grad = grad / self.pixel_scale
 
 		return grad
+		
+class FenicsGradient_v1(FenicsGradient):
+	'''
+	Compute gradients on an embryo mesh using fenics
+	The inputs live in the tangent space but are defined on the mesh
+	The outputs also live in the tangent space and are computed using
+		the projected gradient operators
+	'''
+	def build_gradient_operators(self, order, mesh, tangent):
+		#Check if it exists in file
+		fname = os.path.join(geo_dir, 'gradient_operators', f'{self.mesh_name}_order_{order}.npz')
+		if os.path.exists(fname):
+			print(f'Loading order {order} from file')
+			grad = sparse.load_npz(fname)
 
-	def forward(self, X):
-		return self.transform(X)
+		else:
+			if order == 2:
+				fe = TensorElement('CG', mesh.ufl_cell(), 1)
+			elif order == 1:
+				fe = VectorElement('CG', mesh.ufl_cell(), 1)
+			else:
+				fe = FiniteElement('CG', mesh.ufl_cell(), 1)
+
+			if not order in tangent.N:
+				tangent.build_N_matrix(order)
+			if not order+1 in tangent.N:
+				tangent.build_N_matrix(order+1)
+			N_in = tangent.N[order]
+			N_out = tangent.N[order+1]
+
+			print(f'{mesh.coordinates().shape[0]} vertices, N_in: {N_in.shape}, N_out: {N_out.shape}')
+
+			FS = FunctionSpace(mesh, fe)
+			num_vertices = mesh.coordinates().shape[0]
+			v2d = vertex_to_dof_map(FS).reshape([num_vertices, -1]).T.flatten()
+			
+			u = TrialFunction(FS)
+			v = TestFunction(FS)
+			A = build_operator( inner(u, v) * dx, v2d)
+			Ainv = sparse.linalg.inv(A)
+
+			grad = sparse.vstack([
+				Ainv @ build_operator( -inner(u, v.dx(0)) * dx, v2d),
+				Ainv @ build_operator( -inner(u, v.dx(1)) * dx, v2d),
+				Ainv @ build_operator( -inner(u, v.dx(2)) * dx, v2d),
+			])
+
+			grad = N_out @ grad @ N_in.T
+
+			sparse.save_npz(fname, grad)
+
+		if self.mode == 'torch':
+			grad = torch.from_numpy(grad.todense()).to_sparse()
+
+		return grad
+
+	def transform(self, X):
+		n_components = np.prod(X.shape[:-1])
+		order = int(np.log2(n_components))
+
+		grad = self.ops[order] @ X.flatten()
+		grad = grad.reshape([2, *X.shape])
+
+		if self.mode == 'numpy':
+			grad = np.moveaxis(grad, 0, -1)
+		else:
+			grad = torch.moveaxis(grad, 0, -1)
+
+		grad = grad / self.pixel_scale
+
+		return grad
