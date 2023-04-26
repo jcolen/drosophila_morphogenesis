@@ -50,8 +50,10 @@ class MeshInterpolator(BaseEstimator, TransformerMixin):
 	This transformer only operates in cpu mode
 	'''
 	def __init__(self, 
-				 mesh_name='embryo_coarse_noll'):
+				 mesh_name='embryo_coarse_noll',
+				 cutoff=0.05):
 		self.mesh_name = mesh_name
+		self.cutoff = cutoff
 
 	def fit(self, X, y0=None):
 		mesh = Mesh(os.path.join(geo_dir, f'{self.mesh_name}.xml'))
@@ -81,9 +83,11 @@ class MeshInterpolator(BaseEstimator, TransformerMixin):
 							 self.phi_emb.max(), 
 							 X.shape[-2]) #This goes the opposite direction of Y
 
+		mask = np.logical_and(Z_AP >= self.cutoff, Z_AP <= 1 - self.cutoff)
+
 		x1 = []
 		for i in range(x0.shape[0]):
-			xi = RectBivariateSpline(Phi_DV, Z_AP, x0[i])(self.phi_emb, self.z_emb, grid=False)
+			xi = RectBivariateSpline(Phi_DV, Z_AP[mask], x0[i][..., mask])(self.phi_emb, self.z_emb, grid=False)
 			x1.append(xi)
 		x1 = np.stack(x1)
 
@@ -118,15 +122,17 @@ class MeshInterpolator(BaseEstimator, TransformerMixin):
 		Phi_DV = np.linspace(self.phi_emb.min(), 
 							 self.phi_emb.max(), 
 							 nDV) #This goes the opposite direction of Y
+		
+		mask = np.logical_and(self.z_emb >= self.cutoff, self.z_emb <= 1 - self.cutoff)
 
 		x1 = []
 		for i in range(x0.shape[0]):
 			xi = griddata(
-				(self.phi_emb, self.z_emb), x0[i], 
+				(self.phi_emb[mask], self.z_emb[mask]), x0[i][mask], 
 				(Phi_DV[:, None], Z_AP[None, :])
 			)
 			xi_nearest = griddata(
-				(self.phi_emb, self.z_emb), x0[i], 
+				(self.phi_emb[mask], self.z_emb[mask]), x0[i][mask], 
 				(Phi_DV[:, None], Z_AP[None, :]),
 				method='nearest'
 			)

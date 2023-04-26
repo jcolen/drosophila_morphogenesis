@@ -3,7 +3,7 @@ import numpy as np
 
 from ..forecasting.closed_loop import ClosedFlyLoop
 from .geometry_utils import TangentSpaceTransformer, MeshInterpolator
-from .fenics_utils import FenicsGradient, FenicsGradient_v0
+from .fenics_utils import FenicsGradient, FenicsGradient_v0, FenicsGradient_v1
 
 
 class HybridClosedLoop(ClosedFlyLoop):
@@ -21,8 +21,7 @@ class HybridClosedLoop(ClosedFlyLoop):
 
 		self.tangent   = TangentSpaceTransformer(self.mesh_name).fit(X)
 		self.interp    = MeshInterpolator(self.mesh_name).fit(X)
-		#self.gradient = FenicsGradient_v0(self.mesh_name, self.tangent).fit(X)
-		self.gradient  = FenicsGradient(self.mesh_name, self.tangent).fit(X)
+		self.gradient  = FenicsGradient_v1(self.mesh_name).fit(X)
 
 		del self.gamma_dv_
 		self.gamma_dv_ = np.array([
@@ -33,7 +32,6 @@ class HybridClosedLoop(ClosedFlyLoop):
 			self.gamma_dv_ = torch.from_numpy(self.gamma_dv_)
 
 	def forward(self, t, y):
-		print(t, flush=True)
 		#Get myosin and source
 		m, s = self.inputs.transform(y)
 
@@ -47,13 +45,11 @@ class HybridClosedLoop(ClosedFlyLoop):
 			v = v.cpu()
 			self.gamma_dv_ = self.gamma_dv_.cpu()
 
-		#Gradients are computed in tangent space and projected to 3D
 		d1_m = self.gradient(self.interp.transform(m))
 		d1_s = self.gradient(self.interp.transform(s))
 		d1_v = self.gradient(self.interp.transform(v))
 
 		v_verts = self.interp.transform(v)
-		#v_verts = self.tangent.transform(v_verts)
 
 		sdot = -self.einsum_('iv,vi->v', v_verts, d1_s)
 		sdot = self.interp.inverse_transform(sdot)
@@ -63,10 +59,6 @@ class HybridClosedLoop(ClosedFlyLoop):
 		E =  0.5 * (self.einsum_('ivj->ijv', d1_v) + \
 					self.einsum_('ivj->jiv', d1_v))
 		adv = self.einsum_('kv,ijvk->ijv', v_verts, d1_m)
-		
-		#O = self.tangent.inverse_transform(O)
-		#E = self.tangent.inverse_transform(E)
-		#adv = self.tangent.inverse_transform(adv)
 
 		O = self.interp.inverse_transform(O)
 		E = self.interp.inverse_transform(E)
