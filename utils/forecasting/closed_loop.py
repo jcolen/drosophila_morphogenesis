@@ -138,11 +138,11 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 
 	def postprocess(self, f, dv_cut=10, ap_cut=10):
 		#fill edges 
-		f[..., :dv_cut, :] = f[..., dv_cut:dv_cut+1, :]
-		f[..., -dv_cut:, :] = f[..., -dv_cut-1:-dv_cut, :]
+		#f[..., :dv_cut, :] = f[..., dv_cut:dv_cut+1, :] * 0
+		#f[..., -dv_cut:, :] = f[..., -dv_cut-1:-dv_cut, :] * 0
 
-		f[..., :ap_cut] = f[..., ap_cut:ap_cut+1]
-		f[..., -ap_cut:] = f[..., -ap_cut-1:-ap_cut]
+		f[..., :ap_cut] = f[..., ap_cut:ap_cut+1] * 0
+		f[..., -ap_cut:] = f[..., -ap_cut-1:-ap_cut] * 0
 		
 		#smooth 
 		f = self.smoother.transform(f)

@@ -20,8 +20,8 @@ class HybridClosedLoop(ClosedFlyLoop):
 		super().fit(X, y0)
 
 		self.tangent   = TangentSpaceTransformer(self.mesh_name).fit(X)
-		self.interp    = MeshInterpolator(self.mesh_name, cutoff=0.15).fit(X)
-		self.gradient  = FenicsGradient_v3(self.mesh_name).fit(X)
+		self.interp    = MeshInterpolator(self.mesh_name, cutoff=0.0).fit(X)
+		self.gradient  = FenicsGradient_v3(self.mesh_name, cutoff=0.10).fit(X)
 
 		del self.gamma_dv_
 		self.gamma_dv_ = np.array([
@@ -87,11 +87,11 @@ class HybridClosedLoop(ClosedFlyLoop):
 	
 	def postprocess(self, f, dv_cut=10, ap_cut=10):
 		#fill edges 
-		f[..., :dv_cut, :] = f[..., dv_cut:dv_cut+1, :]
-		f[..., -dv_cut:, :] = f[..., -dv_cut-1:-dv_cut, :]
+		#f[..., :dv_cut, :] = f[..., dv_cut:dv_cut+1, :]
+		#f[..., -dv_cut:, :] = f[..., -dv_cut-1:-dv_cut, :]
 
-		f[..., :ap_cut] = f[..., ap_cut:ap_cut+1]
-		f[..., -ap_cut:] = f[..., -ap_cut-1:-ap_cut]
+		#f[..., :ap_cut] = f[..., ap_cut:ap_cut+1] * 0
+		#f[..., -ap_cut:] = f[..., -ap_cut-1:-ap_cut] * 0
 		
 		#smooth 
 		f = self.smoother.transform(f)

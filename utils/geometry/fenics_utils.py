@@ -4,17 +4,17 @@ import torch
 from torch.nn import Parameter, ParameterList, Module
 
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.utils.validation import check_is_fitted, NotFittedError
 
 from fenics import Mesh
 from fenics import Function, FunctionSpace
 from fenics import FiniteElement, VectorElement, TensorElement
-from fenics import dof_to_vertex_map, vertex_to_dof_map
+from fenics import vertex_to_dof_map
 from fenics import TrialFunction, TestFunction
 from fenics import assemble
 from fenics import inner, grad, dx
 
 from scipy import sparse
+from scipy.io import loadmat
 
 from .geometry_utils import geo_dir,TangentSpaceTransformer
 
@@ -32,10 +32,12 @@ class FenicsGradient(BaseEstimator, TransformerMixin, Module):
 	'''
 	def __init__(self, 
 				 mesh_name='embryo_coarse_noll',
+				 cutoff=0.0,
 				 pixel_scale=0.2619):
 		Module.__init__(self)
 		self.mesh_name = mesh_name
 		self.pixel_scale = pixel_scale #microns per pixel
+		self.cutoff = cutoff #AP cutoff fraction
 
 	def build_gradient_operators(self, order, mesh, tangent):
 		'''
@@ -53,6 +55,13 @@ class FenicsGradient(BaseEstimator, TransformerMixin, Module):
 
 		self.ops = {}
 		mesh = Mesh(os.path.join(geo_dir, f'{self.mesh_name}.xml'))
+		tangent_space_data = loadmat(os.path.join(geo_dir, f'{self.mesh_name}.mat'))
+		z_emb = tangent_space_data['z'].squeeze()
+
+		self.mask = np.zeros(z_emb.shape, dtype=bool)
+		self.mask[z_emb <= self.cutoff] = 1
+		self.mask[z_emb >= (1 - self.cutoff)] = 1
+
 		if tangent is None:
 			if self.mode == 'torch':
 				tangent = TangentSpaceTransformer(mesh_name=self.mesh_name).fit(X.cpu().numpy())
@@ -372,6 +381,7 @@ class FenicsGradient_v3(FenicsGradient):
 
 		grad = self.ops[order] @ X.flatten()
 		grad = grad.reshape([2, *X.shape])
+		grad[..., self.mask] = 0 #Zero out gradients at the poles
 		
 		#Note that higher order function space places gradient at last index
 		if self.mode == 'numpy':
