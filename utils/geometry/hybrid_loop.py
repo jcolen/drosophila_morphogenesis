@@ -3,7 +3,7 @@ import numpy as np
 
 from ..forecasting.closed_loop import ClosedFlyLoop
 from .geometry_utils import TangentSpaceTransformer, MeshInterpolator
-from .fenics_utils import FenicsGradient, FenicsGradient_v0, FenicsGradient_v1
+from .fenics_utils import *
 
 
 class HybridClosedLoop(ClosedFlyLoop):
@@ -20,8 +20,8 @@ class HybridClosedLoop(ClosedFlyLoop):
 		super().fit(X, y0)
 
 		self.tangent   = TangentSpaceTransformer(self.mesh_name).fit(X)
-		self.interp    = MeshInterpolator(self.mesh_name).fit(X)
-		self.gradient  = FenicsGradient_v1(self.mesh_name).fit(X)
+		self.interp    = MeshInterpolator(self.mesh_name, cutoff=0.15).fit(X)
+		self.gradient  = FenicsGradient_v3(self.mesh_name).fit(X)
 
 		del self.gamma_dv_
 		self.gamma_dv_ = np.array([
@@ -97,3 +97,18 @@ class HybridClosedLoop(ClosedFlyLoop):
 		f = self.smoother.transform(f)
 
 		return f
+	
+	def rhs(self, m, s, v, E):
+		'''
+		Compute the right hand side of the myosin dynamics
+		'''
+		trm = self.einsum_('kkyx->yx', m)
+		trE = self.einsum_('kkyx->yx', E)
+
+		rhs  = -(0.066 - 0.061 * s) * m #Detachment
+		rhs +=  (0.489 + 0.318 * s) * m * trE #Strain recruitment
+		#rhs +=  2*(0.489 - 0.118 * s) * m * trE #Strain recruitment
+		rhs +=  (0.564 - 0.393 * s) * trm * m #Tension recruitment
+		rhs +=  (0.047 - 0.037 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
+
+		return rhs
