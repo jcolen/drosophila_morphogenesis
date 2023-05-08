@@ -24,14 +24,12 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 	'''
 	def __init__(self,
 				 v_model=None,
-				 v_thresh=0.,
 				 sigma=3,
 				 dv_mode='circular',
 				 ap_mode='replicate'):
 		nn.Module.__init__(self)
 		
 		self.v_model = v_model
-		self.v_thresh = v_thresh
 		self.sigma = sigma
 		self.ap_mode = ap_mode
 		self.dv_mode = dv_mode
@@ -68,20 +66,13 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 	def get_velocity(self, t, y):
 		v = self.v_model(t, y)
 		
-		#Left right symmetrize
+		#Left right symmetrize the flow
 		if self.mode_ == 'torch':
 			v_lr = torch.flip(v, (-2,))
 		elif self.mode_ == 'numpy':
 			v_lr = np.flip(v, (-2,)).copy()
 		v_lr[..., 0, :, :] *= -1
 		v = 0.5 * (v + v_lr)
-		
-		#Threshold
-		if self.mode_ == 'torch':
-			vnorm = torch.linalg.norm(v, dim=-3, keepdims=True)
-		elif self.mode_ == 'numpy':
-			vnorm = np.linalg.norm(v, axis=-3, keepdims=True)
-		v *= vnorm >= self.v_thresh
 				
 		return v
 	
@@ -136,13 +127,15 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		ydot = self.inputs.inverse_transform(mdot, sdot)
 		return ydot
 
-	def postprocess(self, f, dv_cut=10, ap_cut=10):
+	def postprocess(self, f, ap_cut=15):
+		'''
+		Because of edge distortions and discrete effects, 
+		we zero out the poles (15/200 = 7.5%) and smooth
+		with a gaussian filter
+		'''
 		#fill edges 
-		#f[..., :dv_cut, :] = f[..., dv_cut:dv_cut+1, :] * 0
-		#f[..., -dv_cut:, :] = f[..., -dv_cut-1:-dv_cut, :] * 0
-
-		f[..., :ap_cut] = f[..., ap_cut:ap_cut+1] * 0
-		f[..., -ap_cut:] = f[..., -ap_cut-1:-ap_cut] * 0
+		f[..., :ap_cut] = 0
+		f[..., -ap_cut:] = 0
 		
 		#smooth 
 		f = self.smoother.transform(f)

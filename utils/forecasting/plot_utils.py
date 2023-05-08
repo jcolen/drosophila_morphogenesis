@@ -122,6 +122,8 @@ def comparison_plot(t, *fields,
 
 	colors = ['Reds', 'Blues', 'Greys']
 
+	res = []
+
 	for i, (field, z, z0) in enumerate(fields):
 		znorm = z0.reshape([z0.shape[0], -1, *z0.shape[-2:]])
 		n_channels = znorm.shape[1]
@@ -155,20 +157,24 @@ def comparison_plot(t, *fields,
 			color = cmap((t[jj] + 20) / (t.max() + 20))	
 
 			if n_channels == 1:
-				color_2D(ax[i, j], z[jj], alpha=alpha, **kwargs)
+				color_2D(ax[i, j], z[jj, ::-1], alpha=alpha, **kwargs)
 				color_2D(ax[i, j], z0[jj], alpha=alpha0, **kwargs)
 			elif n_channels == 2:
-				#vwargs['scale'] = 10 if t[jj] < 5 else 50
+				#vwargs['scale'] = 5e1 if t[jj] > 5 else 2e1
+				vwargs['scale'] = 5e1
 				ax[i, j].quiver(X[bot][slc], Y[bot][slc],
 								z0[jj, 1][bot][slc], z0[jj, 0][bot][slc],
 								color='grey', **vwargs)
 				ax[i, j].quiver(X[top][slc], Y[top][slc],
-								z[jj, 1][top][slc], z[jj, 0][top][slc],
+								z[jj, 1, ::-1][top][slc], -z[jj, 0, ::-1][top][slc],
 								color='black', **vwargs)
 				ax[i, j].set(xticks=[], yticks=[])
 			elif n_channels == 4:
 				kwargs['both'] = t[jj] < 0
-				plot_tensor2D(ax[i, j], z[jj] * alpha, alpha=alpha, **kwargs)
+				zj = z[jj, :, :, ::-1].copy()
+				zj[0, 1] *= -1
+				zj[1, 0] *= -1
+				plot_tensor2D(ax[i, j], zj * alpha, alpha=alpha, **kwargs)
 				plot_tensor2D(ax[i, j], z0[jj] * np.sign(alpha0), alpha=alpha0, **kwargs)
 
 			ax[i, j].set(xlim=xlim, ylim=ylim)
@@ -177,9 +183,9 @@ def comparison_plot(t, *fields,
 				continue
 
 
-			cut = get_cut(z[jj])
+			cut = get_cut(z[jj, ..., ::-1, :])
 			cut0 = get_cut(z0[jj])
-			ax[i, -1].plot(dv, cut[:midpoint], color=color)
+			ax[i, -1].plot(dv, cut[::-1][:midpoint], color=color)
 			ax[i, -1].plot(dv, cut0[:midpoint], color=color, linestyle='--')
 			
 			cut = cut[midpoint:]
@@ -191,13 +197,8 @@ def comparison_plot(t, *fields,
 			ax_Y.fill_betweenx(dv, 0, cut0, color=color, alpha=0.7*al)
 			axes.append(ax_Y)
 
-		if n_channels == 4:
-			res = mean_norm_residual(z0[mask], z[mask]).mean(axis=(1, 2))
-			ax[-1, -1].plot(t, res, color=color, label=field)
-			labelcolor=color
-		else:
-			pass
-			res = residual(z0[mask], z[mask]).mean(axis=(1, 2))
+		ax[i, 0].set_ylabel(field, labelpad=labelpad)
+		res.append(residual(z0[mask], z[mask]).mean(axis=(1, 2)))
 
 		if n_channels == 2:
 			znorm = znorm.mean(axis=(1, 2))
@@ -205,32 +206,28 @@ def comparison_plot(t, *fields,
 				z0.reshape([z0.shape[0], -1, *z0.shape[-2:]])[..., :-20], axis=1)
 			znorm = np.linalg.norm(
 				z.reshape([z.shape[0], -1, *z.shape[-2:]])[..., :-20], axis=1)
-			ax2 = ax[-1, -1].twinx()
-			ax2.plot(t, z0norm.mean(axis=(-1, -2)), color='black')
-			
-			ax3 = ax2.twinx()
-			znorm = np.linalg.norm(
-				z.reshape([z.shape[0], -1, *z.shape[-2:]])[..., :-20], axis=1)
-			ax3.plot(t, znorm.mean(axis=(-1, -2)), color='grey')
-			ax3.set_yticklabels([])
+			ax[i, -1].plot(t, z0norm.mean(axis=(-1, -2)), color='black', linestyle='--')
+			#ax2 = ax[i, -1].twinx()
+			ax2 = ax[i, -1]
+			ax2.plot(t, znorm.mean(axis=(-1, -2)), color='black')
+			ax2.set_yticks([])
 			ax2.set_yticklabels([])
-			ax2.set_ylabel('Mean flow\n($\\mu$m / min)', labelpad=0)
+			ax[i, -1].set_xlabel('Time (min)')
+			ax[i, -1].set_xticks([-10, 0, 10, 20])
+			ax[i, -1].set_ylabel('Mean flow\n($\\mu$m / min)', labelpad=0)
+		else:
+			ax[i, -1].set_xlim([dv_min+vfc, dv_midpoint])
+			ax[i, -1].set(xticks=[], yticks=[], xlabel='DV')
+			ax[i, -1].autoscale(axis='y')
+			for axis in axes:
+				axis.set(xlim=ax[i, -1].get_ylim())
+				axis.invert_xaxis()
+				axis.axis('off')
 
-
-		ax[i, 0].set_ylabel(field, labelpad=labelpad)
-
-		if i == n_rows - 1:
-			continue
-		ax[i, -1].set_xlim([dv_min+vfc, dv_midpoint])
-		ax[i, -1].set(xticks=[], yticks=[], xlabel='DV')
-		ax[i, -1].autoscale(axis='y')
-		for axis in axes:
-			axis.set(xlim=ax[i, -1].get_ylim())
-			axis.invert_xaxis()
-			axis.axis('off')
-
-	ax[-1, -1].set_ylabel('Error Rate', labelpad=0, color=labelcolor)
-	ax[-1, -1].set(ylim=[-0.05, 1.05])
+	#ax[-1, -1].plot(t, res, color=color, label=field)
+	#ax[-1, -1].axhline(0.25, zorder=0, color=color, linestyle='--')
+	#ax[-1, -1].set_ylabel('Error Rate', labelpad=0)
+	#ax[-1, -1].set(ylim=[-0.05, 1.05])
 	
 	norm = Normalize(vmin=-20, vmax=np.max(t))
 	fig.subplots_adjust(right=0.97, wspace=0.35, hspace=0.3)
@@ -239,3 +236,18 @@ def comparison_plot(t, *fields,
 		cax = fig.add_axes([0.98, pos.y0, 0.01, pos.y1-pos.y0])
 		plt.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=plt.get_cmap(colors[i])),
 					 cax=cax, label='Time (min)', ticks=[])
+
+	fig1, ax = plt.subplots(1, 1, figsize=(1, 1))
+	colors = ['firebrick', 'steelblue', 'black']
+	for i in range(3):
+		ax.plot(t, res[i], color=colors[i], label=fields[i][0])
+	ax.axhline(0.25, zorder=0, color='grey', linestyle='--')
+	ax.text(1.01, 0.25, '25%', transform=ax.transAxes,
+			color='grey', va='center', ha='left')
+	ax.set_ylabel('Error Rate')
+	ax.set_ylim([-0.05, 1.05])
+	ax.set_xlabel('Time')
+	ax.set_xticks([-10, 0, 10, 20])
+	ax.legend(fontsize=6)
+
+	return fig, fig1

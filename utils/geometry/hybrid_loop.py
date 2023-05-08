@@ -84,31 +84,3 @@ class HybridClosedLoop(ClosedFlyLoop):
 		ydot = self.inputs.inverse_transform(mdot, sdot)
 
 		return ydot
-	
-	def postprocess(self, f, dv_cut=10, ap_cut=10):
-		#fill edges 
-		#f[..., :dv_cut, :] = f[..., dv_cut:dv_cut+1, :]
-		#f[..., -dv_cut:, :] = f[..., -dv_cut-1:-dv_cut, :]
-
-		#f[..., :ap_cut] = f[..., ap_cut:ap_cut+1] * 0
-		#f[..., -ap_cut:] = f[..., -ap_cut-1:-ap_cut] * 0
-		
-		#smooth 
-		f = self.smoother.transform(f)
-
-		return f
-	
-	def rhs(self, m, s, v, E):
-		'''
-		Compute the right hand side of the myosin dynamics
-		'''
-		trm = self.einsum_('kkyx->yx', m)
-		trE = self.einsum_('kkyx->yx', E)
-
-		rhs  = -(0.066 - 0.061 * s) * m #Detachment
-		rhs +=  (0.489 + 0.318 * s) * m * trE #Strain recruitment
-		#rhs +=  2*(0.489 - 0.118 * s) * m * trE #Strain recruitment
-		rhs +=  (0.564 - 0.393 * s) * trm * m #Tension recruitment
-		rhs +=  (0.047 - 0.037 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
-
-		return rhs

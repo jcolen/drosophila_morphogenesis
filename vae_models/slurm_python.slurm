@@ -18,11 +18,12 @@ conda activate /project/vitelli/ml_venv
 
 cd /project/vitelli/jonathan/REDO_fruitfly/src/vae_models
 beta=0
+beta=1e-4
 echo "STARTING EMBRYO SPLIT"
-python INPUTS_forecasting.py --beta $beta --mode embryo
+python INPUTS_forecasting.py --beta $beta --mode embryo --epochs 500
 
-echo "STARTING LR SPLIT"
-python INPUTS_forecasting.py --beta $beta --mode LR
+#echo "STARTING LR SPLIT"
+#python INPUTS_forecasting.py --beta $beta --mode LR
 
-echo "STARTING AP SPLIT"
-python INPUTS_forecasting.py --beta $beta --mode AP
+#echo "STARTING AP SPLIT"
+#python INPUTS_forecasting.py --beta $beta --mode AP

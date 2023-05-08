@@ -48,6 +48,16 @@ def masked_residual(u, v, mask=None):
 
 	return res
 
+def masked_mse(u, v, mask=None):
+	mse = (u - v).pow(2).sum(dim=-3)
+	
+	if mask is None:
+		mask = torch.ones(mse.shape, device=mse.device, dtype=bool)
+	mse = mse * mask #Only use the masked spatial region
+	mse = mse.sum(dim=(-2, -1)) / mask.sum(dim=(-2, -1)) #Sum over space
+
+	return mse
+
 def kld_loss(params, mu, logvar):
 	kld = mu.pow(2) + logvar.exp() - logvar - 1
 	kld = 0.5 * kld.sum(axis=-1).mean()
@@ -58,7 +68,7 @@ def get_argument_parser():
 	parser.add_argument('--num_latent', type=int, default=64)
 	parser.add_argument('--hidden_size', type=int, default=128)
 	parser.add_argument('--lstm_layers', type=int, default=2)
-	parser.add_argument('--beta', type=float, default=1e-3)
+	parser.add_argument('--beta', type=float, default=0)
 	parser.add_argument('--lr', type=float, default=1e-4)
 	parser.add_argument('--epochs', type=int, default=100)
 	parser.add_argument('--mode', type=str, choices=['embryo', 'LR', 'AP'], default='embryo')
@@ -160,8 +170,6 @@ def run_train(dataset,
 
 	device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-	dataset.transform = DorsalVentralRoll(dataset.keys)
-
 	split_mode = model_kwargs.get('mode', 'embryo')
 	train, val = train_val_split(dataset, mode=split_mode)
 	train_loader = DataLoader(train, **dl_kwargs, collate_fn=dataset.collate_fn)
@@ -171,14 +179,20 @@ def run_train(dataset,
 	model_kwargs['stage_dims'] = [[32,32],[64,64],[128,128],[256,256]]
 	model_kwargs['out_channels'] = 2
 	model_kwargs['output'] = 'vel'
+	
+	#Retrain a model to improve magnitude
+	#info = torch.load(os.path.join(logdir, 'March2023', 'MaskedVAE_Evolver_sqh_beta=0_split=embryo'))
+	#model_kwargs = info['hparams']
+	
+	model = MaskedVAE_Evolver(**model_kwargs)
+	#model.load_state_dict(info['state_dict'])
 
-	model = VAE_Evolver(**model_kwargs)
 	model.to(device)
 	print('Training ', model_kwargs['input'], model_kwargs['output'])
 	optimizer = torch.optim.AdamW(
 		filter(lambda p: p.requires_grad, model.parameters()), 
 		lr=model_kwargs['lr'])
-	scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=5)
+	scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=20, factor=0.5, min_lr=1e-5)
 	
 	model_path = os.path.join(logdir, 
 		'_'.join([
@@ -209,6 +223,7 @@ def run_train(dataset,
 			optimizer.zero_grad()
 			y, pl = model.forward(x.to(device), batch['lengths'])
 			res = masked_residual(y, y0, mask).mean()
+			#res = masked_mse(y, y0, mask).mean()
 			kld = kld_loss(*pl)
 			loss = res + model_kwargs['beta'] * kld
 			loss.backward()
@@ -236,6 +251,7 @@ def run_train(dataset,
 				
 				y, pl = model.forward(x.to(device), batch['lengths'])
 				res = masked_residual(y, y0, mask).mean()
+				#res = masked_mse(y, y0, mask).mean()
 				kld = kld_loss(*pl)
 				loss = res + model_kwargs['beta'] * kld
 				val_loss += loss.item() / len(val_loader)
@@ -271,5 +287,8 @@ def run_train(dataset,
 			torch.save(save_dict, model_path)
 			best_res = res_val
 		
+			#if input('Press q to quit. Press any key to continue: ') == 'q':
+			#	break
+
 		gc.collect()
 		torch.cuda.empty_cache()
