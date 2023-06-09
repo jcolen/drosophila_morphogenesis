@@ -78,7 +78,6 @@ class MyoVelPINN(nn.Module):
 			
 		self.lb = to_param(lb, requires_grad=False)
 		self.ub = to_param(ub, requires_grad=False)
-
 		
 	def init_weights(self, m):
 		if isinstance(m, nn.Linear):
@@ -127,6 +126,30 @@ class CompressibleStokesPINN(MyoVelPINN):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, n_outs=7, **kwargs)
 
+	def get_boundary_points(self, Nb=20):
+		bTDA = torch.rand([Nb, 3], device=self.t_train.device) * (self.ub - self.lb) + self.lb
+
+		boundary_t = bTDA[:, 0].repeat(Nb*4)[:, None]
+		boundary_y = torch.zeros([Nb, Nb * 4], device=self.t_train.device)
+		boundary_x = torch.zeros([Nb, Nb * 4], device=self.t_train.device)
+
+		boundary_y[:, :Nb] = bTDA[:, 1]
+		boundary_x[:, :Nb] = self.lb[2]
+
+		boundary_y[:, Nb:2*Nb] = bTDA[:, 1]
+		boundary_x[:, Nb:2*Nb] = self.ub[2]
+
+		boundary_y[:, 2*Nb:3*Nb] = self.lb[1]
+		boundary_x[:, 2*Nb:3*Nb] = bTDA[:, 2]
+
+		boundary_y[:, 3*Nb:4*Nb] = self.ub[1]
+		boundary_x[:, 3*Nb:4*Nb] = bTDA[:, 2]	
+
+		boundary_x = boundary_x.reshape([-1, 1])
+		boundary_y = boundary_y.reshape([-1, 1])
+
+		return boundary_t, boundary_y, boundary_x
+
 	def forward(self, t, y, x):
 		X = torch.cat([t, y, x], dim=-1)
 		H = 2. * (X - self.lb) / (self.ub - self.lb) - 1.0
@@ -146,7 +169,7 @@ class CompressibleStokesPINN(MyoVelPINN):
 		vel_loss = (vel - self.vel_train[idx]).pow(2).sum()
 		mse = sqh_loss + vel_loss
 	
-		#Physics (Stokes) loss
+		#Stokes loss
 		grad_sqh = self.gradient(sqh, y, x)
 		grad_v = self.gradient(vel, y, x)
 		grad_p = self.gradient(pre, y, x)
@@ -159,8 +182,21 @@ class CompressibleStokesPINN(MyoVelPINN):
 
 		stokes_loss = lapl_v - grad_p + alpha_over_nu * div_m
 		phys = stokes_loss.pow(2).sum()
+		
+		#Periodic boundary loss
+		Nb = 20
+		bt, by, bx = self.get_boundary_points(Nb)
+		bm, bv, bp = self(bt, by, bx)
+		bvals = torch.cat([
+			bm.reshape([Nb, 4*Nb, 4]),
+			bv.reshape([Nb, 4*Nb, 2]),
+			bp.reshape([Nb, 4*Nb, 1]),
+		], dim=-1)
+		boundary_loss = (bvals[:, :Nb] - bvals[:, Nb:2*Nb]).pow(2).sum() + \
+						(bvals[:, 2*Nb:3*Nb] - bvals[:, 3*Nb:]).pow(2).sum()
+		
 		   
-		return mse, phys
+		return mse+boundary_loss, phys
 	
 	def print(self, loss=None, mse=None, phys=None):
 		outstr = 'Iteration %d\t' % self.iter
@@ -175,6 +211,70 @@ class CompressibleStokesPINN(MyoVelPINN):
 			self.vel_coefs[0].exp().item(),
 		)
 		print(outstr, flush=True)
+
+
+class BulkCompressibleStokesPINN(CompressibleStokesPINN):
+	def training_step(self, step_size=5000):  
+		idx = np.random.choice(self.t_train.shape[0], step_size, replace=False)
+		t, y, x = self.t_train[idx], self.y_train[idx], self.x_train[idx]
+		sqh, vel, pre = self(t, y, x)
+					
+		#MSE loss
+		sqh_loss = (sqh - self.sqh_train[idx]).pow(2).sum()
+		vel_loss = (vel - self.vel_train[idx]).pow(2).sum()
+		mse = sqh_loss + vel_loss
+	
+		#Stokes loss
+		grad_sqh = self.gradient(sqh, y, x)
+		grad_v = self.gradient(vel, y, x)
+		grad_p = self.gradient(pre, y, x)
+
+		lapl_v = self.gradient(grad_v[..., 0], y) + \
+				 self.gradient(grad_v[..., 1], x)
+		gdiv_v = self.gradient(torch.einsum('bjj->b', grad_v), y, x)
+		div_m  = torch.einsum('bijj->bi', grad_sqh)
+		
+		alpha = self.vel_coefs[0].exp()
+		beta = self.vel_coefs[1].exp()
+		
+
+		stokes_loss = lapl_v + beta * gdiv_v - grad_p + alpha * div_m
+		phys = stokes_loss.pow(2).sum()
+
+		#Periodic boundary loss
+		Nb = 20
+		bt, by, bx = self.get_boundary_points(Nb)
+		bm, bv, bp = self(bt, by, bx)
+		bvals = torch.cat([
+			bm.reshape([Nb, 4*Nb, 4]),
+			bv.reshape([Nb, 4*Nb, 2]),
+			bp.reshape([Nb, 4*Nb, 1]),
+		], dim=-1)
+		boundary_loss = (bvals[:, :Nb] - bvals[:, Nb:2*Nb]).pow(2).sum() + \
+						(bvals[:, 2*Nb:3*Nb] - bvals[:, 3*Nb:]).pow(2).sum()
+		
+		   
+		return mse+boundary_loss, phys
+	
+	def print(self, loss=None, mse=None, phys=None):
+		outstr = 'Iteration %d\t' % self.iter
+		if loss is not None:
+			outstr += 'Loss: %e, MSE: %e, Phys: %e\n' % \
+				(
+					loss.item() if loss else 0., 
+					mse.item() if loss else 0., 
+					phys.item() if loss else 0.,
+				)
+		outstr += '\tgrad^2 v + %.3f grad(div(v) - grad p = -%.3f div(m)\n' % (
+			self.vel_coefs[1].exp().item(),
+			self.vel_coefs[0].exp().item(),
+		)
+		print(outstr, flush=True)
+
+class NoEndpointsCompressibleStokesPINN(CompressibleStokesPINN):
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+
 
 from argparse import ArgumentParser
 if __name__=='__main__':
@@ -193,6 +293,11 @@ if __name__=='__main__':
 	vel = np.load(os.path.join(loaddir, 'velocity.npy'), mmap_mode='r')[mask]
 	y = np.load(os.path.join(loaddir, 'DV_coordinates.npy'), mmap_mode='r')
 	x = np.load(os.path.join(loaddir, 'AP_coordinates.npy'), mmap_mode='r')
+
+	#For NoEndpoints case, crop the AP poles
+	sqh = sqh.copy()
+	sqh[..., -25:] = 0.
+	sqh[..., :25] = 0.
 
 	print('Data shapes')
 
@@ -245,7 +350,7 @@ if __name__=='__main__':
 	
 
 	device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-	model = CompressibleStokesPINN(
+	model = NoEndpointsCompressibleStokesPINN(
 		t_train, y_train, x_train,
 		sqh_train, vel_train,
 		lower_bound, upper_bound, beta=args.beta)

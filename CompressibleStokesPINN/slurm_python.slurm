@@ -17,4 +17,4 @@ module load python
 conda activate /project/vitelli/ml_venv
 
 cd /project/vitelli/jonathan/REDO_fruitfly/src/CompressibleStokesPINN
-python run_CompressibleStokesPINN.py --beta BB
+python run_CompressibleStokesPINN.py --beta 1e5
