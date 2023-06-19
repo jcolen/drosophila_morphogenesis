@@ -198,7 +198,11 @@ def comparison_plot(t, *fields,
 			axes.append(ax_Y)
 
 		ax[i, 0].set_ylabel(field, labelpad=labelpad)
-		res.append(residual(z0[mask], z[mask]).mean(axis=(1, 2)))
+		#res.append(residual(z0[mask], z[mask]).mean(axis=(1, 2)))
+		if i > 0:
+			res.append(residual(z0[mask], z[mask]).mean(axis=(1, 2)))
+		else:
+			res.append(mean_norm_residual(z0[mask], z[mask]).mean(axis=(1, 2)))
 
 		if n_channels == 2:
 			znorm = znorm.mean(axis=(1, 2))
