@@ -5,6 +5,7 @@ from scipy.linalg import LinAlgWarning
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.pipeline import Pipeline
 from sklearn.base import TransformerMixin
+from sklearn.model_selection import train_test_split
 
 from pysindy.pysindy import SINDy
 from pysindy.optimizers import SINDyOptimizer, EnsembleOptimizer
@@ -89,7 +90,7 @@ class FlySINDy(SINDy):
 		#print(f'Building ensemble optimizer with {self.n_models} models')
 		n_subset = x.shape[0] * self.subset_fraction
 		if component_weight is None:
-			n_subset *= x.shape[1]
+			n_subset *= x.shape[1] * self.subset_fraction
 
 		n_subset = int(np.round(n_subset))
 
@@ -144,6 +145,8 @@ class FlySINDy(SINDy):
 
 		if self.material_derivative:
 			x, x_dot = self.shift_material_derivative(x, x_dot)
+
+		x, _, x_dot, __ = train_test_split(x, x_dot, test_size=0.2)
 
 		if self.n_models > 1:
 			self.optimizer = self.build_ensemble_optimizer(x, component_weight)

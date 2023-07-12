@@ -192,6 +192,9 @@ def fit_sindy_model(h5f, key, tmin, tmax,
 	#Collect data
 	X, X_dot, feature_names = collect_data(h5f, key, tmin, tmax, 
 										   collect_function, feature_names)
+
+	if collect_function == collect_raw_data:
+		component_weight = None
 	
 	#Train model
 	sindy = FlySINDy(
