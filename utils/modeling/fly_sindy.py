@@ -139,7 +139,7 @@ class FlySINDy(SINDy):
 			x_dot,
 			component_weight=None,
 			unbias=True,
-			quiet=False):
+			quiet=True):
 		if hasattr(self.optimizer, "unbias"):
 			unbias = self.optimizer.unbias
 
@@ -175,3 +175,59 @@ class FlySINDy(SINDy):
 		self.n_control_features_ = 0
 
 		return self
+
+	def equations(self, precision=3):
+		'''
+		Override pysindy.utils.base.equations to group cadherin terms
+		'''
+		input_features = self.feature_names
+		coef = self.model.steps[-1][1].coef_
+		
+		def joint_term(cm, cc, name):
+			rounded_cm = np.round(cm, precision)
+			rounded_cc = np.round(cc, precision)
+			if rounded_cm == 0 and rounded_cc == 0:
+				return ""
+			elif rounded_cc == 0:
+				return f"{cm:.{precision}f} {name}"
+			elif rounded_cm == 0:
+				return f"{cc:.{precision}f} c {name}"
+			else:
+				return f"({cm:.{precision}f} + {cc:.{precision}f} c) {name}"
+		
+		eqns = []
+		for i in range(coef.shape[0]):
+			components = []
+			used = np.zeros(coef[i].shape, dtype=bool)
+			
+			for j, feat in enumerate(input_features):
+				if used[j]: 
+					continue
+				if feat[0] == 'c': #Cadherin modulated
+					mterm = feat[2:]
+					cterm = feat
+				else: #Not cadherin modulated
+					mterm = feat
+					cterm = 'c ' + feat
+				try:	
+					jj = input_features.index(mterm)
+					kk = input_features.index(cterm)
+
+					cm = coef[i, jj]
+					cc = coef[i, kk]
+
+					components.append(joint_term(cm, cc, mterm.replace('E_full', 'E_ij')))
+					used[jj] = True
+					used[kk] = True
+				except:
+					cj = coef[i, j]
+					components.append(joint_term(cj, 0, feat))
+					used[j] = True
+
+			eq = " + ".join(filter(bool, components))
+			if len(eq) == 0:
+				eq = "0"
+			eqns.append(eq)
+		return eqns
+
+

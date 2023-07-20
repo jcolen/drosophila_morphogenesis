@@ -76,7 +76,7 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 				
 		return v
 	
-	def rhs(self, m, s, v, E):
+	def rhs_WT(self, m, s, v, E):
 		'''
 		Compute the right hand side of the myosin dynamics
 		'''
@@ -89,6 +89,71 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		rhs +=  (0.047 - 0.037 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
 
 		return rhs
+	
+	def rhs_twist(self, m, s, v, E):
+		'''
+		Compute the right hand side of the myosin dynamics
+		'''
+		trm = self.einsum_('kkyx->yx', m)
+		trE = self.einsum_('kkyx->yx', E)
+
+		rhs  = -(0.067 - 0.055 * s) * m #Detachment
+		rhs +=  (0.533 + 0.251 * s) * m * trE #Strain recruitment
+		rhs +=  (0.534 - 0.326 * s) * trm * m #Tension recruitment
+		rhs +=  (0.041 - 0.029 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
+
+		return rhs
+	
+	def rhs_WT_twist(self, m, s, v, E):
+		'''
+		Compute the right hand side of the myosin dynamics
+		'''
+		trm = self.einsum_('kkyx->yx', m)
+		trE = self.einsum_('kkyx->yx', E)
+
+		rhs  = -(0.067 - 0.055 * s) * m #Detachment
+		rhs +=  (0.533 + 0.251 * s) * m * trE #Strain recruitment
+		rhs +=  (0.534 - 0.326 * s) * trm * m #Tension recruitment
+		rhs +=  (0.041 - 0.029 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
+
+		return rhs
+	
+	def rhs_VF_m2_p2(self, m, s, v, E):
+		trm = self.einsum_('kkyx->yx', m)
+		trE = self.einsum_('kkyx->yx', E)
+
+		rhs  =  (0.041 - 0.025 * s) * m
+		rhs +=  (0.000 + 0.000 * s) * m * trE
+		rhs += -(0.177 - 0.376 * s) * trm * m
+		rhs +=  (0.025 - 0.030 * s) * trm * self.gamma_dv_
+
+		return rhs
+	
+	def rhs_VF_m2_p4(self, m, s, v, E):
+		trm = self.einsum_('kkyx->yx', m)
+		trE = self.einsum_('kkyx->yx', E)
+
+		rhs  =  (0.040 - 0.012 * s) * m
+		rhs +=  (-0.005 + 0.759 * s) * m * trE
+		rhs += -(0.261 - 0.330 * s) * trm * m
+		rhs +=  (0.029 - 0.033 * s) * trm * self.gamma_dv_
+
+		return rhs
+	
+	def rhs_VF_m2_p6(self, m, s, v, E):
+		trm = self.einsum_('kkyx->yx', m)
+		trE = self.einsum_('kkyx->yx', E)
+
+		rhs  =  (0.037 - 0.005 * s) * m
+		rhs +=  (0.589 + 0.228 * s) * m * trE
+		rhs += -(0.217 - 0.202 * s) * trm * m
+		rhs +=  (0.032 - 0.032 * s) * trm * self.gamma_dv_
+
+		return rhs
+	
+	def rhs(self, *args, **kwargs):
+		return self.rhs_VF_m2_p6(*args, **kwargs)
+		return self.rhs_WT_twist(*args, **kwargs)
 		
 	def forward(self, t, y):
 		#Get myosin and source

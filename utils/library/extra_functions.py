@@ -192,7 +192,7 @@ def multiply_tensor_by_scalar(data, tensors, scalars):
 
 def add_static_sources(data, couple='m_ij'):
 	'''
-	Add a static DV and AP source to the library
+	Add a static DV source to the library
 	'''
 	raw = data['X_raw']
 	if not couple in raw:
@@ -207,27 +207,6 @@ def add_static_sources(data, couple='m_ij'):
 	#Add a coupling to the key
 	key = f'Static_DV Tr({couple})'
 	raw[key] = np.einsum('bij...,bkk...->bij...', dv, raw[couple])
-	raw[key].attrs.update(raw[couple].attrs)
-
-def add_static_sources_mesh(data, couple='m_ij'):
-	'''
-	Add a static DV and AP
-	'''
-	raw = data['X_raw']
-	if not couple in raw:
-		raise ValueError(f'{couple} not in X_raw')
-
-	dv = np.zeros([2, 2, raw[couple].shape[-1]])
-	dv[0, 0] = 1
-	dv = TangentSpaceTransformer().fit_transform(dv)
-
-	raw['Static_DV'] = np.zeros_like(raw[couple])
-	raw['Static_DV'][:] = dv
-	raw['Static_DV'].attrs.update({'space': 0, 't': raw[couple].attrs['t']})
-
-	#Add a coupling to the key
-	key = f'Static_DV Tr({couple})'
-	raw[key] = np.einsum('ij...,bkk...->bij...', dv, raw[couple])
 	raw[key].attrs.update(raw[couple].attrs)
 
 def material_derivative_terms(data, key='m_ij'):

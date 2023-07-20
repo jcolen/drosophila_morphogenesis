@@ -268,7 +268,8 @@ if __name__=='__main__':
 		#'WT/Fushi_Tarazu',
 		#'WT/Paired',
 		#'WT/Sloppy_Paired',
-		'WT/Even_Skipped-YFP',
+		#'WT/Even_Skipped-YFP',
+		'Halo_twist[ey53]/Sqh-GFP',
 	]
 	
 	#savedir = 'spaetzle[A]/Sqh-GFP'
@@ -295,14 +296,14 @@ if __name__=='__main__':
 		'''
 		Dynamic datasets
 		'''
-		#df = convert_matstruct_to_csv(fulldir, prefix='dynamic')
-		#print(fulldir)# len(df))
-		#collect_velocity_fields(fulldir)
-		#downsample_raw_tiff(fulldir)
-		#collect_anisotropy_tensor(fulldir)
+		df = convert_matstruct_to_csv(fulldir, prefix='dynamic')
+		print(fulldir)# len(df))
+		collect_velocity_fields(fulldir)
+		downsample_raw_tiff(fulldir)
+		collect_anisotropy_tensor(fulldir)
 		#collect_anisotropy_tensor(fulldir, threshold_sigma=7) #toll, spz
-		#collect_thresholded_cytosolic_normalization(fulldir)
-		build_ensemble_timeline(fulldir, init_unc=1, 
-			t_min=-10, t_max=40,
-			drop_times=np.any([a in savedir for a in ['Sqh', 'Eve', 'hist']]))
+		collect_thresholded_cytosolic_normalization(fulldir)
+		#build_ensemble_timeline(fulldir, init_unc=1, #Only when we have a timeline
+		#	t_min=-10, t_max=40,
+		#	drop_times=np.any([a in savedir for a in ['Sqh', 'Eve', 'hist']]))
 	

@@ -1,8 +1,8 @@
 import numpy as np
 import os
-from ..utils.library.derivative_library_utils import validate_key_and_derivatives
-from ..utils.library.derivative_library_utils import write_library_to_dataset
-from ..utils.library.derivative_library_utils import project_embryo_data
+from utils.library.derivative_library_utils import validate_key_and_derivatives
+from utils.library.derivative_library_utils import write_library_to_dataset
+from utils.library.derivative_library_utils import project_embryo_data
 from scipy.ndimage import gaussian_filter
 
 def s2s_terms(x, group, YY, XX, key='Rnt'):

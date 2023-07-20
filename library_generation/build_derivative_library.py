@@ -7,9 +7,9 @@ basedir = '/project/vitelli/jonathan/REDO_fruitfly/'
 sys.path.insert(0, os.path.join(basedir, 'src'))
 from tqdm import tqdm
 
-from tensor_library import build_tensor_library
-from vector_library import build_vector_library
-from scalar_library import build_scalar_library
+from library_generation.tensor_library import build_tensor_library
+from library_generation.vector_library import build_vector_library
+from library_generation.scalar_library import build_scalar_library
 
 def build_ensemble_derivative_library(
 		directory,
@@ -54,18 +54,20 @@ def build_dynamic_derivative_library(
 			if not 'time' in group:
 				group.create_dataset('time', data=index[index.embryoID==embryoID].time.values)
 			write_library(directory, embryoID, group, **afl_kwargs)
-	build_ensemble_derivative_library(directory, filename, write_library, **afl_kwargs)
+	#build_ensemble_derivative_library(directory, filename, write_library, **afl_kwargs)
 
 
 if __name__=='__main__':
 	datadir = '/project/vitelli/jonathan/REDO_fruitfly/src/Public'
 
 	sets = [
-		('c', ['WT', 'ECad-GFP'], 'cyt'),
+		#('c', ['WT', 'ECad-GFP'], 'cyt'),
 		#('c', ['WT', 'ECad-GFP'], 'raw'),
-		('v', ['WT', 'ECad-GFP'], 'velocity'),
+		#('v', ['WT', 'ECad-GFP'], 'velocity'),
 		#('v', ['Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP'], 'velocity'),
 		#('m_ij', ['Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP'], 'tensor'),
+		('m_ij', ['Halo_twist[ey53]', 'Sqh-GFP'], 'tensor'),
+		('v', ['Halo_twist[ey53]', 'Sqh-GFP'], 'velocity'),
 	]
 
 	for key, path, base in sets:
@@ -82,4 +84,5 @@ if __name__=='__main__':
 			libfunc,
 			drop_times='Sqh-GFP' in path,
 			key=key,
+			project=False, #Twist
 			base=base)

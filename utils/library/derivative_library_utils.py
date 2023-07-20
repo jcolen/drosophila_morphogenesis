@@ -73,7 +73,7 @@ def validate_key_and_derivatives(x, group, YY, XX, key, order=2):
 	flag = False
 	dx = []
 	for i in range(order):
-		name = f'D{i+1} {key}' % (i+1, key)
+		name = f'D{i+1} {key}'
 		if name in group:
 			dx.append(group[name])
 		else:
@@ -83,7 +83,7 @@ def validate_key_and_derivatives(x, group, YY, XX, key, order=2):
 		print('Computing derivatives!')
 		dx = get_derivative_tensors(x, YY, XX, order=order)
 		for i in range(order):
-			name = f'D{i+1} {key}' % (i+1, key)
+			name = f'D{i+1} {key}'
 			if name in group:
 				del group[name]
 			group.create_dataset(name, data=dx[i])
