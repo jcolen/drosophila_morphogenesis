@@ -269,8 +269,14 @@ if __name__=='__main__':
 		#'WT/Paired',
 		#'WT/Sloppy_Paired',
 		#'WT/Even_Skipped-YFP',
-		'Halo_twist[ey53]/Sqh-GFP',
+		#'Halo_twist[ey53]/Sqh-GFP',
+		#'even-Skipped[r13]/Sqh-GFP',
+		#'Eve_Mutants/Sqh-GFP',
+		'Dpp_Mutants/Sqh-GFP',
+		'Dpp_Controls/Sqh-GFP',
 	]
+
+	basedir = '../MutantForecasting'
 	
 	#savedir = 'spaetzle[A]/Sqh-GFP'
 	#fulldir = os.path.join(basedir, savedir)

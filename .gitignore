@@ -10,3 +10,6 @@ Figures
 session_logs
 *.npy
 *.ckpt
+*.zip
+*.tif
+*.mat
