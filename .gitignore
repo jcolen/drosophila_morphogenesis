@@ -1,6 +1,5 @@
 __pycache__
 *.npz
-Figures
 .ipynb_checkpoints
 *.csv
 *.swp
