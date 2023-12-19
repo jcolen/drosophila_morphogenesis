@@ -38,41 +38,42 @@ def combine_attrs(x1, x2):
 
 	return combined_attrs, x1[t1_mask, ...], x2[t2_mask, ...]
 
-def symmetric_tensor_powers(data, key='m_ij', max_order=3):
+def material_derivative_terms(data, key='m_ij'):
+	'''
+	Add a material derivative term (v.grad) key 
+	For tensor fields, also add the co-rotation [Omega.key - key.Omega]
+	'''
+	D1_x = data['links'][key][f'D1 {key}']
+	v = data['fields']['v']
+
 	raw = data['X_raw']
 	x = raw[key]
-	trx = np.einsum('bij...->b...', x)[:, None, None]
-	attrs = dict(x.attrs).copy()
-	
-	if max_order < 2: 
-		return
-	
-	attrs[key] = 2
+	O = raw['O']
 
-	feat = f'{key} Tr({key})'
-	raw[feat] = x * trx
-	raw[feat].attrs.update(attrs)
+	feat = f'v dot grad {key}'
+	if feat not in raw:
+		if is_tensor(x):
+			raw[feat] = np.einsum('bk...,bij...k->bij...', v, D1_x)
+		else:
+			raw[feat] = np.einsum('bk...,b...k->b...', v, D1_x)
+	raw[feat].attrs.update({key: 1, 'v': 1, 'space': 1})
+	raw[feat].attrs['t'] = x.attrs['t']
 
-	feat = f'{key}^2'
-	raw[feat] = np.einsum('bik...,bkj...->bij...', x, x)
-	raw[feat].attrs.update(attrs)
+	#Co-rotation term
+	#SINCE Omega is v_[i,j] and not D_[i v_j] put a minus sign
+	if is_tensor(x):
+		feat = f'[O, {key}]'
+		raw[feat] = -(np.einsum('bik...,bkj...->bij...', O, x) - \
+					  np.einsum('bik...,bkj...->bij...', x, O))
+		raw[feat].attrs.update({key: 1, 'v': 1, 'space': 1})
+		raw[feat].attrs['t'] = x.attrs['t']
+		for f in raw: #Remove any Omega terms
+			if 'O' in f and not f == feat:
+				del raw[f]
 
-	if max_order < 3:
-		return
-
-	attrs[key] = 3
-
-	feat = f'{key} Tr({key})^2'
-	raw[feat] = x * trx * trx
-	raw[feat].attrs.update(attrs)
-
-	#feat = f'{key}^2 Tr({key})'
-	#raw[feat] = np.einsum('bik...,bkj...->bij...', x, x) * trx
-	#raw[feat].attrs.update(attrs)
-
-	feat = f'{key}^3'
-	raw[feat] = np.einsum('bik...,bkl...,blj...->bij...', x, x, x)
-	raw[feat].attrs.update(attrs)
+'''
+For myosin
+'''
 
 def symmetric_tensor_couple(data, keys=['m_ij', 'E'], max_space_order=1):
 	'''
@@ -100,69 +101,6 @@ def symmetric_tensor_couple(data, keys=['m_ij', 'E'], max_space_order=1):
 		raw[feat] = np.einsum('bik...,bkj...->bij...', x1, x2) + \
 					np.einsum('bik...,bkj...->bij...', x2, x1)
 		raw[feat].attrs.update(combined_attrs)
-		
-def active_strain_decomposition(data, key='m_ij'):
-	raw = data['X_raw']
-	E = raw['E']
-	x = raw[key]
-	
-	deviatoric = x - 0.5 * np.einsum('bkk...,ij->bij...', x, np.eye(2))
-	deviatoric[deviatoric == 0] = 1e-5
-	
-	x_0 = np.linalg.norm(x, axis=(1, 2), keepdims=True).mean(axis=(3, 4), keepdims=True)
-	dev_mag = np.linalg.norm(deviatoric, axis=(1, 2), keepdims=True)
-		
-	devE = np.einsum('bkl...,bkl...->b...', deviatoric, E)[:, None, None]
-	
-	E_active = E - np.sign(devE) * devE * deviatoric / dev_mag**2
-	E_active = 0.5 * E_active * dev_mag / x_0
-	
-	E_passive = E - E_active
-
-	attrs = dict(E.attrs)
-	
-	#Remove regular strain terms from library
-	raw['E_full'] = E[()]
-	raw['E_full'].attrs.update(attrs)
-	del raw['E']
-	
-	raw['E_active'] = E_active
-	raw['E_active'].attrs.update(attrs)
-	
-	raw['E_passive'] = E_passive
-	raw['E_passive'].attrs.update(attrs)
-
-def active_strain_decomposition_mesh(data, key='m_ij'):
-	raw = data['X_raw']
-	E = raw['E']
-	x = raw[key]
-
-	deviatoric = x - 0.5 * np.einsum('bkk...,ij->bij...', x, np.eye(3))
-	deviatoric[deviatoric == 0] = 1e-5
-	
-	x_0 = np.linalg.norm(x, axis=(1, 2), keepdims=True)
-	x_0 = np.mean(x_0, axis=-1, keepdims=True)
-	dev_mag = np.linalg.norm(deviatoric, axis=(1, 2), keepdims=True)
-		
-	devE = np.einsum('bkl...,bkl...->b...', deviatoric, E)[:, None, None]
-	
-	E_active = E - np.sign(devE) * devE * deviatoric / dev_mag**2
-	E_active = 0.5 * E_active * dev_mag / x_0
-	
-	E_passive = E - E_active
-
-	attrs = dict(E.attrs)
-	
-	#Remove regular strain terms from library
-	raw['E_full'] = E[()]
-	raw['E_full'].attrs.update(attrs)
-	del raw['E']
-	
-	raw['E_active'] = E_active
-	raw['E_active'].attrs.update(attrs)
-	
-	raw['E_passive'] = E_passive
-	raw['E_passive'].attrs.update(attrs)
 
 def multiply_tensor_by_scalar(data, tensors, scalars):
 	'''
@@ -209,35 +147,59 @@ def add_static_sources(data, couple='m_ij'):
 	raw[key] = np.einsum('bij...,bkk...->bij...', dv, raw[couple])
 	raw[key].attrs.update(raw[couple].attrs)
 
-def material_derivative_terms(data, key='m_ij'):
-	'''
-	Add a material derivative term (v.grad) key 
-	For tensor fields, also add the co-rotation [Omega.key - key.Omega]
-	'''
-	D1_x = data['links'][key][f'D1 {key}']
-	v = data['fields']['v']
+'''
+For E-cadherin
+'''
 
+def scalar_couple(data, keys=['c', 'Tr(E)', 'Tr(m_ij)'], max_space_order=1):
+	'''
+	Generate scalar couplings of scalar fields
+	'''
 	raw = data['X_raw']
-	x = raw[key]
-	O = raw['O']
+	for ii in range(len(keys)):
+		for jj in range(ii, len(keys)):
+			key1, key2 = keys[ii], keys[jj]
+			x1 = raw[key1]
+			x2 = raw[key2]
 
-	feat = f'v dot grad {key}'
-	if feat not in raw:
-		if is_tensor(x):
-			raw[feat] = np.einsum('bk...,bij...k->bij...', v, D1_x)
-		else:
-			raw[feat] = np.einsum('bk...,b...k->b...', v, D1_x)
-	raw[feat].attrs.update({key: 1, 'v': 1, 'space': 1})
-	raw[feat].attrs['t'] = x.attrs['t']
+			combined_attrs, x1, x2 = combine_attrs(x1, x2)
+			if combined_attrs['space'] > max_space_order:
+				continue
 
-	#Co-rotation term
-	#SINCE Omega is v_[i,j] and not D_[i v_j] put a minus sign
-	if is_tensor(x):
-		feat = f'[O, {key}]'
-		raw[feat] = -(np.einsum('bik...,bkj...->bij...', O, x) - \
-					  np.einsum('bik...,bkj...->bij...', x, O))
-		raw[feat].attrs.update({key: 1, 'v': 1, 'space': 1})
-		raw[feat].attrs['t'] = x.attrs['t']
-		for f in raw: #Remove any Omega terms
-			if 'O' in f and not f == feat:
-				del raw[f]
+			feat = f'{key1} {key2}'
+			raw[feat] = x1 * x2
+			raw[feat].attrs.update(combined_attrs)
+
+
+def add_v_squared(data):
+	'''
+	Include v^2 in the E-cadherin library
+	'''
+	raw = data['X_raw']
+	v = data['fields']['v']
+	
+	feat = 'v v'
+	raw[feat] = np.einsum('bk...,bk...->b...', v, v)
+	raw[feat].attrs.update({'v': 2, 't': v.attrs['t'], 'space': 0})
+
+def tensor_trace(data, keys=['m_ij', 'E']):
+	'''
+	Take the trace of a tensor and turn it into a scalar
+	'''
+	raw = data['X_raw']
+	for key in keys:
+		x = raw[key]
+		feat = f'Tr({key})'
+		raw[feat] = np.einsum('bkk...->b...', x)
+		raw[feat].attrs.update(x.attrs)
+
+def delete_high_order_scalars(data, max_space_order=1):
+	'''
+	Because for historical reasons we computed grad^2(c), we 
+	have to remove it from the library
+	'''
+	raw = data['X_raw']
+	for key in raw.keys():
+		x = raw[key]
+		if x.attrs['space'] > max_space_order:
+			del raw[key]
