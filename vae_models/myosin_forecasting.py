@@ -1,7 +1,7 @@
 import os
 import sys
 basedir = '/project/vitelli/jonathan/REDO_fruitfly/'
-sys.path.insert(0, os.path.join(basedir, 'src'))
+sys.path.insert(0, os.path.join(basedir, 'release'))
 
 from torchvision.transforms import Compose
 

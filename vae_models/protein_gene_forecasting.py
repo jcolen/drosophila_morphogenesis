@@ -13,11 +13,11 @@ from argparse import ArgumentParser
 import gc
 
 basedir = '/project/vitelli/jonathan/REDO_fruitfly/'
-sys.path.insert(0, os.path.join(basedir, 'src'))
+sys.path.insert(0, os.path.join(basedir, 'release'))
 
 from utils.dataset import *
-from convnext_models import *
-from training import *
+from utils.vae.convnext_models import *
+from utils.vae.training import *
 
 if __name__ == '__main__':
 	parser = get_argument_parser()
@@ -33,7 +33,7 @@ if __name__ == '__main__':
 	Define datasets
 	'''
 	cad = AtlasDataset('WT', 'ECad-GFP', 'raw2D',
-		transform=Compose([Reshape2DField(), Smooth2D(sigma=8), ToTensor()]))
+		transform=Compose([Reshape2DField(), Smooth2D(sigma=7), ToTensor()]))
 	cad_vel = AtlasDataset('WT', 'ECad-GFP', 'velocity2D', 
 		transform=Compose([Reshape2DField(), ToTensor()]))
 

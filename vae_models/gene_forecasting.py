@@ -12,11 +12,12 @@ from torchvision.transforms import Compose
 from argparse import ArgumentParser
 
 basedir = '/project/vitelli/jonathan/REDO_fruitfly/'
-sys.path.insert(0, os.path.join(basedir, 'src'))
+sys.path.insert(0, os.path.join(basedir, 'release'))
 
 from utils.dataset import *
-from convnext_models import *
-from training import *
+from utils.vae.convnext_models import *
+from utils.vae.training import *
+
 
 if __name__ == '__main__':
 	parser = get_argument_parser()

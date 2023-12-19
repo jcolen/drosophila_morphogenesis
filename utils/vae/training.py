@@ -74,27 +74,6 @@ def get_argument_parser():
 	parser.add_argument('--mode', type=str, choices=['embryo', 'LR', 'AP'], default='embryo')
 	return parser
 
-class DorsalVentralRoll():
-	'''
-	Data augmentation for trajectory datasets
-	Roll each element by some amount along the DV (-2) axis
-	The keys should be dataset.keys
-	'''
-	def __init__(self, keys):
-		self.keys = list(keys)
-		self.keys.append('train_mask')
-		self.keys.append('val_mask')
-
-	def __call__(self, sample):
-		nDV = sample['train_mask'].shape[-2]
-		roll = np.random.randint(0, nDV)
-
-		for key in self.keys:
-			sample[key] = torch.roll(sample[key], roll, dims=-2)
-
-		return sample
-
-
 def train_val_split(dataset, mode='embryo', random_state=42):
 	live_df = dataset.df[
 		(dataset.df.sequence_index >= 0) & \
@@ -157,7 +136,7 @@ def train_val_split(dataset, mode='embryo', random_state=42):
 
 def run_train(dataset,
 			  model_kwargs,
-		      logdir='/project/vitelli/jonathan/REDO_fruitfly/tb_logs/',
+		      logdir='/project/vitelli/jonathan/REDO_fruitfly/tb_logs/November2023',
 			  grad_clip=0.5,
 			  epochs=100):
 	

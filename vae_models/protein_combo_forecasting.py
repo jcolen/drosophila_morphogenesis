@@ -1,7 +1,7 @@
 import os
 import sys
 basedir = '/project/vitelli/jonathan/REDO_fruitfly/'
-sys.path.insert(0, os.path.join(basedir, 'src'))
+sys.path.insert(0, os.path.join(basedir, 'release'))
 
 from torchvision.transforms import Compose
 
@@ -16,7 +16,7 @@ if __name__ == '__main__':
 	transform = Compose([
 		Reshape2DField(),
 		LeftRightSymmetrize(),
-		AnteriorPosteriorMask(),
+		#AnteriorPosteriorMask(),
 		ToTensor()
 	])
 
@@ -42,7 +42,7 @@ if __name__ == '__main__':
 			#('vel', cad_vel),
 		],
 		live_key='vel',
-		ensemble=6,
+		ensemble=2,
 	)
 	model_kwargs['in_channels'] = 5
 	model_kwargs['input'] = ['sqh', 'cad']
