@@ -74,7 +74,7 @@ if __name__ == '__main__':
     parser.add_argument('--in_channels', type=int, default=4)
     parser.add_argument('--output', type=str, default='vel')
     parser.add_argument('--out_channels', type=int, default=2)
-    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--logdir', type=str, default='/project/vitelli/jonathan/REDO_fruitfly/tb_logs/May2024')
     args = parser.parse_args()
 
@@ -86,7 +86,8 @@ if __name__ == '__main__':
     print('Building datasets')
     transform = Compose([
         Reshape2DField(),
-        LeftRightSymmetrize(),
+        #LeftRightSymmetrize(),
+        RandomLR(),
         ToTensor()
     ])
 

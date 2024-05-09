@@ -39,6 +39,32 @@ class Reshape2DField(BaseTransformer):
     '''
     def transform(self, X):
         return X.reshape([-1, *X.shape[-2:]])
+
+class RandomLR():
+    '''
+    Randomly transform by flipping or symmetrizing along the left/right axis
+    '''
+    def flip(self, x):
+        x_flip = x[:, ::-1, :].copy()
+        if x.shape[0] == 2:
+            x_flip[0] *= -1
+        elif x.shape[0] == 4:
+            x_flip[1:3] *= -1
+        
+        return x_flip
+        
+    def __call__(self, sample):
+        prob = np.random.uniform()
+        if prob < 0.33:
+            # Flip
+            sample['sqh'] = self.flip(sample['sqh'])
+            sample['vel'] = self.flip(sample['vel'])
+        elif prob < 0.66:
+            # Symmetrize
+            sample['sqh'] = 0.5 * (sample['sqh'] + self.flip(sample['sqh']))
+            sample['vel'] = 0.5 * (sample['vel'] + self.flip(sample['vel']))
+        return sample
+    
     
 class LeftRightSymmetrize(BaseTransformer):
     '''
