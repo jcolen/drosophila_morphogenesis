@@ -4,7 +4,7 @@ import sys
 from torchvision.transforms import Compose
 
 sys.path.insert(0, '/project/vitelli/jonathan/REDO_fruitfly/release')
-from dataset import *
+from mutant_datasets import *
 from utils.vae.convnext_models import VAE
 
 from sklearn.model_selection import train_test_split
@@ -63,22 +63,6 @@ def kld_loss(params, mu, logvar):
     kld = 0.5 * kld.sum(axis=-1).mean()
     return kld
 
-def train_val_split(dataset, random_state=42):
-    # Split on embryos
-    embryos = dataset.df.embryoID.unique()
-    train, val = train_test_split(embryos, test_size=0.5, random_state=random_state)
-    print('Train embryos: ', train)
-    print('Val embryos: ', val)
-    
-    # Find dataset indices for each embryo
-    train_idxs = dataset.df[dataset.df.embryoID.isin(train)].merged_index.values
-    val_idxs = dataset.df[dataset.df.embryoID.isin(val)].merged_index.values
-    train = Subset(deepcopy(dataset), train_idxs)
-    val = Subset(deepcopy(dataset), val_idxs)
-    print('Train size: ', len(train))
-    print('Val size: ', len(val))
-    
-    return train, val
 
 if __name__ == '__main__':
     parser = ArgumentParser()
@@ -90,9 +74,12 @@ if __name__ == '__main__':
     parser.add_argument('--in_channels', type=int, default=4)
     parser.add_argument('--output', type=str, default='vel')
     parser.add_argument('--out_channels', type=int, default=2)
+    parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--logdir', type=str, default='/project/vitelli/jonathan/REDO_fruitfly/tb_logs/May2024')
     args = parser.parse_args()
 
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    
     '''
     Build dataset
     '''
@@ -104,32 +91,31 @@ if __name__ == '__main__':
     ])
 
     #Base datasets
-    sqh = AtlasDataset('Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP', 'tensor2D',
-        transform=transform, drop_time=True)
-    sqh_vel = AtlasDataset('Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP', 'velocity2D',
-        transform=transform, drop_time=True)
+    dataset = torch.utils.data.ConcatDataset([
+        WTDataset(transform=transform),
+        TwistDataset(transform=transform),
+        TollDataset(transform=transform),
+        SpaetzleDataset(transform=transform),
+    ])
 
-    #Myosin
-    dataset = JointDataset(
-        datasets=[
-            ('sqh', sqh),
-            ('vel', sqh_vel),
-        ],
-        live_key='vel',
-    )
+    # Split on embryos
+    full_df = pd.concat([ds.df for ds in dataset.datasets], ignore_index=True)
+    embryos = full_df.embryoID.unique()
+    train, val = train_test_split(embryos, test_size=0.5, random_state=42)
+    print('Train embryos: ', train)
+    print('Val embryos: ', val)
     
-    dl_kwargs = dict(
-        num_workers=4, 
-        batch_size=8, 
-        shuffle=True, 
-        pin_memory=True
-    )
+    # Find dataset indices for each embryo
+    train_idxs = full_df[full_df.embryoID.isin(train)].index.values
+    val_idxs = full_df[full_df.embryoID.isin(val)].index.values
+    train = Subset(deepcopy(dataset), train_idxs)
+    val = Subset(deepcopy(dataset), val_idxs)
+    print('Train size: ', len(train))
+    print('Val size: ', len(val))
+    
 
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
-    train, val = train_val_split(dataset)
-    train_loader = DataLoader(train, num_workers=4, batch_size=8, shuffle=True, pin_memory=True)
-    val_loader = DataLoader(val, num_workers=4, batch_size=8, shuffle=True, pin_memory=True)
+    train_loader = DataLoader(train, num_workers=4, batch_size=args.batch_size, shuffle=True, pin_memory=True)
+    val_loader = DataLoader(val, num_workers=4, batch_size=args.batch_size, shuffle=True, pin_memory=True)
 
     '''
     Build the model
@@ -142,6 +128,10 @@ if __name__ == '__main__':
     model.to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=20, factor=0.5, min_lr=1e-5)
+    
+    '''
+    Train the model
+    '''
     
     savename = f'{model.__class__.__name__}_{args.input}_beta={args.beta:.2g}_split=embryo'
     print(savename)
@@ -156,11 +146,11 @@ if __name__ == '__main__':
             y, pl = model(x)
             
             kld = kld_loss(*pl)
-            res = residual(y, y0).mean()
-            loss = res + args.beta * kld
+            #res = residual(y, y0).mean()
+            #loss = res + args.beta * kld
             
-            #mse = mean_squared_error(y, y0).mean()
-            #loss = mse + args.beta * kld
+            mse = mean_squared_error(y, y0).mean()
+            loss = mse + args.beta * kld
             
             train_loss += loss.item()
             
@@ -184,7 +174,7 @@ if __name__ == '__main__':
                 res = residual(y, y0).mean()
                 mse = mean_squared_error(y, y0).mean()
 
-                loss = res + args.beta * kld
+                loss = mse + args.beta * kld
                 val_loss += loss.item() / len(val_loader)
                 res_val += res.item() / len(val_loader)
                 mse_val += mse.item() / len(val_loader)
@@ -196,9 +186,9 @@ if __name__ == '__main__':
         scheduler.step(val_loss)
 
         res_val = np.mean(residuals)
-
-        outstr = 'Epoch %d: Val Loss=%.3f' % (epoch, val_loss)
-        outstr += '\tRes=%.3f  KLD=%.3f' % (res_val, kld_val)
+        
+        outstr  = f'Epoch {epoch:03d} Val Loss = {val_loss:.3f} '
+        outstr += f'Res = {res_val:.3f} MSE = {mse_val:.3f} KLD = {kld_val:.3f}'
         print(outstr)
         if res_val < best_res:
             save_dict = {
@@ -210,7 +200,7 @@ if __name__ == '__main__':
                 'mse_std': np.std(mses),
                 'res': np.mean(residuals),
                 'res_std': np.std(residuals),
-                'val_df': dataset.df.iloc[val.indices],
+                'val_df': full_df.iloc[val.indices],
             }
             torch.save(save_dict, f'{args.logdir}/{savename}')
             best_res = res_val
