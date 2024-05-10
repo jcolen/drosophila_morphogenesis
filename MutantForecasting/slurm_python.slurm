@@ -2,7 +2,7 @@
 #
 #SBATCH --job-name=mutant_translation
 #SBATCH --output=/scratch/midway3/jcolen/mutant_%A_%a.out
-#SBATCH --partition=vitelli-gpu
+#SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --account=pi-vitelli
 #SBATCH --exclude=midway3-0294
@@ -25,6 +25,7 @@ conda activate /project/vitelli/ml_venv
 cd /project/vitelli/jonathan/REDO_fruitfly/release/MutantForecasting
 
 betas=(1e-3 1e-4 1e-5)
+betas=(1e0 1e-1 1e-2)
 beta=${betas[${SLURM_ARRAY_TASK_ID}]}
 
 echo "STARTING BETA " ${beta}
