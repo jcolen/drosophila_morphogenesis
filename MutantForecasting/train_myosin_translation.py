@@ -94,8 +94,8 @@ if __name__ == '__main__':
 	dataset = torch.utils.data.ConcatDataset([
 		WTDataset(transform=transform),
 		TwistDataset(transform=transform),
-		#TollDataset(transform=transform),
-		#SpaetzleDataset(transform=transform),
+		TollDataset(transform=transform),
+		SpaetzleDataset(transform=transform),
 	])
 
 	# Split on embryos
@@ -134,7 +134,6 @@ if __name__ == '__main__':
 	'''
 	
 	savename = f'{model.__class__.__name__}_{args.input}_beta={args.beta:.2g}_split=embryo'
-	savename = f'{model.__class__.__name__}_{args.input}_beta={args.beta:.2g}_split=embryo_WTTwist'
 	print(savename)
 
 	best_res = 1e5

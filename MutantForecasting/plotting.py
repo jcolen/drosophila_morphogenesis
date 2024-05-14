@@ -118,7 +118,7 @@ def sqh_vel_plot(t,
     ax[0,-1].set_ylabel('Intensity')
     
     ax[1, -1].set_xlabel('Time (min)')
-    ax[1, -1].set(xlim=[-10, 20], ylim=[0, 4], xticks=[-10, 0, 10, 20], yticks=[0, 2, 4])
+    ax[1, -1].set(xlim=[0, 20], ylim=[0, 4], xticks=[-0, 10, 20], yticks=[0, 2, 4])
     ax[1, -1].set_ylabel('Mean flow')
 
     norm = Normalize(vmin=-20, vmax=np.max(t))
@@ -140,7 +140,7 @@ def residual_plot(t, m, m0, v, v0):
     ax.set_ylabel('Error Rate')
     ax.set_ylim([-0.05, 1.05])
     ax.set_xlabel('Time')
-    ax.set_xticks([-10, 0, 10, 20])
+    ax.set_xticks([0, 10, 20])
     ax.legend(fontsize=6)
 
 from scipy.interpolate import RectBivariateSpline as interp2d

@@ -257,7 +257,7 @@ def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3, dro
 
 if __name__=='__main__':
 	savedirs = [
-		#'toll[RM9]/Sqh-GFP',
+		'toll[RM9]/Sqh-GFP',
 		#'spaetzle[A]/Sqh-GFP',
 		#'WT/ECad-GFP',
 		#'Halo_Hetero_Twist[ey53]_Hetero/Sqh-GFP',
@@ -272,11 +272,10 @@ if __name__=='__main__':
 		#'Halo_twist[ey53]/Sqh-GFP',
 		#'even-Skipped[r13]/Sqh-GFP',
 		#'Eve_Mutants/Sqh-GFP',
-		'Dpp_Mutants/Sqh-GFP',
-		'Dpp_Controls/Sqh-GFP',
+		#'Dpp_Mutants/Sqh-GFP',
+		#'Dpp_Controls/Sqh-GFP',
+		#'WT/Moesin-GFP',
 	]
-
-	basedir = '../MutantForecasting'
 	
 	#savedir = 'spaetzle[A]/Sqh-GFP'
 	#fulldir = os.path.join(basedir, savedir)
@@ -306,9 +305,9 @@ if __name__=='__main__':
 		print(fulldir)# len(df))
 		collect_velocity_fields(fulldir)
 		downsample_raw_tiff(fulldir)
-		collect_anisotropy_tensor(fulldir)
-		#collect_anisotropy_tensor(fulldir, threshold_sigma=7) #toll, spz
-		collect_thresholded_cytosolic_normalization(fulldir)
+		#collect_anisotropy_tensor(fulldir)
+		collect_anisotropy_tensor(fulldir, threshold_sigma=7) #toll, spz
+		#collect_thresholded_cytosolic_normalization(fulldir)
 		#build_ensemble_timeline(fulldir, init_unc=1, #Only when we have a timeline
 		#	t_min=-10, t_max=40,
 		#	drop_times=np.any([a in savedir for a in ['Sqh', 'Eve', 'hist']]))
