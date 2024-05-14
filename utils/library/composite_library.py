@@ -7,7 +7,6 @@ import pysindy as ps
 from tqdm.auto import tqdm
 
 from ..decomposition.decomposition_utils import get_decomposition_model
-from ..geometry.geometry_utils import TangentSpaceTransformer
 
 def fill_group_info(data, embryoID, libraries, filename='derivative_library.h5'):
 	'''

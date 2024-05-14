@@ -84,9 +84,24 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		trE = self.einsum_('kkyx->yx', E)
 
 		rhs  = -(0.066 - 0.061 * s) * m #Detachment
-		rhs +=  (0.489 + 0.318 * s) * m * trE #Strain recruitment
-		rhs +=  (0.564 - 0.393 * s) * trm * m #Tension recruitment
-		rhs +=  (0.047 - 0.037 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
+		rhs +=	(0.489 + 0.318 * s) * m * trE #Strain recruitment
+		rhs +=	(0.564 - 0.393 * s) * trm * m #Tension recruitment
+		rhs +=	(0.047 - 0.037 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
+
+		return rhs
+	
+	def rhs_actin(self, m, s, v, E):
+		'''
+		Compute the right hand side of the myosin dynamics
+			using actin as a "control" field instead of eCadherin
+		'''
+		trm = self.einsum_('kkyx->yx', m)
+		trE = self.einsum_('kkyx->yx', E)
+
+		rhs  = -(0.209 - 0.194 * s) * m #Detachment
+		rhs +=	(0.463 + 0.358 * s) * m * trE #Strain recruitment
+		rhs +=	(1.431 - 1.235 * s) * trm * m #Tension recruitment
+		rhs +=	(0.095 - 0.075 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
 
 		return rhs
 	
@@ -98,9 +113,9 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		trE = self.einsum_('kkyx->yx', E)
 
 		rhs  = -(0.067 - 0.055 * s) * m #Detachment
-		rhs +=  (0.533 + 0.251 * s) * m * trE #Strain recruitment
-		rhs +=  (0.534 - 0.326 * s) * trm * m #Tension recruitment
-		rhs +=  (0.041 - 0.029 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
+		rhs +=	(0.533 + 0.251 * s) * m * trE #Strain recruitment
+		rhs +=	(0.534 - 0.326 * s) * trm * m #Tension recruitment
+		rhs +=	(0.041 - 0.029 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
 
 		return rhs
 	
@@ -112,9 +127,9 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		trE = self.einsum_('kkyx->yx', E)
 
 		rhs  = -(0.067 - 0.055 * s) * m #Detachment
-		rhs +=  (0.533 + 0.251 * s) * m * trE #Strain recruitment
-		rhs +=  (0.534 - 0.326 * s) * trm * m #Tension recruitment
-		rhs +=  (0.041 - 0.029 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
+		rhs +=	(0.533 + 0.251 * s) * m * trE #Strain recruitment
+		rhs +=	(0.534 - 0.326 * s) * trm * m #Tension recruitment
+		rhs +=	(0.041 - 0.029 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
 
 		return rhs
 	
@@ -122,10 +137,10 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		trm = self.einsum_('kkyx->yx', m)
 		trE = self.einsum_('kkyx->yx', E)
 
-		rhs  =  (0.041 - 0.025 * s) * m
-		rhs +=  (0.000 + 0.000 * s) * m * trE
+		rhs  =	(0.041 - 0.025 * s) * m
+		rhs +=	(0.000 + 0.000 * s) * m * trE
 		rhs += -(0.177 - 0.376 * s) * trm * m
-		rhs +=  (0.025 - 0.030 * s) * trm * self.gamma_dv_
+		rhs +=	(0.025 - 0.030 * s) * trm * self.gamma_dv_
 
 		return rhs
 	
@@ -133,10 +148,10 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		trm = self.einsum_('kkyx->yx', m)
 		trE = self.einsum_('kkyx->yx', E)
 
-		rhs  =  (0.040 - 0.012 * s) * m
-		rhs +=  (-0.005 + 0.759 * s) * m * trE
+		rhs  =	(0.040 - 0.012 * s) * m
+		rhs +=	(-0.005 + 0.759 * s) * m * trE
 		rhs += -(0.261 - 0.330 * s) * trm * m
-		rhs +=  (0.029 - 0.033 * s) * trm * self.gamma_dv_
+		rhs +=	(0.029 - 0.033 * s) * trm * self.gamma_dv_
 
 		return rhs
 	
@@ -144,17 +159,18 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		trm = self.einsum_('kkyx->yx', m)
 		trE = self.einsum_('kkyx->yx', E)
 
-		rhs  =  (0.037 - 0.005 * s) * m
-		rhs +=  (0.589 + 0.228 * s) * m * trE
+		rhs  =	(0.037 - 0.005 * s) * m
+		rhs +=	(0.589 + 0.228 * s) * m * trE
 		rhs += -(0.217 - 0.202 * s) * trm * m
-		rhs +=  (0.032 - 0.032 * s) * trm * self.gamma_dv_
+		rhs +=	(0.032 - 0.032 * s) * trm * self.gamma_dv_
 
 		return rhs
 	
 	def rhs(self, *args, **kwargs):
 		#return self.rhs_VF_m2_p6(*args, **kwargs)
 		#return self.rhs_WT_twist(*args, **kwargs)
-		return self.rhs_WT(*args, **kwargs)
+		#return self.rhs_WT(*args, **kwargs)
+		return self.rhs_actin(*args, **kwargs)
 		
 	def forward(self, t, y):
 		#Get myosin and source
@@ -175,15 +191,15 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		O = -0.5 * (self.einsum_('iyxj->ijyx', d1_v) - \
 					self.einsum_('iyxj->jiyx', d1_v))
 		E =  0.5 * (self.einsum_('iyxj->ijyx', d1_v) + \
-				    self.einsum_('iyxj->jiyx', d1_v))
+					self.einsum_('iyxj->jiyx', d1_v))
 
 		#Myosin dynamics - comoving derivative
 		lhs  =	self.einsum_('kyx,ijyxk->ijyx', v, d1_m)
-		lhs +=  self.einsum_('ikyx,kjyx->ijyx', O, m)
-		lhs -=  self.einsum_('ikyx,kjyx->ijyx', m, O)
+		lhs +=	self.einsum_('ikyx,kjyx->ijyx', O, m)
+		lhs -=	self.einsum_('ikyx,kjyx->ijyx', m, O)
 
 		#Myosin dynamics - right hand side
-		rhs  =  self.rhs(m, s, v, E)
+		rhs  =	self.rhs(m, s, v, E)
 
 		mdot = -lhs + rhs
 

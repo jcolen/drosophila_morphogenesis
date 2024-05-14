@@ -54,7 +54,7 @@ def build_dynamic_derivative_library(
 			if not 'time' in group:
 				group.create_dataset('time', data=index[index.embryoID==embryoID].time.values)
 			write_library(directory, embryoID, group, **afl_kwargs)
-	#build_ensemble_derivative_library(directory, filename, write_library, **afl_kwargs)
+	build_ensemble_derivative_library(directory, filename, write_library, **afl_kwargs)
 
 
 if __name__=='__main__':
@@ -66,8 +66,10 @@ if __name__=='__main__':
 		#('v', ['WT', 'ECad-GFP'], 'velocity'),
 		#('v', ['Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP'], 'velocity'),
 		#('m_ij', ['Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP'], 'tensor'),
-		('m_ij', ['Halo_twist[ey53]', 'Sqh-GFP'], 'tensor'),
-		('v', ['Halo_twist[ey53]', 'Sqh-GFP'], 'velocity'),
+		#('m_ij', ['Halo_twist[ey53]', 'Sqh-GFP'], 'tensor'),
+		#('v', ['Halo_twist[ey53]', 'Sqh-GFP'], 'velocity'),
+        ('c', ['WT', 'Moesin-GFP'], 'raw'),
+        ('v', ['WT', 'Moesin-GFP'], 'velocity'),
 	]
 
 	for key, path, base in sets:

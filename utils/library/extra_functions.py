@@ -1,7 +1,6 @@
 from itertools import product, combinations
 import numpy as np
 from scipy.interpolate import interp1d
-from ..geometry.geometry_utils import TangentSpaceTransformer
 
 def is_tensor(x):
 	if len(x.shape) < 3:
