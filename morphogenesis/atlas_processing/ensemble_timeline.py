@@ -57,7 +57,7 @@ def build_ensemble_timeline(savedir, t_min=0, t_max=50, init_unc=3, sigma=3, dro
 			else:
 				flag = False
 		if max_unc > init_unc:
-			warnings.warn('t=%d\tIncreasing uncertainty to %d' % (t, max_unc))
+			print('t=%d\tIncreasing uncertainty to %d' % (t, max_unc))
 
 		frame = {}
 		total_weight = 0.

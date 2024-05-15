@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     print('Other datasets')
     runt_dataset = AtlasDataset('WT', 'Runt', 'raw2D', transform=Compose([transform, Smooth2D(sigma=3)]), tmin=-15, tmax=45)
-    eve_dataset = AtlasDataset('WT', 'Even_Skipped-YFP', 'raw2D', transform=Compose([transform, Smooth2D(sigma=3)]), drop_time=True, tmin=-15, tmax=45)
+    eve_dataset = AtlasDataset('WT', 'Even_Skipped', 'raw2D', transform=Compose([transform, Smooth2D(sigma=3)]), drop_time=True, tmin=-15, tmax=45)
 
     build_decomposition_model(runt_dataset, crop=10, lrsym=False)
     build_decomposition_model(eve_dataset, crop=10, lrsym=False)

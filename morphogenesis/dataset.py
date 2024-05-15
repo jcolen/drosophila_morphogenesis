@@ -239,7 +239,8 @@ class JointDataset(torch.utils.data.Dataset):
 			#dfi['time'] = np.round(dfi['time']).astype(int) #Round time to int for merge
 			dfi['key'] = key
 			dfi['dataset_idx'] = int(i)
-			df = df.append(dfi, ignore_index=True)
+			df = pd.concat([df, dfi], ignore_index=True)
+			#df = df.append(dfi, ignore_index=True)
 
 			# Merge dataset into values dict
 			for eId in dataset.values:
@@ -323,7 +324,8 @@ class TrajectoryDataset(JointDataset):
 		for eId in self.df.embryoID.unique():
 			sub = self.df[self.df.embryoID == eId].copy()
 			sub['max_len'] = np.max(sub.eIdx) - sub.eIdx
-			df = df.append(sub, ignore_index=True)
+			df = pd.concat([df, sub], ignore_index=True)
+			#df = df.append(sub, ignore_index=True)
 
 		#Re-compute merged index
 		mask = (df.max_len > 1) & (df.key == self.live_key)
