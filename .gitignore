@@ -1,8 +1,12 @@
 __pycache__
+.DS_store
+morphogenesis.egg-info
+Public
 *.npz
 .ipynb_checkpoints
 *.csv
 *.swp
+*.asv
 *.h5
 *.png
 *.svg
