@@ -8,7 +8,7 @@ import glob
 from morphogenesis.atlas_processing.ensemble_timeline import *
 
 if __name__=='__main__':
-	basedir = '/Users/jcolen/Documents/drosophila_morphogenesis/Public/'
+	basedir = '/Users/jcolen/Documents/drosophila_morphogenesis/flydrive/'
 
 	'''
 	Myosin anisotropy datasets
@@ -19,10 +19,10 @@ if __name__=='__main__':
 		#'spaetzle[A]/Sqh-GFP',
 		#'Halo_twist[ey53]/Sqh-GFP',
 		'WT/ECad-GFP',
-		#'WT/Moesin-GFP',
-		#'WT/histone-RFP',
-		#'WT/Runt',
-		#'WT/Even_Skipped-YFP',
+		'WT/Moesin-GFP',
+		'WT/histone-RFP',
+		'WT/Runt',
+		'WT/Even_Skipped-YFP',
 	]
 	for savedir in savedirs:
 		fulldir = os.path.join(basedir, savedir)

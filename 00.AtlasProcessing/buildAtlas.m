@@ -4,13 +4,14 @@ clear;
 %% Add paths (this part can be slow)
 cd /Users/jcolen/Documents/drosophila_morphogenesis/00.AtlasProcessing;
 
-addpath(genpath('../Public/dynamicAtlas'));
+addpath(genpath('../flydrive/dynamicAtlas'));
+addpath(genpath('../flydrive/dynamicAtlas/+dynamicAtlas'))
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define atlasPath to be where the dynamicAtlas resides (the parent
 % dynamicAtlas directory, not the project directory '+dynamicAtlas')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-atlasPath = '/Users/jcolen/Documents/drosophila_morphogenesis/Public';
+atlasPath = '/Users/jcolen/Documents/drosophila_morphogenesis/flydrive';
 da = BuildAtlas(atlasPath);
 
 function [da] = BuildAtlas(atlasPath)

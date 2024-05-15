@@ -17,7 +17,7 @@ from plyfile import PlyData
 
 from .anisotropy_detection import collect_anisotropy_tensor, collect_thresholded_cytosolic_normalization
 
-geometry_dir = '/Users/jcolen/Documents/drosophila_morphogenesis/Public/embryo_geometry'
+geometry_dir = '/Users/jcolen/Documents/drosophila_morphogenesis/flydrive/embryo_geometry'
 
 def convert_matstruct_to_csv(savedir, prefix='dynamic'):
 	data = loadmat(os.path.join(savedir, '%s_queried_sample.mat' % prefix))

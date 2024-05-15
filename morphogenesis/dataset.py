@@ -145,7 +145,7 @@ class AtlasDataset(torch.utils.data.Dataset):
 				 genotype,
 				 label,
 				 filename,
-				 atlas_dir='/Users/jcolen/Documents/drosophila_morphogenesis/Public/',
+				 atlas_dir='/Users/jcolen/Documents/drosophila_morphogenesis/flydrive/',
 				 drop_time=False,
 				 tmin=-15, tmax=30,
 				 transform=ToTensor()):

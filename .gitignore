@@ -2,6 +2,7 @@ __pycache__
 .DS_store
 morphogenesis.egg-info
 Public
+flydrive
 *.npz
 .ipynb_checkpoints
 *.csv

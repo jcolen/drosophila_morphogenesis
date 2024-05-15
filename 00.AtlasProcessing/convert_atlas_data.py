@@ -11,7 +11,7 @@ from morphogenesis.atlas_processing.atlas_processing import *
 
 
 if __name__=='__main__':
-	basedir = '/Users/jcolen/Documents/drosophila_morphogenesis/Public/'
+	basedir = '/Users/jcolen/Documents/drosophila_morphogenesis/flydrive/'
 
 	'''
 	Myosin anisotropy datasets
@@ -27,11 +27,11 @@ if __name__=='__main__':
 		print(savedir)
 		df = convert_matstruct_to_csv(fulldir, prefix='dynamic')
 		print(fulldir)
-		collect_velocity_fields(fulldir)
-		if 'toll' in savedir or 'spaetzle' in savedir:
-			collect_anisotropy_tensor(fulldir, threshold_sigma=7)
-		else:
-			collect_anisotropy_tensor(fulldir)
+		#collect_velocity_fields(fulldir)
+		#if 'toll' in savedir or 'spaetzle' in savedir:
+		#	collect_anisotropy_tensor(fulldir, threshold_sigma=7)
+		#else:
+		#	collect_anisotropy_tensor(fulldir)
 
 	'''
 	Dynamic intensity datasets
