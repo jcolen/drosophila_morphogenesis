@@ -18,12 +18,12 @@ if __name__=='__main__':
 		#'toll[RM9]/Sqh-GFP',
 		#'spaetzle[A]/Sqh-GFP',
 		#'Halo_twist[ey53]/Sqh-GFP',
-		#'WT/ECad-GFP',
+		'WT/ECad-GFP',
 		#'WT/Moesin-GFP',
 		#'WT/histone-RFP',
-		'WT/Runt',
-		'WT/Even_Skipped-YFP',
-		'WT/Even_Skipped',
+		#'WT/Runt',
+		#'WT/Even_Skipped-YFP',
+		#'WT/Even_Skipped',
 	]
 	for savedir in savedirs:
 		fulldir = os.path.join(basedir, savedir)

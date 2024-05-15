@@ -38,12 +38,12 @@ if __name__=='__main__':
 	Dynamic intensity datasets
 	'''
 	savedirs = [
-		#'WT/ECad-GFP',
+		'WT/ECad-GFP',
 		#'WT/Moesin-GFP',
 		#'WT/histone-RFP',
-		'WT/Runt',
-		'WT/Even_Skipped-YFP',
-		'WT/Even_Skipped',
+		#'WT/Runt',
+		#'WT/Even_Skipped-YFP',
+		#'WT/Even_Skipped',
 	]
 	for savedir in savedirs:
 		fulldir = os.path.join(basedir, savedir)
