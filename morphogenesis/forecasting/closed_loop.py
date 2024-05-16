@@ -121,9 +121,9 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		return rhs
 	
 	def rhs(self, *args, **kwargs):
-		return self.rhs_WT(*args, **kwargs)
+		#return self.rhs_WT(*args, **kwargs)
 		#return self.rhs_actin(*args, **kwargs)
-		#return self.rhs_eCad(*args, **kwargs)
+		return self.rhs_eCad(*args, **kwargs)
 		
 	def forward(self, t, y):
 		#Get myosin and source
@@ -190,7 +190,7 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 			with torch.no_grad():
 				self.to(y0.device)
 				if not torch.is_tensor(t):
-					t = torch.DoubleTensor(t).to(y0.device)
+					t = torch.FloatTensor(t).to(y0.device)
 				y = odeint(self, y0, t, method='rk4')
 				v = self.get_velocity(t, y).cpu().numpy()
 				y = y.cpu().numpy()
