@@ -68,9 +68,10 @@ def build_derivative_library(dataset, library_function, key,
 	for embryoID in tqdm(dataset.df.embryoID.unique()):
 		with h5py.File(f'{path}/{embryoID}.h5', 'a') as h5f:
 			time = dataset.df[dataset.df.embryoID == embryoID].time.values
+			eIdx = dataset.df[dataset.df.embryoID == embryoID].eIdx.values
 			dv = np.load(f'{dataset.path}/{embryoID}/DV_coordinates.npy', mmap_mode='r')
 			ap = np.load(f'{dataset.path}/{embryoID}/AP_coordinates.npy', mmap_mode='r')
-			data = dataset.values[embryoID]
+			data = dataset.values[embryoID][eIdx]
 
 			library_function(h5f, data, (time, dv, ap), key,
 							 project=model, keep_frac=keep_frac)
@@ -89,7 +90,6 @@ def build_derivative_library(dataset, library_function, key,
 from morphogenesis.dataset import *
 
 if __name__=='__main__':
-	datadir = '/project/vitelli/jonathan/REDO_fruitfly/src/Public'
 	transform = Reshape2DField()
 
 	print('eCadherin library')
@@ -103,7 +103,7 @@ if __name__=='__main__':
 	sqh_dataset = AtlasDataset('Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP', 'tensor2D', transform=transform, drop_time=True, tmin=-15, tmax=45)
 	sqh_vel_dataset = AtlasDataset('Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP', 'velocity2D', transform=transform, drop_time=True, tmin=-15, tmax=45)
 
-	build_derivative_library(sqh_dataset, tensor_library, 'm')
+	build_derivative_library(sqh_dataset, tensor_library, 'm_ij')
 	build_derivative_library(sqh_vel_dataset, vector_library, 'v')
 
 	print('Actin library')

@@ -45,7 +45,7 @@ def material_derivative_terms(data, key='m_ij'):
 	D1_x = data['links'][key][f'D1 {key}']
 	v = data['fields']['v']
 
-	raw = data['X_raw']
+	raw = data['features']
 	x = raw[key]
 	O = raw['O']
 
@@ -79,7 +79,7 @@ def symmetric_tensor_couple(data, keys=['m_ij', 'E'], max_space_order=1):
 	Generate the three symmetric tensor couplings of two tensor fields
 	A Tr(B), B Tr(A), and {A.B + B.A}
 	'''
-	raw = data['X_raw']
+	raw = data['features']
 	for key1, key2 in combinations(keys, 2):
 		x1 = raw[key1]
 		x2 = raw[key2]
@@ -106,7 +106,7 @@ def multiply_tensor_by_scalar(data, tensors, scalars):
 	Order-1 couplings between scalars and tensors
 	Without adding gradients, all we can do is multiply the two
 	'''
-	raw = data['X_raw']
+	raw = data['features']
 	
 	if tensors is None:
 		tensors = []
@@ -131,9 +131,9 @@ def add_static_sources(data, couple='m_ij'):
 	'''
 	Add a static DV source to the library
 	'''
-	raw = data['X_raw']
+	raw = data['features']
 	if not couple in raw:
-		raise ValueError(f'{couple} not in X_raw')
+		raise ValueError(f'{couple} not in features')
 	
 	dv = np.zeros_like(raw[couple])
 	dv[:, 0, 0, ...] = 1
@@ -146,6 +146,15 @@ def add_static_sources(data, couple='m_ij'):
 	raw[key] = np.einsum('bij...,bkk...->bij...', dv, raw[couple])
 	raw[key].attrs.update(raw[couple].attrs)
 
+def delete_non_tensors(data, like='m_ij'):
+	'''
+	Remove all terms from library that are not of the same shape as the tensor
+	'''
+	raw = data['features']
+	for key in raw.keys():
+		if raw[key].shape[1:] != raw[like].shape[1:]:
+			del raw[key]
+
 '''
 For E-cadherin
 '''
@@ -154,7 +163,7 @@ def scalar_couple(data, keys=['c', 'Tr(E)', 'Tr(m_ij)'], max_space_order=1):
 	'''
 	Generate scalar couplings of scalar fields
 	'''
-	raw = data['X_raw']
+	raw = data['features']
 	for ii in range(len(keys)):
 		for jj in range(ii, len(keys)):
 			key1, key2 = keys[ii], keys[jj]
@@ -174,7 +183,7 @@ def add_v_squared(data):
 	'''
 	Include v^2 in the E-cadherin library
 	'''
-	raw = data['X_raw']
+	raw = data['features']
 	v = data['fields']['v']
 	
 	feat = 'v v'
@@ -185,7 +194,7 @@ def tensor_trace(data, keys=['m_ij', 'E']):
 	'''
 	Take the trace of a tensor and turn it into a scalar
 	'''
-	raw = data['X_raw']
+	raw = data['features']
 	for key in keys:
 		x = raw[key]
 		feat = f'Tr({key})'
@@ -197,8 +206,17 @@ def delete_high_order_scalars(data, max_space_order=1):
 	Because for historical reasons we computed grad^2(c), we 
 	have to remove it from the library
 	'''
-	raw = data['X_raw']
+	raw = data['features']
 	for key in raw.keys():
 		x = raw[key]
 		if x.attrs['space'] > max_space_order:
+			del raw[key]
+
+def delete_non_scalars(data, like='c'):
+	'''
+	Remove all terms from library that are not of the same shape as the scalar
+	'''
+	raw = data['features']
+	for key in raw.keys():
+		if raw[key].shape[1:] != raw[like].shape[1:]:
 			del raw[key]
