@@ -259,7 +259,6 @@ class JointDataset(torch.utils.data.Dataset):
 		self.df = df
 		self.keys = self.df.key.unique()
 
-
 	def __len__(self):
 		return self.df.merged_index.max()+1
 
