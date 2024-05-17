@@ -10,7 +10,7 @@ from scipy.integrate import solve_ivp
 from torchdiffeq import odeint
 
 from .transforms import InputProcessor, EmbryoSmoother
-from .transforms import CovariantEmbryoGradient, ActiveStrainDecomposition
+from .transforms import EmbryoGradient, CovariantEmbryoGradient
 
 class ClosedFlyLoop(BaseEstimator, nn.Module):
 	'''
@@ -18,14 +18,12 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		a machine-learned equation of motion from initial conditions using the fly
 
 	I've done my best to abstract this as much as possible for simpler extension
-
-	TODO: accept a RHS method after we decide what variables it accepts
-	TODO: account for posterior pole distortion, either by swap padding or imposing a maximum ydot
 	'''
 	def __init__(self,
 				 v_model=None,
 				 rhs=None,
 				 sigma=3,
+				 sym_vel=True,
 				 dv_mode='circular',
 				 ap_mode='replicate',
 				 geo_dir='/Users/jcolen/Documents/drosophila_morphogenesis/flydrive/embryo_geometry'):
@@ -36,9 +34,12 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		self.ap_mode = ap_mode
 		self.dv_mode = dv_mode
 		self.geo_dir = geo_dir
+		self.sym_vel = sym_vel
 		if rhs is None:
+			print('Using default RHS')
 			self.rhs = lambda *args: ClosedFlyLoop.rhs_WT(self, *args)
 		else:
+			print('Using custom RHS')
 			self.rhs = lambda *args: rhs(self, *args)
 		
 	def fit(self, X, y0=None):
@@ -48,13 +49,22 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		])[..., None, None] #Constant over space
 		
 		self.inputs = InputProcessor().fit(X)
-		self.active = ActiveStrainDecomposition().fit(X)
-		self.gradient = CovariantEmbryoGradient(
-			sigma=self.sigma,
-			dv_mode=self.dv_mode,
-			ap_mode=self.ap_mode,
-			geo_dir=self.geo_dir,
-		).fit(X)
+		if self.geo_dir is None:
+			print('Using standard gradient')
+			self.gradient = EmbryoGradient(
+				sigma=self.sigma,
+				dv_mode=self.dv_mode,
+				ap_mode=self.ap_mode,
+			).fit(X)
+		else:
+			print('Using covariant gradient')
+			self.gradient = CovariantEmbryoGradient(
+				sigma=self.sigma,
+				dv_mode=self.dv_mode,
+				ap_mode=self.ap_mode,
+				geo_dir=self.geo_dir,
+			).fit(X)
+
 		self.smoother = EmbryoSmoother(
 			sigma=self.sigma,
 			dv_mode=self.dv_mode,
@@ -74,13 +84,14 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 	def get_velocity(self, t, y):
 		v = self.v_model(t, y)
 		
-		#Left right symmetrize the flow
-		if self.mode_ == 'torch':
-			v_lr = torch.flip(v, (-2,))
-		elif self.mode_ == 'numpy':
-			v_lr = np.flip(v, (-2,)).copy()
-		v_lr[..., 0, :, :] *= -1
-		v = 0.5 * (v + v_lr)
+		if self.sym_vel:
+			#Left right symmetrize the flow
+			if self.mode_ == 'torch':
+				v_lr = torch.flip(v, (-2,))
+			elif self.mode_ == 'numpy':
+				v_lr = np.flip(v, (-2,)).copy()
+			v_lr[..., 0, :, :] *= -1
+			v = 0.5 * (v + v_lr)
 				
 		return v
 	
