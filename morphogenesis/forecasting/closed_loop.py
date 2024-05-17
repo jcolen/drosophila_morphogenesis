@@ -24,6 +24,7 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 	'''
 	def __init__(self,
 				 v_model=None,
+				 rhs=None,
 				 sigma=3,
 				 dv_mode='circular',
 				 ap_mode='replicate',
@@ -35,6 +36,10 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		self.ap_mode = ap_mode
 		self.dv_mode = dv_mode
 		self.geo_dir = geo_dir
+		if rhs is None:
+			self.rhs = lambda *args: ClosedFlyLoop.rhs_WT(self, *args)
+		else:
+			self.rhs = lambda *args: rhs(self, *args)
 		
 	def fit(self, X, y0=None):
 		self.gamma_dv_ = np.array([
@@ -92,41 +97,6 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		rhs +=	(0.047 - 0.037 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
 
 		return rhs
-
-	def rhs_eCad(self, m, s, v, E):
-		'''
-		Compute the right hand side of the myosin dynamics
-			using actin as a "control" field instead of eCadherin
-		'''
-		trm = self.einsum_('kkyx->yx', m)
-		trE = self.einsum_('kkyx->yx', E)
-
-		rhs  = -(0.110 - 0.099 * s) * m #Detachment
-		rhs +=	(0.767 + 0.055 * s) * m * trE #Strain recruitment
-		rhs +=	(0.732 - 0.590 * s) * trm * m #Tension recruitment
-		rhs +=	(0.069 - 0.048 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
-
-		return rhs
-	
-	def rhs_actin(self, m, s, v, E):
-		'''
-		Compute the right hand side of the myosin dynamics
-			using actin as a "control" field instead of eCadherin
-		'''
-		trm = self.einsum_('kkyx->yx', m)
-		trE = self.einsum_('kkyx->yx', E)
-
-		rhs  = -(0.217 - 0.202 * s) * m #Detachment
-		rhs +=	(0.664 + 0.202 * s) * m * trE #Strain recruitment
-		rhs +=	(1.547 - 1.365 * s) * trm * m #Tension recruitment
-		rhs +=	(0.095 - 0.073 * s) * trm * self.gamma_dv_ #Hoop stress recruitment
-
-		return rhs
-	
-	def rhs(self, *args, **kwargs):
-		return self.rhs_WT(*args, **kwargs)
-		#return self.rhs_actin(*args, **kwargs)
-		#return self.rhs_eCad(*args, **kwargs)
 		
 	def forward(self, t, y):
 		#Get myosin and source
