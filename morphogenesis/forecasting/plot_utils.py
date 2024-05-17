@@ -20,7 +20,7 @@ plt.rcParams['legend.fontsize'] = 7
 plt.rcParams['axes.linewidth'] = 1.
 plt.rcParams['image.origin'] = 'lower'
 
-def get_cut(z, N0=80, N1=120):
+def get_cut(z, N0=50, N1=150):
 	'''
 	Return the average DV cut between N0 and N1 along the AP axi
 	'''
@@ -126,7 +126,7 @@ def comparison_plot(t, *fields,
 	for i, (field, z, z0) in enumerate(fields):
 		znorm = z0.reshape([z0.shape[0], -1, *z0.shape[-2:]])
 		n_channels = znorm.shape[1]
-		znorm = np.linalg.norm(znorm[mask], axis=1)[..., :-20] #ignore posterior pole
+		znorm = np.linalg.norm(znorm[mask], axis=1)#[..., :-20] #ignore posterior pole
 		kwargs = dict(vmin=np.min(znorm), vmax=np.max(znorm))
 		
 		alpha = np.zeros(z.shape[-2:])
@@ -159,7 +159,6 @@ def comparison_plot(t, *fields,
 				plot_scalar(ax[i, j], z[jj, ::-1], alpha=alpha, **kwargs)
 				plot_scalar(ax[i, j], z0[jj], alpha=alpha0, **kwargs)
 			elif n_channels == 2:
-				#vwargs['scale'] = 5e1 if t[jj] > 5 else 2e1
 				vwargs['scale'] = 5e1
 				ax[i, j].quiver(X[bot][slc], Y[bot][slc],
 								z0[jj, 1][bot][slc], z0[jj, 0][bot][slc],
@@ -208,11 +207,6 @@ def comparison_plot(t, *fields,
 				axis.set(xlim=ax[i, -1].get_ylim())
 				axis.invert_xaxis()
 				axis.axis('off')
-
-	#ax[-1, -1].plot(t, res, color=color, label=field)
-	#ax[-1, -1].axhline(0.25, zorder=0, color=color, linestyle='--')
-	#ax[-1, -1].set_ylabel('Error Rate', labelpad=0)
-	#ax[-1, -1].set(ylim=[-0.05, 1.05])
 	
 	norm = Normalize(vmin=-20, vmax=np.max(t))
 	fig.subplots_adjust(right=0.97, wspace=0.35, hspace=0.3)
