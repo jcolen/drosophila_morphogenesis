@@ -189,6 +189,13 @@ class VAE(nn.Module):
 		return x, (params, mu, logvar)
 	
 class MaskedVAE(VAE):
+	'''
+	For downstream use in forecasting, we need to mask out regions of the image 
+	that accumulate distortions: 
+		- the AP poles due to image processing/cartography artifacts
+		- the DV poles due to artifacts induced by the ventral furrow
+	This model learns to predict flow with a small region (15 pixels) masked out from the boundary
+	'''
 	def __init__(self, 
 				 *args,
 				 dv_min=15,

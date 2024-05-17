@@ -71,6 +71,10 @@ class VAE_Evolver(VAE):
 		return x, (params, mu, logvar)
 
 class MaskedVAE_Evolver(VAE_Evolver):
+	'''
+	As with MaskedVAE, this model masks out a region of the input 
+	in order to avoid errors due to distortions at the image edge
+	'''
 	def __init__(self, 
 				 *args,
 				 dv_min=15,

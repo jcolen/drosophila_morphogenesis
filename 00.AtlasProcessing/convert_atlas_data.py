@@ -8,9 +8,6 @@ import glob
 from morphogenesis.atlas_processing.anisotropy_detection import *
 from morphogenesis.atlas_processing.atlas_processing import *
 
-
-
-
 if __name__=='__main__':
 	basedir = '/Users/jcolen/Documents/drosophila_morphogenesis/flydrive/'
 
@@ -19,9 +16,9 @@ if __name__=='__main__':
 	'''
 	savedirs = [
 		#'Halo_Hetero_Twist[ey53]_Hetero/Sqh-GFP',
-		#'toll[RM9]/Sqh-GFP',
-		#'spaetzle[A]/Sqh-GFP',
-		#'Halo_twist[ey53]/Sqh-GFP',
+		'toll[RM9]/Sqh-GFP',
+		'spaetzle[A]/Sqh-GFP',
+		'Halo_twist[ey53]/Sqh-GFP',
 	]
 	for savedir in savedirs:
 		fulldir = os.path.join(basedir, savedir)
@@ -38,7 +35,7 @@ if __name__=='__main__':
 	Dynamic intensity datasets
 	'''
 	savedirs = [
-		'WT/ECad-GFP',
+		#'WT/ECad-GFP',
 		#'WT/Moesin-GFP',
 		#'WT/histone-RFP',
 		#'WT/Runt',
