@@ -26,13 +26,15 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 				 v_model=None,
 				 sigma=3,
 				 dv_mode='circular',
-				 ap_mode='replicate'):
+				 ap_mode='replicate',
+				 geo_dir='/Users/jcolen/Documents/drosophila_morphogenesis/flydrive/embryo_geometry'):
 		nn.Module.__init__(self)
 		
 		self.v_model = v_model
 		self.sigma = sigma
 		self.ap_mode = ap_mode
 		self.dv_mode = dv_mode
+		self.geo_dir = geo_dir
 		
 	def fit(self, X, y0=None):
 		self.gamma_dv_ = np.array([
@@ -46,6 +48,7 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 			sigma=self.sigma,
 			dv_mode=self.dv_mode,
 			ap_mode=self.ap_mode,
+			geo_dir=self.geo_dir,
 		).fit(X)
 		self.smoother = EmbryoSmoother(
 			sigma=self.sigma,
@@ -121,9 +124,9 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 		return rhs
 	
 	def rhs(self, *args, **kwargs):
-		#return self.rhs_WT(*args, **kwargs)
+		return self.rhs_WT(*args, **kwargs)
 		#return self.rhs_actin(*args, **kwargs)
-		return self.rhs_eCad(*args, **kwargs)
+		#return self.rhs_eCad(*args, **kwargs)
 		
 	def forward(self, t, y):
 		#Get myosin and source

@@ -169,8 +169,8 @@ class ClosedFlyLoop(BaseEstimator, nn.Module):
 	def rhs(self, *args, **kwargs):
 		#return self.rhs_VF_m2_p6(*args, **kwargs)
 		#return self.rhs_WT_twist(*args, **kwargs)
-		#return self.rhs_WT(*args, **kwargs)
-		return self.rhs_actin(*args, **kwargs)
+		return self.rhs_WT(*args, **kwargs)
+		#return self.rhs_actin(*args, **kwargs)
 		
 	def forward(self, t, y):
 		#Get myosin and source

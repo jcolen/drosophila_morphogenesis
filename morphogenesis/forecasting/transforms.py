@@ -158,15 +158,15 @@ class EmbryoPadder(BaseEstimator, TransformerMixin):
 		#Reflective boundary conditions along the AP axis should invert the DV axis
 		if self.ap_mode_ == 'reflect':
 			if self.mode_ == 'numpy':
-				x[...,  :self.ap_pad] = np.flip(x[...,  :self.ap_pad], (-2,))
+				x[...,	:self.ap_pad] = np.flip(x[...,	:self.ap_pad], (-2,))
 				x[..., -self.ap_pad:] = np.flip(x[..., -self.ap_pad:], (-2,))
 			elif self.mode_ == 'torch':
-				x[...,  :self.ap_pad] = torch.flip(x[...,  :self.ap_pad], (-2,))
+				x[...,	:self.ap_pad] = torch.flip(x[...,  :self.ap_pad], (-2,))
 				x[..., -self.ap_pad:] = torch.flip(x[..., -self.ap_pad:], (-2,))
 
 			#Handle vectorial or tensorial nature
 			if x.shape[0] == 2:
-				x[...,  :self.ap_pad] *= -1
+				x[...,	:self.ap_pad] *= -1
 				x[..., -self.ap_pad:] *= -1
 		
 		return x
@@ -288,7 +288,7 @@ class PoleSmoother(EmbryoSmoother):
 		z = self.padder_.transform(x)
 		z = self.smooth(z)
 
-		x[...,  :self.pad_] = z[...,  :self.pad_]
+		x[...,	:self.pad_] = z[...,  :self.pad_]
 		x[..., -self.pad_:] = z[..., -self.pad_:]
 		
 		x = x.reshape([*c, h, w])
@@ -400,11 +400,11 @@ class CovariantEmbryoGradient(EmbryoGradient):
 	def __init__(self,
 				 sigma=3,
 				 dv_mode='circular',
-				 ap_mode='edge'):
+				 ap_mode='edge',
+				 geo_dir='/Users/jcolen/Documents/drosophila_morphogenesis/flydrive/embryo_geometry'):
 		super().__init__(sigma=sigma, dv_mode=dv_mode, ap_mode=ap_mode)
 
 		#Load geometric information
-		geo_dir = '/Users/jcolen/Documents/drosophila_morphogenesis/flydrive/embryo_geometry'
 
 		self.Gijk = np.load(os.path.join(geo_dir, 'christoffel_symbols.npy'), mmap_mode='r')
 		geometry = loadmat(os.path.join(geo_dir, 'embryo_rectPIVscale_fundamentalForms.mat'),
