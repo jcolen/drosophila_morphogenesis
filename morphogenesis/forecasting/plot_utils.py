@@ -126,7 +126,7 @@ def comparison_plot(t, *fields,
 	for i, (field, z, z0) in enumerate(fields):
 		znorm = z0.reshape([z0.shape[0], -1, *z0.shape[-2:]])
 		n_channels = znorm.shape[1]
-		znorm = np.linalg.norm(znorm[mask], axis=1)#[..., :-20] #ignore posterior pole
+		znorm = np.linalg.norm(znorm[mask], axis=1)[..., :-20] #ignore posterior pole
 		kwargs = dict(vmin=np.min(znorm), vmax=np.max(znorm))
 		
 		alpha = np.zeros(z.shape[-2:])

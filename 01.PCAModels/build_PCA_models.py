@@ -9,7 +9,7 @@ from torchvision.transforms import Compose
 from morphogenesis.dataset import *
 from morphogenesis.decomposition.decomposition_model import SVDPipeline
 
-def build_decomposition_model(dataset, model_type=SVDPipeline, tmin=-15, tmax=45, save=True, **model_kwargs):
+def build_decomposition_model(dataset, model_type=SVDPipeline, model_name=None, tmin=-15, tmax=45, save=True, **model_kwargs):
 	'''
 	Learn a decomposition model on an AtlasDataset object
 	'''
@@ -60,7 +60,10 @@ def build_decomposition_model(dataset, model_type=SVDPipeline, tmin=-15, tmax=45
 		path = os.path.join(dataset.path, 'decomposition_models')
 		if not os.path.exists(path):
 			os.mkdir(path)
-		path = os.path.join(path, f'{dataset.filename[:-2]}_{model.__class__.__name__}')
+		if model_name is None:
+			path = os.path.join(path, f'{dataset.filename[:-2]}_{model.__class__.__name__}')
+		else:
+			path = os.path.join(path, f'{dataset.filename[:-2]}_{model_name}')
 		with open(path+'.pkl', 'wb') as f:
 			pk.dump(model, f)
 		
