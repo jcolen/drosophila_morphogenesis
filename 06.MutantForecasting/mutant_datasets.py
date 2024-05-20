@@ -15,7 +15,7 @@ import torch
 from scipy.ndimage import gaussian_filter, gaussian_filter1d
 from tqdm import tqdm
 
-atlas_dir = '/project/vitelli/jonathan/REDO_fruitfly/src/Public'
+atlas_dir = '/Users/jcolen/Documents/drosophila_morphogenesis/flydrive'
 
 class BaseTransformer():
     def transform(self, X):
@@ -195,6 +195,7 @@ class TollDataset(BaseDataset):
         self.df.time = self.df.eIdx
 
         self.df = self.df[(self.df.time >= tmin) & (self.df.time <= tmax)].reset_index(drop=True)
+        self.df = self.df[self.df.embryoID.astype(str).str.contains('2021')].reset_index(drop=True)
         
         # Load data
         self.sqh = {}

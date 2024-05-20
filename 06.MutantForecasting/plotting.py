@@ -6,12 +6,9 @@ from matplotlib.colors import Normalize
 
 import sys
 import os
-basedir = '/project/vitelli/jonathan/REDO_fruitfly/'
-sys.path.insert(0, os.path.join(basedir, 'release'))
 
-from utils.plot_utils import plot_tensor2D, color_2D
-from utils.plot_utils import ap_min, ap_max, dv_min, dv_max, dv_midpoint
-from utils.plot_utils import residual, mean_norm_residual
+from morphogenesis.plot_utils import plot_tensor, plot_scalar
+from morphogenesis.plot_utils import ap_min, ap_max, dv_min, dv_max, dv_midpoint
 
 plt.rcParams['font.size'] = 8
 plt.rcParams['font.family'] = 'Arial'
@@ -87,8 +84,8 @@ def sqh_vel_plot(t,
         
         color = cmap((t[jj] + 20) / (t.max() + 20))
         
-        plot_tensor2D(ax[0,j], m0[jj] * alpha, alpha=alpha, vmin=mmin, vmax=mmax, both=t[jj]<0)
-        plot_tensor2D(ax[0,j], m[jj] * (1-alpha), alpha=(1-alpha), vmin=mmin, vmax=mmax, both=t[jj]<0)
+        plot_tensor(ax[0,j], m0[jj] * alpha, alpha=alpha, vmin=mmin, vmax=mmax, both=t[jj]<0)
+        plot_tensor(ax[0,j], m[jj] * (1-alpha), alpha=(1-alpha), vmin=mmin, vmax=mmax, both=t[jj]<0)
         
         ax[0,j].set(xlim=[ap_min, ap_max], ylim=[dv_min, dv_max])
         
@@ -129,19 +126,52 @@ def sqh_vel_plot(t,
                  cax=cax, label='Time (min)', ticks=[])
     plt.tight_layout()
 
+def residual(u0, v0):
+	'''
+	Residual metric from Streichan eLife paper
+	'''
+	u = u0.reshape([u0.shape[0], -1, *u0.shape[-2:]])
+	v = v0.reshape([v0.shape[0], -1, *v0.shape[-2:]])
+
+	umag = np.linalg.norm(u, axis=-3)
+	vmag = np.linalg.norm(v, axis=-3)
+
+	uavg = np.sqrt((umag**2).mean(axis=(-2, -1), keepdims=True))
+	vavg = np.sqrt((vmag**2).mean(axis=(-2, -1), keepdims=True))
+
+	res = uavg**2 * vmag**2 + vavg**2 * umag**2 - \
+		2 * uavg * vavg * np.einsum('...ijk,...ijk->...jk', u, v)
+	res /= 2 * vavg**2 * uavg**2
+	return res.mean(axis=(1,2))
+
+def deviation(u0, v0):
+    '''
+    Mean squared error
+    '''
+    u = u0.reshape([u0.shape[0], -1, *u0.shape[-2:]])
+    v = v0.reshape([v0.shape[0], -1, *v0.shape[-2:]])
+
+    dev = np.linalg.norm(u-v, axis=1)
+    return dev.mean(axis=(1,2))
+
 def residual_plot(t, m, m0, v, v0):
-    fig1, ax = plt.subplots(1, 1, figsize=(1, 1))
+    fig1, ax = plt.subplots(1, 1, figsize=(1.5, 1.5), sharex=True)
     colors = ['firebrick', 'black']
-    ax.plot(t, residual(m0, m).mean(axis=(1,2)), color='firebrick', label='Myosin')
-    ax.plot(t, residual(v0, v).mean(axis=(1,2)), color='black', label='Velocity')
+
+    ax.plot(t, residual(m0, m), color='firebrick', label='Myosin')
+    ax.plot(t, residual(v0, v), color='black', label='Velocity')
+
+
     ax.axhline(0.25, zorder=0, color='grey', linestyle='--')
     ax.text(1.01, 0.25, '25%', transform=ax.transAxes,
             color='grey', va='center', ha='left')
-    ax.set_ylabel('Error Rate')
+    ax.set_title('Normalized error')
     ax.set_ylim([-0.05, 1.05])
     ax.set_xlabel('Time')
     ax.set_xticks([0, 10, 20])
     ax.legend(fontsize=6)
+
+    plt.tight_layout()
 
 from scipy.interpolate import RectBivariateSpline as interp2d
 from math import floor, ceil
