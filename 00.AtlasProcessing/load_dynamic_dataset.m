@@ -17,7 +17,7 @@ labels = {...
 genotype = 'WT';
 genotype = 'toll[RM9]';
 genotype = 'spaetzle[A]';
-%genotype = 'Halo_twist[ey53]';
+genotype = 'Halo_twist[ey53]';
 %genotype = 'Halo_Hetero_Twist[ey53]_Hetero'
 
 for ii = 1:length(labels)

@@ -15,9 +15,11 @@ dependencies:
   - numpy
   - scipy
   - pandas
+  - fenics-dolfinx
   - scikit-learn
   - scikit-image
   - pip
   - pip:
     - jupyterlab
+    - torchdiffeq
     - tqdm
