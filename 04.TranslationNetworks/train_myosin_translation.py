@@ -73,7 +73,7 @@ if __name__ == '__main__':
     ])
 
     #Base datasets
-    dataset = FlowDataset(transform=transform)
+    dataset = FlowDataset(tmin=-15, tmax=45, transform=transform)
 
     # Split on embryos
     df = dataset.df.copy()
