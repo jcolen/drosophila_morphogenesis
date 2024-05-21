@@ -22,10 +22,9 @@ conda deactivate
 conda deactivate
 conda activate /project/vitelli/ml_venv
 
-cd /project/vitelli/jonathan/REDO_fruitfly/release/MutantForecasting
+cd /project/vitelli/jonathan/REDO_fruitfly/revision/06.MutantForecasting
 
 betas=(1e-3 1e-4 1e-5)
-betas=(1e0 1e-1 1e-2)
 beta=${betas[${SLURM_ARRAY_TASK_ID}]}
 
 echo "STARTING BETA " ${beta}

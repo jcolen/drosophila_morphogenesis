@@ -3,15 +3,14 @@ import sys
 
 from torchvision.transforms import Compose
 
-sys.path.insert(0, '/project/vitelli/jonathan/REDO_fruitfly/release')
-from mutant_datasets import *
-from utils.vae.convnext_models import VAE
-
 from sklearn.model_selection import train_test_split
 from scipy.stats import sem
 from copy import deepcopy
 from torch.utils.data import DataLoader, random_split, Subset
 from argparse import ArgumentParser
+
+from mutant_datasets import *
+from morphogenesis.flow_networks.translation_models import VAE, MaskedVAE
 
 '''
 Instantaneous translation model
@@ -75,7 +74,7 @@ if __name__ == '__main__':
 	parser.add_argument('--output', type=str, default='vel')
 	parser.add_argument('--out_channels', type=int, default=2)
 	parser.add_argument('--batch_size', type=int, default=8)
-	parser.add_argument('--logdir', type=str, default='/project/vitelli/jonathan/REDO_fruitfly/tb_logs/May2024')
+	parser.add_argument('--logdir', type=str, default='./tb_logs')
 	args = parser.parse_args()
 
 	device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -200,7 +199,6 @@ if __name__ == '__main__':
 				'mse_std': np.std(mses),
 				'res': np.mean(residuals),
 				'res_std': np.std(residuals),
-				'val_df': full_df.iloc[val.indices],
 			}
 			torch.save(save_dict, f'{args.logdir}/{savename}')
 			best_res = res_val
