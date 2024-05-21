@@ -16,7 +16,7 @@ from scipy.ndimage import gaussian_filter, gaussian_filter1d
 from tqdm import tqdm
 
 atlas_dir = '/Users/jcolen/Documents/drosophila_morphogenesis/flydrive'
-atlas_dir = '/project/vitelli/jonathan/REDO_fruitfly/revision/flydrive'
+#atlas_dir = '/project/vitelli/jonathan/REDO_fruitfly/revision/flydrive'
 
 class BaseTransformer():
     def transform(self, X):

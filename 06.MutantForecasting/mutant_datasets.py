@@ -15,8 +15,8 @@ import torch
 from scipy.ndimage import gaussian_filter, gaussian_filter1d
 from tqdm import tqdm
 
-atlas_dir = '/Users/jcolen/Documents/drosophila_morphogenesis/flydrive'
-atlas_dir = '/project/vitelli/jonathan/REDO_fruitfly/revision/flydrive'
+atlas_dir = '/Users/jcolen/Documents/drosophila_morphogenesis/flydrive'  #Inference locally
+#atlas_dir = '/project/vitelli/jonathan/REDO_fruitfly/revision/flydrive' #Training on the cluster
 
 class BaseTransformer():
     def transform(self, X):
