@@ -202,12 +202,18 @@ class MaskedVAE(VAE):
 				 dv_max=-15,
 				 ap_min=15, 
 				 ap_max=-15,
+				 mask=None,
 				 **kwargs):
 		super().__init__(*args, **kwargs)
 
 		# Remove data wherever mask is True
-		self.mask = torch.ones(self.input_size, dtype=bool)
-		self.mask[dv_min:dv_max, ap_min:ap_max] = 0
+		self.mask = torch.zeros(self.input_size, dtype=bool)
+		if mask is not None: # Can mask out PMG/CF regions
+			self.mask[~mask] = 1
+		self.mask[:dv_min, :] = 1
+		self.mask[dv_max:, :] = 1
+		self.mask[:, :ap_min] = 1
+		self.mask[:, ap_max:] = 1
 		self.mask = torch.nn.Parameter(self.mask, requires_grad=False)
 	
 	def forward(self, x):

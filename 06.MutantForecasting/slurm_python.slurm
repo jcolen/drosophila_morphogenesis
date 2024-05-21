@@ -30,4 +30,4 @@ beta=${betas[${SLURM_ARRAY_TASK_ID}]}
 echo "STARTING BETA " ${beta}
 
 epochs=500
-python train_myosin_translation.py --beta $beta --epochs $epochs
+python train_myosin_translation.py --beta $beta --epochs $epochs --use_pmg_cf_mask

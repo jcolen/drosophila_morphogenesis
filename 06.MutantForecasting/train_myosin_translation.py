@@ -12,28 +12,6 @@ from argparse import ArgumentParser
 from mutant_datasets import *
 from morphogenesis.flow_networks.translation_models import VAE, MaskedVAE
 
-'''
-Instantaneous translation model
-'''
-class MaskedVAE(VAE):
-	def __init__(self, 
-				 *args,
-				 dv_min=15,
-				 dv_max=-15,
-				 ap_min=15, 
-				 ap_max=-15,
-				 **kwargs):
-		super().__init__(*args, **kwargs)
-
-		# Remove data wherever mask is True
-		self.mask = torch.ones(self.input_size, dtype=bool)
-		self.mask[dv_min:dv_max, ap_min:ap_max] = 0
-		self.mask = torch.nn.Parameter(self.mask, requires_grad=False)
-	
-	def forward(self, x):
-		x[..., self.mask] = 0. # Mask regions marked
-		return super().forward(x)
-
 def residual(u, v):
 	'''
 	We assume u is the INPUT and v is the TARGET
@@ -75,6 +53,8 @@ if __name__ == '__main__':
 	parser.add_argument('--out_channels', type=int, default=2)
 	parser.add_argument('--batch_size', type=int, default=8)
 	parser.add_argument('--logdir', type=str, default='./tb_logs')
+	parser.add_argument('--use_pmg_cf_mask', action='store_true')
+	parser.add_argument('--edge_mask', type=int, default=15)
 	args = parser.parse_args()
 
 	device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -119,10 +99,20 @@ if __name__ == '__main__':
 	'''
 	Build the model
 	'''
+	if args.use_pmg_cf_mask:
+		mask = np.load('../flydrive/Masks/pmg_cf_mask.npy')
+	else:
+		mask = None
+
 	model = MaskedVAE(in_channels=args.in_channels,
 					  out_channels=args.out_channels,
 					  num_latent=args.num_latent,
-					  stage_dims=[[32,32],[64,64],[128,128],[256,256]])
+					  stage_dims=[[32,32],[64,64],[128,128],[256,256]],
+					  dv_min=args.edge_mask,
+					  dv_max=-args.edge_mask,
+					  ap_min=args.edge_mask,
+					  ap_max=-args.edge_mask,
+					  mask=mask)
 
 	model.to(device)
 	optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
@@ -135,7 +125,7 @@ if __name__ == '__main__':
 	savename = f'{model.__class__.__name__}_{args.input}_beta={args.beta:.2g}_split=embryo'
 	print(savename)
 
-	best_res = 1e5
+	best_val = 1e5
 	for epoch in range(args.epochs):
 		model.train()
 		train_loss = 0.
@@ -183,13 +173,11 @@ if __name__ == '__main__':
 				mses.append(mse.item())
 
 		scheduler.step(val_loss)
-
-		res_val = np.mean(residuals)
 		
 		outstr	= f'Epoch {epoch:03d} Val Loss = {val_loss:.3f} '
 		outstr += f'Res = {res_val:.3f} MSE = {mse_val:.3f} KLD = {kld_val:.3f}'
 		print(outstr)
-		if res_val < best_res:
+		if res_val < best_val:
 			save_dict = {
 				'state_dict': model.state_dict(),
 				'hparams': vars(args),
@@ -201,4 +189,4 @@ if __name__ == '__main__':
 				'res_std': np.std(residuals),
 			}
 			torch.save(save_dict, f'{args.logdir}/{savename}')
-			best_res = res_val
+			best_val = res_val
