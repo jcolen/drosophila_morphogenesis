@@ -7,32 +7,8 @@ from torchvision.transforms import Compose
 from sklearn.model_selection import train_test_split
 from argparse import ArgumentParser
 
-from morphogenesis.flow_translation.convnext_models import VAE, MaskedVAE
-from morphogenesis.dataset import *
-
-class RandomLR(BaseTransformer):
-    '''
-    Randomly transform by flipping or symmetrizing along the left/right axis
-    '''
-    def flip(self, x):
-        x_flip = x[:, ::-1, :].copy()
-        if x.shape[0] == 2:
-            x_flip[0] *= -1
-        elif x.shape[0] == 4:
-            x_flip[1:3] *= -1
-
-        return x_flip
-
-    def transform(self, X):
-        prob = np.random.uniform()
-        if prob < 0.33:
-            # Flip
-            return self.flip(X)
-        elif prob < 0.66:
-            # Symmetrize
-            return 0.5 * (X + self.flip(X))
-        else:
-            return X
+from flow_dataset import *
+from morphogenesis.flow_networks.translation_models import VAE, MaskedVAE
 
 def residual(u, v):
     '''
@@ -74,6 +50,8 @@ if __name__ == '__main__':
     parser.add_argument('--out_channels', type=int, default=2)
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--logdir', type=str, default='./tb_logs')
+    parser.add_argument('--use_pmg_cf_mask', action='store_true')
+    parser.add_argument('--edge_mask', type=int, default=15)
     args = parser.parse_args()
 
     if torch.cuda.is_available():
@@ -95,19 +73,7 @@ if __name__ == '__main__':
     ])
 
     #Base datasets
-    sqh = AtlasDataset('Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP', 'tensor2D',
-        transform=transform, drop_time=True, tmin=-15, tmax=45)
-    sqh_vel = AtlasDataset('Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP', 'velocity2D',
-        transform=transform, drop_time=True, tmin=-15, tmax=45)
-
-    #Myosin
-    dataset = JointDataset(
-        datasets=[
-            ('sqh', sqh),
-            ('vel', sqh_vel),
-        ],
-        live_key='vel',
-    )
+    dataset = FlowDataset(transform=transform)
 
     # Split on embryos
     df = dataset.df.copy()
@@ -117,10 +83,8 @@ if __name__ == '__main__':
     print('Val embryos: ', val)
 
     # Find dataset indices for each embryo
-    train_idxs = df[df.embryoID.isin(train)].merged_index.values
-    val_idxs = df[df.embryoID.isin(val)].merged_index.values
-    train_idxs = train_idxs[train_idxs >= 0]
-    val_idxs = val_idxs[val_idxs >= 0]
+    train_idxs = df[df.embryoID.isin(train)].index.values
+    val_idxs = df[df.embryoID.isin(val)].index.values
     train = Subset(deepcopy(dataset), train_idxs)
     val = Subset(deepcopy(dataset), val_idxs)
     print('Train size: ', len(train))
@@ -133,10 +97,20 @@ if __name__ == '__main__':
     '''
     Build the model
     '''
+    if args.use_pmg_cf_mask:
+        mask = np.load('../flydrive/Masks/pmg_cf_mask.npy')
+    else:
+        mask = None
+    
     model = MaskedVAE(in_channels=args.in_channels,
                       out_channels=args.out_channels,
                       num_latent=args.num_latent,
-                      stage_dims=[[32,32],[64,64],[128,128],[256,256]])
+                      stage_dims=[[32,32],[64,64],[128,128],[256,256]],
+                      dv_min=args.edge_mask,
+                      dv_max=-args.edge_mask,
+                      ap_min=args.edge_mask,
+                      ap_max=-args.edge_mask,
+                      mask=mask)
 
     model.to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
@@ -149,7 +123,7 @@ if __name__ == '__main__':
     savename = f'{model.__class__.__name__}_{args.input}_beta={args.beta:.2g}_split=embryo'
     print(savename)
 
-    best_res = 1e5
+    best_val = 1e5
     for epoch in range(args.epochs):
         model.train()
         train_loss = 0.
@@ -159,9 +133,11 @@ if __name__ == '__main__':
             y, pl = model(x)
 
             kld = kld_loss(*pl)
+            #res = residual(y, y0).mean()
+            #loss = res + args.beta * kld
+            
             mse = mean_squared_error(y, y0).mean()
-            res = residual(y, y0).mean()
-            loss = mse + res + args.beta * kld
+            loss = mse + args.beta * kld
 
             train_loss += loss.item()
 
@@ -196,12 +172,10 @@ if __name__ == '__main__':
 
         scheduler.step(val_loss)
 
-        res_val = np.mean(residuals)
-
         outstr	= f'Epoch {epoch:03d} Val Loss = {val_loss:.3f} '
         outstr += f'Res = {res_val:.3f} MSE = {mse_val:.3f} KLD = {kld_val:.3f}'
         print(outstr)
-        if res_val < best_res:
+        if res_val < best_val:
             save_dict = {
                 'state_dict': model.state_dict(),
                 'hparams': vars(args),
@@ -213,4 +187,4 @@ if __name__ == '__main__':
                 'res_std': np.std(residuals),
             }
             torch.save(save_dict, f'{args.logdir}/{savename}')
-            best_res = res_val
+            best_val = res_val
