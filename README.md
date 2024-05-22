@@ -1,3 +1,5 @@
 # Learning to predict *Drosophila* gastrulation
 
-Working repository for the manuscript **Learning a conserved mechanism for early neuroectoderm morphogenesis** (https://www.biorxiv.org/content/10.1101/2023.12.22.573058v1). This code may be updated as the manuscript is revised and reviewed
+Working repository for the manuscript **Learning a conserved mechanism for early neuroectoderm morphogenesis** (https://www.biorxiv.org/content/10.1101/2023.12.22.573058v1). This code may be updated as the manuscript is revised and reviewed.
+
+The `refactor` branch tracks all changes made in response to reviewer comments. The code for the original bioRxiv submission can be found at the `release` branch. There is an ongoing refactor in this branch to replace `utils` directory with the `morphogenesis` directory. In the initial release, we manually added the `utils` directory to the python path using `sys.path.insert` which mirrors how the dynamicAtlas code is loaded into Matlab. Now, the morphogenesis code can be installed as a python module by running `pip install -e .` from the top level directory. 

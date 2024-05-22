@@ -7,8 +7,32 @@ from torchvision.transforms import Compose
 from sklearn.model_selection import train_test_split
 from argparse import ArgumentParser
 
-from flow_dataset import *
 from morphogenesis.flow_networks.translation_models import VAE, MaskedVAE
+from morphogenesis.dataset import *
+
+class RandomLR(BaseTransformer):
+    '''
+    Randomly transform by flipping or symmetrizing along the left/right axis
+    '''
+    def flip(self, x):
+        x_flip = x[:, ::-1, :].copy()
+        if x.shape[0] == 2:
+            x_flip[0] *= -1
+        elif x.shape[0] == 4:
+            x_flip[1:3] *= -1
+
+        return x_flip
+
+    def transform(self, X):
+        prob = np.random.uniform()
+        if prob < 0.33:
+            # Flip
+            return self.flip(X)
+        elif prob < 0.66:
+            # Symmetrize
+            return 0.5 * (X + self.flip(X))
+        else:
+            return X
 
 def residual(u, v):
     '''
@@ -73,7 +97,19 @@ if __name__ == '__main__':
     ])
 
     #Base datasets
-    dataset = FlowDataset(transform=transform)
+    sqh = AtlasDataset('Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP', 'tensor2D',
+        transform=transform, drop_time=True, tmin=-15, tmax=45)
+    sqh_vel = AtlasDataset('Halo_Hetero_Twist[ey53]_Hetero', 'Sqh-GFP', 'velocity2D',
+        transform=transform, drop_time=True, tmin=-15, tmax=45)
+
+    #Myosin
+    dataset = JointDataset(
+        datasets=[
+            ('sqh', sqh),
+            ('vel', sqh_vel),
+        ],
+        live_key='vel',
+    )
 
     # Split on embryos
     df = dataset.df.copy()
@@ -83,8 +119,10 @@ if __name__ == '__main__':
     print('Val embryos: ', val)
 
     # Find dataset indices for each embryo
-    train_idxs = df[df.embryoID.isin(train)].index.values
-    val_idxs = df[df.embryoID.isin(val)].index.values
+    train_idxs = df[df.embryoID.isin(train)].merged_index.values
+    val_idxs = df[df.embryoID.isin(val)].merged_index.values
+    train_idxs = train_idxs[train_idxs >= 0]
+    val_idxs = val_idxs[val_idxs >= 0]
     train = Subset(deepcopy(dataset), train_idxs)
     val = Subset(deepcopy(dataset), val_idxs)
     print('Train size: ', len(train))

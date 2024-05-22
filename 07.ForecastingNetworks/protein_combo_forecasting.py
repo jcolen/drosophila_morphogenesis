@@ -1,13 +1,11 @@
 import os
 import sys
-basedir = '/project/vitelli/jonathan/REDO_fruitfly/'
-sys.path.insert(0, os.path.join(basedir, 'release'))
 
 from torchvision.transforms import Compose
 
-from utils.dataset import *
-from utils.vae.convnext_models import *
-from utils.vae.training import *
+from morphogenesis.dataset import *
+from morphogenesis.flow_networks.forecasting_models import *
+from training import *
 
 if __name__ == '__main__':
 	parser = get_argument_parser()
